@@ -107,13 +107,13 @@ class Validation extends \Delibera\Modules\ModuleBase
 		$rows[] = array(
 				"id" => "minimo_validacao",
 				"label" => __('Mínimo de validações para uma pauta:', 'delibera'),
-				"content" => '<input type="text" name="minimo_validacao" id="minimo_validacao" value="'.htmlspecialchars_decode($opt['minimo_validacao']).'"/>'
+				"content" => '<input type="text" name="minimo_validacao" id="minimo_validacao" value="'.htmlspecialchars_decode($opt['minimo_validacao']).'" autocomplete="off" />'
 		);
 		
 		$rows[] = array(
 				"id" => "dias_validacao",
 				"label" => __('Dias para validação da pauta:', 'delibera'),
-				"content" => '<input type="text" name="dias_validacao" id="dias_validacao" value="'.htmlspecialchars_decode($opt['dias_validacao']).'"/>'
+				"content" => '<input type="text" name="dias_validacao" id="dias_validacao" value="'.htmlspecialchars_decode($opt['dias_validacao']).'" autocomplete="off" />'
 		);
 		return $rows;
 	}
@@ -175,11 +175,11 @@ class Validation extends \Delibera\Modules\ModuleBase
 		?>
 			<p>
 				<label  class="label_min_validacoes"><?php _e('Mínimo de Validações','delibera'); ?>:</label>
-				<input <?php echo $disable_edicao ?> name="min_validacoes" class="min_validacoes widefat" value="<?php echo $min_validacoes; ?>"/>
+				<input <?php echo $disable_edicao ?> name="min_validacoes" class="min_validacoes widefat" value="<?php echo $min_validacoes; ?>" autocomplete="off" />
 			</p>
 			<p>
 				<label class="label_prazo_validacao"><?php _e('Prazo para Validação','delibera') ?>:</label>
-				<input <?php echo $disable_edicao ?> name="prazo_validacao" class="prazo_validacao widefat hasdatepicker" value="<?php echo $prazo_validacao; ?>"/>
+				<input <?php echo $disable_edicao ?> name="prazo_validacao" class="prazo_validacao widefat hasdatepicker" value="<?php echo $prazo_validacao; ?>" autocomplete="off" />
 			</p>
 		<?php
 		

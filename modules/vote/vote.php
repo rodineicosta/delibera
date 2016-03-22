@@ -86,7 +86,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		$rows[] = array(
 			"id" => "dias_votacao",
 			"label" => __('Dias para votação de encaminhamentos:', 'delibera'),
-			"content" => '<input type="text" name="dias_votacao" id="dias_votacao" value="'.htmlspecialchars_decode($opt['dias_votacao']).'"/>'
+			"content" => '<input type="text" name="dias_votacao" id="dias_votacao" value="'.htmlspecialchars_decode($opt['dias_votacao']).'" autocomplete="off" />'
 		);
 		return $rows;
 	}
@@ -149,7 +149,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		?>
 		<p>
 			<label class="label_prazo_votacao"><?php _e('Prazo para Votações','delibera') ?>:</label>
-			<input <?php echo $disable_edicao ?> name="prazo_votacao" class="prazo_votacao widefat hasdatepicker" value="<?php echo $prazo_votacao; ?>"/>
+			<input <?php echo $disable_edicao ?> name="prazo_votacao" class="prazo_votacao widefat hasdatepicker" value="<?php echo $prazo_votacao; ?>" autocomplete="off" />
 		</p>
 		
 		<div class="delibera_comment_list_panel" style="display: none;">
