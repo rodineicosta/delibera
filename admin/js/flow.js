@@ -157,7 +157,14 @@ jQuery(document).ready(function() {
 		if(delibera_admin_flow.post_id == '')
 		{
 			jQuery('.delibera-flow-panel').find('#delibera-flow-column1').find('input:not(input[type=button], input[type=submit], input[type=reset]), textarea, select').each(function(){
-				data[this.name] = this.value;
+				if(this.type == 'checkbox')
+				{
+					if(this.checked) data[this.name] = this.value;
+				}
+				else
+				{
+					data[this.name] = this.value;
+				}
 			});
 		}
 		else
@@ -182,7 +189,14 @@ jQuery(document).ready(function() {
 				}
 				else
 				{
-					data[this.name] = this.value;
+					if(this.type == 'checkbox')
+					{
+						if(this.checked) data[this.name] = this.value;
+					}
+					else
+					{
+						data[this.name] = this.value;
+					}
 				}
 			});
 		}
