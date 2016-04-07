@@ -34,7 +34,7 @@ function delibera_Add_custom_Post()
 		'capability_type' => array('pauta','pautas'),
 		'map_meta_cap' => true,
 		'hierarchical' => false,
-		'supports' => array('title', 'editor', 'author', 'excerpt', 'trackbacks', 'revisions', 'comments'),
+		'supports' => array('title', 'editor', 'author', 'excerpt', 'trackbacks', 'revisions', 'comments', 'thumbnail'),
 		'register_meta_box_cb' => 'delibera_pauta_custom_meta', // função para chamar na edição
 		'taxonomies' => array('post_tag'), // Taxionomias já existentes relaciondas, vamos criar e registrar na sequência
 		'permalink_epmask' => 'EP_PERMALINK ',
@@ -155,14 +155,14 @@ function delibera_Add_custom_taxonomy()
 
 function deliberaLoadModules()
 {
-	include dirname(__FILE__).'/modules/modulebase.php';
+	require_once dirname(__FILE__).'/modules/modulebase.php';
 	$modules = array_filter(glob(dirname(__FILE__).'/modules/*'), 'is_dir');
 	foreach ($modules as $module)
 	{
 		$filename = $module.DIRECTORY_SEPARATOR.basename($module).'.php';
 		if(file_exists($filename))
 		{
-			include $filename;
+			require_once $filename;
 		}
 	}
 }
@@ -393,12 +393,12 @@ function delibera_register_required_plugins() {
 		array(
 			'name'      => 'mention-comments-authors',
 			'slug'      => 'mention-comments-authors',
-			'required'  => false
+			'required'  => true
 		),
 		array(
 			'name'      => 'comment-attachment',
 			'slug'      => 'comment-attachment',
-			'required'  => false
+			'required'  => true
 		),
     );
 

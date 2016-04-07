@@ -36,7 +36,6 @@ function delibera_get_config() {
 }
 
 require_once('delibera_conf_themes.php');
-require_once('delibera_conf_roles.php');
 
 /**
  * Return Main Configuration from database
@@ -53,7 +52,7 @@ function delibera_get_main_config($config = array()) {
     if(!is_object($deliberaThemes)) $deliberaThemes = new DeliberaThemes;
 
     $opt = array();
-    $opt['theme'] = $deliberaThemes->getThemeDir('creta');
+    $opt['theme'] = plugin_dir_path(__FILE__)."/themes/creta";
     
     $opt['criar_pauta_pelo_front_end'] = 'N';
     $opt['representante_define_prazos'] = 'N';

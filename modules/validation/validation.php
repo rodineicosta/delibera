@@ -321,10 +321,38 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 */
 	public function marcarNaovalidada($postID)
 	{
+		$this->delModuleCron($post_id);
 		wp_set_object_terms($postID, 'naovalidada', 'situacao', false);
 		if(has_action('delibera_pauta_recusada'))
 		{
 			do_action('delibera_pauta_recusada', $postID);
+		}
+	}
+	
+	/**
+	 * Check if have mininal validation at a "validation action"
+	 * @param int $post_id
+	 */
+	public function validaValidacoes($post_id)
+	{
+		$validacoes = get_post_meta($post_id, 'numero_validacoes', true);
+		$min_validacoes = get_post_meta($post_id, 'min_validacoes', true);
+	
+		if($validacoes >= $min_validacoes)
+		{
+			//wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
+			\Delibera\Flow::next($post_id);
+			if(has_action('delibera_validacao_concluida'))
+			{
+				do_action('delibera_validacao_concluida', $post);
+			}
+		}
+		else
+		{
+			if(has_action('delibera_validacao'))
+			{
+				do_action('delibera_validacao', $post);
+			}
 		}
 	}
 	

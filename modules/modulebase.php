@@ -41,7 +41,7 @@ abstract class ModuleBase
 		add_filter('delibera_register_flow_module', array($this, 'registerFlowModule'));
 		add_action('delibera_situacao_register', array($this, 'registerTax'));
 		add_filter('delibera_get_main_config', array($this, 'getMainConfig'));
-		add_filter('delivera_config_page_rows', array($this, 'configPageRows'), 10, 2);
+		//add_filter('delivera_config_page_rows', array($this, 'configPageRows'), 10, 2);
 		add_filter('delibera_situation_button_text', array($this, 'situationButtonText'));
 		//add_action('delibera_topic_meta', array($this, 'topicMeta'), 10, 5);
 		add_action('delibera_publish_pauta', array($this, 'publishPauta'), 10, 2);
@@ -193,6 +193,12 @@ abstract class ModuleBase
 	 */
 	abstract public static function deadline($args);
 	
+	public function delModuleCron($post_id)
+	{
+		\Delibera\Cron::del($post_id, array(get_class($this), 'deadline'));
+		\Delibera\Cron::del($post_id, 'delibera_notificar_fim_prazo');
+	}
+	
 	/**
 	 * Create new deadline events calendar
 	 * @param int $post_id
@@ -225,8 +231,7 @@ abstract class ModuleBase
 						update_post_meta($post_id, $prazo, $prazo_date);
 					}
 					
-					\Delibera\Cron::del($post_id, array(get_class($this), 'deadline'));
-					\Delibera\Cron::del($post_id, 'delibera_notificar_fim_prazo');
+					$this->delModuleCron($post_id);
 					
 					$cron = get_option('delibera-cron');
 					

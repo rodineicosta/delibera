@@ -39,7 +39,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_rewrite_rules.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_conf.php';
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_conf_roles.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_permission.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_conf_themes.php';
 
@@ -51,7 +51,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_setup.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_init.php';
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_flow.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'delibera_flow.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_utils.php';
 
