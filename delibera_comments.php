@@ -369,7 +369,7 @@ function delibera_save_comment_metas($comment_id)
 				$validacoes = get_post_meta($comment->comment_post_ID, 'numero_validacoes', true);
 				$validacoes++;
 				update_post_meta($comment->comment_post_ID, 'numero_validacoes', $validacoes); // Atualiza
-				delibera_valida_validacoes($comment->comment_post_ID);
+				\Delibera\Flow::getCurrentModule($comment->comment_post_ID)->validaValidacoes($comment->comment_post_ID);
 			}
 			$nvalidacoes = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_validacoes', true);
 			$nvalidacoes++;
