@@ -78,7 +78,7 @@ class Cron
 		//wp_mail("jacson@ethymos.com.br", get_bloginfo('name'),"Foram executadas $exec tarefa(s)");
 	}
 
-	function cron_contains($post_id , $callback )
+	function cronContains($post_id , $callback )
 	{
 			$crons =  get_option('delibera-cron', array());
 			foreach ($crons as $key => $values)
@@ -154,14 +154,6 @@ class Cron
 		</div><?php
 	}
 	
-	function remove_closing_date_notify( $post_id )
-	{
-		$callback = "delibera_notificar_fim_prazo";
-		$approvals = (int) get_post_meta($post_id, 'numero_validacoes', true);
-		$min_validacoes = (int) get_post_meta($post_id, "min_validacoes")[0];
-		if ( $approvals >= $min_validacoes &&  $this->cron_contains($post_id , $callback ))
-			$this->del($post_id, 'delibera_notificar_fim_prazo');
-        }	
 	/**
 	 * Add cron trigger
 	 * @param int $data date that will occur
