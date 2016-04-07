@@ -411,6 +411,9 @@ add_action('delibera_votacao_concluida', 'delibera_notificar_votacao_concluida')
 function delibera_notificar_fim_prazo($args)
 {
 	$post = $args['post_ID'];
+
+        \Delibera\Cron::remove_closing_date_notify($post);
+
 	if(is_int($post))
 	{
 		$post = get_post($post);
