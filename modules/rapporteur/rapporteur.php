@@ -297,6 +297,9 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		elseif($situacao->slug == 'eleicao_relator')
 		{
 			//TODO eleicao relator deadline
+			
+			wp_set_object_terms($post_id, 'relatoria', 'situacao', false);
+			$this->newDeadline($post_id);
 		}
 	}
 	
