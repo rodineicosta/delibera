@@ -25,6 +25,12 @@ class Vote extends \Delibera\Modules\ModuleBase
 	protected $prazo_meta = 'prazo_votacao';
 	
 	/**
+	 * Module comments types
+	 * @var array
+	 */
+	protected $comment_types = array('voto');
+	
+	/**
 	 * Config days to make new deadline
 	 * @var array
 	 */
@@ -429,6 +435,16 @@ class Vote extends \Delibera\Modules\ModuleBase
 		$post_id = $args['post_ID'];
 		$current = \Delibera\Flow::getCurrentModule($post_id);
 		$current->computaVotos($post_id);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
+	 */
+	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	{
+		if($echo) _e('Voto', 'delibera');
+		return __('Voto', 'delibera');
 	}
 	
 }

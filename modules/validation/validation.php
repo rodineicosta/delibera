@@ -35,6 +35,12 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 */
 	protected $shortcodes = array('delibera_lista_de_propostas' => 'replacePropostas' );
 	
+	/**
+	 * Module comments types
+	 * @var array
+	 */
+	protected $comment_types = array('validacao');
+	
 	public function __construct()
 	{
 		add_action('delibera_pauta_recusada', array('\Delibera\Cron', 'del'));
@@ -355,6 +361,18 @@ class Validation extends \Delibera\Modules\ModuleBase
 			}
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
+	 */
+	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	{
+		if($echo) _e('Validação', 'delibera');
+		return __('Validação', 'delibera');
+	}
+	
+	
 	
 }
 $DeliberaValidation = new \Delibera\Modules\Validation();

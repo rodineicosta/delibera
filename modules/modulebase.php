@@ -36,6 +36,12 @@ abstract class ModuleBase
 	 */
 	protected $days = array();
 	
+	/**
+	 * Module comments types
+	 * @var array
+	 */
+	protected $comment_types = array();
+	
 	public function __construct()
 	{
 		add_filter('delibera_register_flow_module', array($this, 'registerFlowModule'));
@@ -64,6 +70,14 @@ abstract class ModuleBase
 		foreach ($this->flows as $situacao)
 		{
 			$modules[$situacao] = $this;
+		}
+		if(!array_key_exists('comments_types', $modules))
+		{
+			$modules['comments_types'] = array();
+		}
+		foreach ($this->comment_types as $comment_type)
+		{
+			$modules['comments_types'][$comment_type] = $this;
 		}
 		return $modules;
 	}
@@ -275,5 +289,18 @@ abstract class ModuleBase
 		}
 		return $days;
 	}
+	
+	/**
+	 * Function in format:
+	 * public function getCommentTypeLabel($comment, $tipo = false, $echo = true);
+	 * {
+	 * 	if($echo) _e('text to show about comment type', 'delibera');
+	 * 	return __('text to return about comment type', 'delibera');
+	 * }
+	 * @param WP_Comment $comment
+	 * @param string $tipo type of comment
+	 * @param boolean $echo if is to print
+	 */
+	abstract public function getCommentTypeLabel($comment, $tipo = false, $echo = true);
 	
 }

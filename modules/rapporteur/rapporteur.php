@@ -24,6 +24,12 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	protected $prazo_meta = array('relatoria' => 'prazo_relatoria', 'eleicao_relator' => 'prazo_eleicao_relator');
 	
 	/**
+	 * Module comments types
+	 * @var array
+	 */
+	protected $comment_types = array();
+	
+	/**
 	 * Config days to make new deadline
 	 * @var array
 	 */
@@ -292,6 +298,15 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		{
 			//TODO eleicao relator deadline
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
+	 */
+	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	{
+		return '';
 	}
 	
 }

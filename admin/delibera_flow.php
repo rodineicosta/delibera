@@ -131,6 +131,8 @@ class Flow
 	
 	/**
 	 * List of Modules and each situation for get information about the module, like deadline
+	 * Modules need to register to make part of flow
+	 * Form: $modules['situacao'] = ModuleObject;
 	 * 
 	 * @return \Delibera\Modules\ModuleBase[]
 	 */

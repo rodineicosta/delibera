@@ -31,6 +31,12 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	protected $shorcodes = array('delibera_lista_de_pautas' => 'replacePautas' );
 	
 	/**
+	 * Module comments types
+	 * @var array
+	 */
+	protected $comment_types = array('encaminhamento_selecionado', 'encaminhamento', 'discussao');
+	
+	/**
 	 * Config days to make new deadline
 	 * @var array
 	 */
@@ -256,6 +262,21 @@ class Discussion extends \Delibera\Modules\ModuleBase
 				$current->newDeadline($post_id, false);
 			}
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
+	 */
+	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	{
+		if($tipo == 'discussao')
+		{
+			if($echo) _e('Opinião', 'delibera');
+			return __('Opinião', 'delibera');
+		}
+		if($echo) _e('Proposta', 'delibera');
+		return __('Proposta', 'delibera');
 	}
 	
 }

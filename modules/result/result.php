@@ -30,6 +30,12 @@ class Result extends \Delibera\Modules\ModuleBase
 	protected $shortcodes = array('delibera_lista_de_resolucoes' => 'replaceResolucoes' );
 	
 	/**
+	 * Module comments types
+	 * @var array
+	 */
+	protected $comment_types = array('resolucao');
+
+	/**
 	 * Register Tax for the module
 	 */
 	public function registerTax()
@@ -209,6 +215,16 @@ class Result extends \Delibera\Modules\ModuleBase
 	public static function deadline($args)
 	{
 		$post_id = $args['post_ID'];
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
+	 */
+	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	{
+		if($echo)  _e('Resolução', 'delibera');
+		return __('Resolução', 'delibera');
 	}
 	
 }

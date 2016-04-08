@@ -1,5 +1,8 @@
 <?php
 
+// PHP 5.3 and later:
+namespace Delibera;
+
 function delibera_get_comment_type($comment)
 {
 	$comment_ID = $comment;
@@ -18,31 +21,14 @@ function delibera_get_comment_type($comment)
 function delibera_get_comment_type_label($comment, $tipo = false, $echo = true)
 {
 	if($tipo === false) $tipo = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
-	switch ($tipo)
+	global $DeliberaFlow;
+	$modules = $DeliberaFlow->getFlowModules();
+	
+	if(array_key_exists('comments_types', $modules) && array_key_exists($tipo, $modules['comments_types']))
 	{
-		case 'validacao':
-			if($echo) _e('Validação', 'delibera');
-			return __('Validação', 'delibera');
-		break;
-		case 'encaminhamento_selecionado':
-		case 'encaminhamento':
-			if($echo) _e('Proposta', 'delibera');
-			return __('Proposta', 'delibera');
-		break;
-		case 'voto':
-			if($echo) _e('Voto', 'delibera');
-			return __('Voto', 'delibera');
-		break;
-		case 'resolucao':
-			if($echo)  _e('Resolução', 'delibera');
-			return __('Resolução', 'delibera');
-		break;
-		case 'discussao':
-			if($echo) _e('Opinião', 'delibera');
-			return __('Opinião', 'delibera');
-		default:
-		break;
+		$modules['comments_types'][$tipo]->getCommentTypeLabel($comment, $tipo = false, $echo = true);
 	}
+	
 }
 
 /**
@@ -99,7 +85,8 @@ function delibera_get_comments_count_by_type($postId)
 
 function delibera_get_comments_types()
 {
-	return array('validacao', 'discussao', 'encaminhamento', 'encaminhamento_selecionado', 'voto', 'resolucao');
+	$modules = $DeliberaFlow->getFlowModules();
+	return $modules['comments_types'];
 }
 
 function delibera_get_comments_link() {
