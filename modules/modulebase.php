@@ -303,4 +303,9 @@ abstract class ModuleBase
 	 */
 	abstract public function getCommentTypeLabel($comment, $tipo = false, $echo = true);
 	
+	public static function getComments($post_id)
+	{
+		return delibera_get_comments($post_id, $this->comment_types);
+	}
+	
 }
