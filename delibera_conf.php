@@ -47,13 +47,7 @@ require_once('delibera_conf_themes.php');
  *
  */
 function delibera_get_main_config($config = array()) {
-    global $deliberaThemes;
-
-    if(!is_object($deliberaThemes)) $deliberaThemes = new DeliberaThemes;
-
     $opt = array();
-    $opt['theme'] = plugin_dir_path(__FILE__)."/themes/generic";
-    
     $opt['criar_pauta_pelo_front_end'] = 'N';
     $opt['representante_define_prazos'] = 'N';
     $opt['dias_novo_prazo'] = '2';
@@ -79,8 +73,6 @@ add_filter('delibera_get_config', 'delibera_get_main_config');
  */
 function delibera_conf_page()
 {
-    global $deliberaThemes;
-
     $mensagem = '';
 
     if ($_SERVER['REQUEST_METHOD']=='POST') {
@@ -143,11 +135,6 @@ function delibera_conf_page()
 						"content" => '<input type="checkbox" name="plan_restriction" id="plan_restriction" value="S" '. ( htmlspecialchars_decode($opt['plan_restriction']) == "S" ? "checked='checked'" : "" ).'/>',
 					);
 				}
-                $rows[] = array(
-                    "id" => "theme",
-                    "label" => __('Tema', 'delibera'),
-                    "content" => $deliberaThemes->getSelectBox($opt['theme']) . '<p class="description">' . __('É possível criar um tema para o Delibera criando uma pasta com o nome "delibera" dentro da pasta do tema atual do Wordpress. Esse tema aparecerá nesta listagem com o nome do tema atual.', 'delibera'). '</p>',
-                );
 				$rows[] = array(
 					"id" => "criar_pauta_pelo_front_end",
 					"label" => __('Habilitar a criação de pautas pelo front-end?', 'delibera'),

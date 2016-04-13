@@ -296,7 +296,7 @@ add_action('wp_enqueue_scripts', function()
     	global $deliberaThemes, $post;
 
     	$situacao = delibera_get_situacao($post->ID);
-        wp_enqueue_script('atenas', $deliberaThemes->getThemeUrl() . '/js/atenas.js', array('jquery'));
+        wp_enqueue_script('atenas', \Delibera\Themes::getThemeUrl() . '/js/atenas.js', array('jquery'));
 
         if ($situacao->slug == 'relatoria')
         {
