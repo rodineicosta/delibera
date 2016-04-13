@@ -15,67 +15,66 @@
  */
 class DeliberaThemes
 {
-    /**
-     * Diretório onde ficam os temas
-     * dentro do plugin
-     * @var string
-     */
-    public $baseDir;
+//     /**
+//      * Diretório onde ficam os temas
+//      * dentro do plugin
+//      * @var string
+//      */
+//     public $baseDir;
 
-    /**
-     * URL do diretório onde ficam
-     * os temas dentro do plugin
-     * @var string
-     */
-    public $baseUrl;
+//     /**
+//      * URL do diretório onde ficam
+//      * os temas dentro do plugin
+//      * @var string
+//      */
+//     public $baseUrl;
 
-    /**
-     * Caminho para o diretório
-     * do tema padrão
-     * @var string
-     */
-    public $defaultThemePath;
+//     /**
+//      * Caminho para o diretório
+//      * do tema padrão
+//      * @var string
+//      */
+//     public $defaultThemePath;
 
-    /**
-     * URL para o diretório do
-     * tema padrão
-     * @var string
-     */
-    public $defaultThemeUrl;
+//     /**
+//      * URL para o diretório do
+//      * tema padrão
+//      * @var string
+//      */
+//     public $defaultThemeUrl;
 
-    /**
-     * Caminho para o tema do Delibera
-     * dentro do tema atual do WP.
-     * @var string
-     */
-    public $wpThemePath;
+//     /**
+//      * Caminho para o tema do Delibera
+//      * dentro do tema atual do WP.
+//      * @var string
+//      */
+//     public $wpThemePath;
 
-    /**
-     * Url para o diretório do tema do Delibera
-     * dentro do tema atual do WP
-     * @var string
-     */
-    public $wpThemeUrl;
+//     /**
+//      * Url para o diretório do tema do Delibera
+//      * dentro do tema atual do WP
+//      * @var string
+//      */
+//     public $wpThemeUrl;
 
-    /**
-     * Nome do tema atual do Wordpress
-     * @var string
-     */
-    public $wpThemeName;
+//     /**
+//      * Nome do tema atual do Wordpress
+//      * @var string
+//      */
+//     public $wpThemeName;
 
     /**
      * Define variáveis obrigatórias para funcionamento correto
      */
     function __construct()
     {
-        $this->baseDir = __DIR__ . '/themes/';
-        $this->baseUrl = plugins_url('/delibera/themes/');
-        $this->defaultThemePath = $this->baseDir . 'generic/';
-        $this->defaultThemeUrl = $this->baseUrl . 'generic/';
-
-        $this->wpThemePath = get_stylesheet_directory() . '/delibera';
-        $this->wpThemeUrl = get_stylesheet_directory_uri() . '/delibera';
-        $this->wpThemeName = wp_get_theme()->get_stylesheet();
+    	add_filter('archive_template', array($this, 'archiveTemplate'));
+    	add_filter('single_template', array($this, 'singleTemplate'));
+    	add_action('admin_print_styles', array($this, 'adminPrintStyles'));
+    	add_action('wp_enqueue_scripts', array($this, 'publicStyles'), 100);
+    	
+    	add_filter('comments_template', array($this, 'commentsTemplate'));
+    	
     }
 
     /**
@@ -88,18 +87,7 @@ class DeliberaThemes
      */
     public function getThemeDir($themeName = '')
     {
-        if (!empty($themeName)) {
-            $themePath = $this->baseDir . $themeName;
-        } else {
-            $conf = delibera_get_config();
-            $themePath = $conf['theme'];
-        }
-
-        if (file_exists($themePath)) {
-            return $themePath;
-        } else {
-            return $this->defaultThemePath;
-        }
+		return plugin_dir_path(__FILE__).'/themes/generic';
     }
 
     /**
@@ -110,20 +98,7 @@ class DeliberaThemes
      */
     public function getThemeUrl()
     {
-        $conf = delibera_get_config();
-
-        if (file_exists($conf['theme'])) {
-            // TODO: melhorar a separacao entre tema distribuido junto com o plugin e tema do delibera dentro do tema do wp
-            if (strpos($conf['theme'], '/wp-content/themes') === false) {
-                // tema distribuido junto com o plugin
-                return $this->baseUrl . basename($conf['theme']);
-            } else {
-                // tema dentro do tema atual do wp
-                return $this->wpThemeUrl;
-            }
-        } else {
-            return $this->defaultThemeUrl;
-        }
+        return plugin_dir_url(__FILE__).'/themes/generic';
     }
 
     /**
@@ -139,11 +114,11 @@ class DeliberaThemes
     {
         $filePath = $this->getThemeDir() . '/' . $fileName;
 
-        if (file_exists($filePath)) {
+        if (file_exists($filePath))
+        {
             return $filePath;
-        } else {
-            return $this->defaultThemePath . $fileName;
         }
+        return false;
     }
 
     /**
@@ -160,9 +135,8 @@ class DeliberaThemes
 
         if (file_exists($filePath)) {
             return $this->getThemeUrl() . '/' . $fileName;
-        } else {
-            return $this->defaultThemeUrl . $fileName;
         }
+        return false;
     }
 
     /**
@@ -271,78 +245,72 @@ class DeliberaThemes
     	}
     }
 
+//     /**
+//      * Retorna um array com os temas disponíveis.
+//      *
+//      * @return array
+//      */
+//     public function getAvailableThemes()
+//     {
+//         $themes = array();
+//         $dirs = glob($this->baseDir . '*', GLOB_ONLYDIR);
+
+//         foreach ($dirs as $dir) {
+//             $themes[$dir] = basename($dir);
+//         }
+
+//         // adiciona o tema do delibera de dentro do tema atual do wp se um existir
+//         if (file_exists($this->wpThemePath)) {
+//             $themes[$this->wpThemePath] = $this->wpThemeName;
+//         }
+
+//         return $themes;
+//     }
+
+//     /**
+//      * Gera o select box com os temas disponíveis
+//      * para a interface de admin do Delibera.
+//      *
+//      * @param string $currentTheme o tema atual
+//      * @return string
+//      */
+//     public function getSelectBox($currentTheme)
+//     {
+//         $themes = $this->getAvailableThemes();
+
+//         $html = "<select name='theme' id='theme'>";
+
+//         foreach ($themes as $themePath => $themeName) {
+//             $html .= "<option value='{$themePath}'" . selected($themePath, $currentTheme, false) . ">{$themeName}</option>";
+//         }
+
+//         $html .= "</select>";
+
+//         return $html;
+//     }
+
     /**
-     * Retorna um array com os temas disponíveis.
+     * Usa o template de comentário do Delibera
+     * no lugar do padrão do Wordpress para as pautas
      *
-     * @return array
-     */
-    public function getAvailableThemes()
-    {
-        $themes = array();
-        $dirs = glob($this->baseDir . '*', GLOB_ONLYDIR);
-
-        foreach ($dirs as $dir) {
-            $themes[$dir] = basename($dir);
-        }
-
-        // adiciona o tema do delibera de dentro do tema atual do wp se um existir
-        if (file_exists($this->wpThemePath)) {
-            $themes[$this->wpThemePath] = $this->wpThemeName;
-        }
-
-        return $themes;
-    }
-
-    /**
-     * Gera o select box com os temas disponíveis
-     * para a interface de admin do Delibera.
-     *
-     * @param string $currentTheme o tema atual
+     * @param string $path
      * @return string
+     * @package Tema
      */
-    public function getSelectBox($currentTheme)
+    function commentsTemplate($path)
     {
-        $themes = $this->getAvailableThemes();
-
-        $html = "<select name='theme' id='theme'>";
-
-        foreach ($themes as $themePath => $themeName) {
-            $html .= "<option value='{$themePath}'" . selected($themePath, $currentTheme, false) . ">{$themeName}</option>";
-        }
-
-        $html .= "</select>";
-
-        return $html;
+    	global $deliberaThemes;
+    
+    	if (get_post_type() == 'pauta') {
+    		return $deliberaThemes->themeFilePath('delibera_comments.php');
+    	}
+    
+    	return $path;
     }
 }
 
 $deliberaThemes = new DeliberaThemes;
 
-add_filter('archive_template', array($deliberaThemes, 'archiveTemplate'));
-add_filter('single_template', array($deliberaThemes, 'singleTemplate'));
-add_action('admin_print_styles', array($deliberaThemes, 'adminPrintStyles'));
-add_action('wp_enqueue_scripts', array($deliberaThemes, 'publicStyles'), 100);
-
 // inclui arquivos específicos do tema
 require_once($deliberaThemes->themeFilePath('functions.php'));
 require_once($deliberaThemes->themeFilePath('delibera_comments_template.php'));
-
-/**
- * Usa o template de comentário do Delibera
- * no lugar do padrão do Wordpress para as pautas
- *
- * @param string $path
- * @return string
- * @package Tema
- */
-function delibera_comments_template($path)
-{
-    global $deliberaThemes;
-
-    if (get_post_type() == 'pauta') {
-        return $deliberaThemes->themeFilePath('delibera_comments.php');
-    }
-
-    return $path;
-}
-add_filter('comments_template', 'delibera_comments_template');
