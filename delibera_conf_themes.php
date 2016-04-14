@@ -204,7 +204,7 @@ class Themes
     	return $path;
     }
 }
-global $deliberaThemes;
+global $DeliberaThemes;
 $DeliberaThemes = new \Delibera\Themes();
 
 // inclui arquivos específicos do tema
