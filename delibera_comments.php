@@ -1,7 +1,7 @@
 <?php
 
 // PHP 5.3 and later:
-namespace Delibera;
+//namespace Delibera;
 
 function delibera_get_comment_type($comment)
 {

@@ -447,6 +447,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		if($echo) _e('Voto', 'delibera');
 		return __('Voto', 'delibera');
 	}
+	
 	public function unfilterDuplicate($tipos)
 	{
 		$tipos[] = 'voto';
