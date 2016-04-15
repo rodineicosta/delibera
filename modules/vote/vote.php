@@ -10,7 +10,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 	 * List of of topic status
 	 * @var array
 	 */
-	protected $situacao = array('emvotacao');
+	public $situacao = array('emvotacao');
 	
 	/**
 	 *
@@ -40,6 +40,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 	{
 		parent::__construct();
 		add_action( 'admin_print_scripts', array($this, 'adminScripts') );
+		add_filter('delibera_unfilter_duplicate', array($this, 'unfilterDuplicate'));
 	}
 	
 	/**
@@ -445,6 +446,11 @@ class Vote extends \Delibera\Modules\ModuleBase
 	{
 		if($echo) _e('Voto', 'delibera');
 		return __('Voto', 'delibera');
+	}
+	public function unfilterDuplicate($tipos)
+	{
+		$tipos[] = 'voto';
+		return $tipos;
 	}
 	
 }
