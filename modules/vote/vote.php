@@ -442,10 +442,25 @@ class Vote extends \Delibera\Modules\ModuleBase
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
 	 */
-	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	public function getCommentTypeLabel($tipo = false, $echo = true, $count = false)
 	{
-		if($echo) _e('Voto', 'delibera');
-		return __('Voto', 'delibera');
+		if($count !== false)
+		{
+			if ($count == 0) {
+				$label = __('Nenhum voto', 'delibera');
+			} else if ($count == 1) {
+				$label = __('1 voto', 'delibera');
+			} else {
+				$label = sprintf(__('%d votos', 'delibera'), $count);
+			}
+			if($echo) echo $label;
+			return $label;
+		}
+		else
+		{
+			if($echo) _e('Voto', 'delibera');
+			return __('Voto', 'delibera');
+		}
 	}
 	
 	public function unfilterDuplicate($tipos)

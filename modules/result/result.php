@@ -221,10 +221,25 @@ class Result extends \Delibera\Modules\ModuleBase
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
 	 */
-	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	public function getCommentTypeLabel($tipo = false, $echo = true, $count = false)
 	{
-		if($echo)  _e('Resolução', 'delibera');
-		return __('Resolução', 'delibera');
+		if($count !== false)
+		{
+			if ($count == 0) {
+				$label = __('Nenhuma resolução', 'delibera');
+			} else if ($count == 1) {
+				$label = __('1 resolução', 'delibera');
+			} else {
+				$label = sprintf(__('%d resoluções', 'delibera'), $count);
+			}
+			if($echo) echo $label;
+			return $label;
+		}
+		else
+		{
+			if($echo)  _e('Resolução', 'delibera');
+			return __('Resolução', 'delibera');
+		}
 	}
 	
 }

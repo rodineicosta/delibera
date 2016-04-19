@@ -6,6 +6,7 @@ if (have_posts()) :
         $temas = wp_get_post_terms($post->ID, 'tema');
         
         $situacao = delibera_get_situacao($post->ID);
+        $module = \Delibera\Flow::getCurrentModule($post->ID);
         ?>
         <div class="topic clearfix">
             <div class="meta clearfix">
@@ -33,7 +34,7 @@ if (have_posts()) :
             <?php endif; ?>
 
             <div class="actions bottom clearfix">
-                <?php $label = delibera_get_comments_count_by_type($post->ID); ?>
+                <?php $label = $module->getCommentsCountByType($post->ID); ?>
                 <?php if ($label) : ?>
                     <div class="number-of-comments alignleft">
                         <a href="<?php the_permalink(); ?>#comments"><?php echo $label; ?></a>

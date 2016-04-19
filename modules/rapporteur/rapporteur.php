@@ -27,7 +27,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	 * Module comments types
 	 * @var array
 	 */
-	protected $comment_types = array();
+	protected $comment_types = array('encaminhamento_selecionado', 'encaminhamento');
 	
 	/**
 	 * Config days to make new deadline
@@ -306,9 +306,45 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
 	 */
-	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	public function getCommentTypeLabel($tipo = false, $echo = true, $count = false)
 	{
-		return '';
+		if($count !== false)
+		{
+			$label = '';
+			$count = count(delibera_get_comments_discussoes($postId));
+			if($tipo == 'discussao'  || $tipo === false)
+			{
+				if ($count == 0) {
+					$label = __('Nenhum comentário', 'delibera');
+				} else if ($count == 1) {
+					$label = __('1 comentário', 'delibera');
+				} else {
+					$label = sprintf(__('%d comentários', 'delibera'), $count);
+				}
+			}
+			else
+			{
+				if ($count == 0) {
+					$label = __('Nenhum emcaminhamento', 'delibera');
+				} else if ($count == 1) {
+					$label = __('1 emcaminhamento', 'delibera');
+				} else {
+					$label = sprintf(__('%d emcaminhamentos', 'delibera'), $count);
+				}
+			}
+			if($echo) echo $label;
+			return $label;
+		}
+		else
+		{
+			if($tipo == 'discussao')
+			{
+				if($echo) _e('Opinião', 'delibera');
+				return __('Opinião', 'delibera');
+			}
+			if($echo) _e('Proposta', 'delibera');
+			return __('Proposta', 'delibera');
+		}
 	}
 	
 }

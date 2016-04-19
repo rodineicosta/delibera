@@ -297,11 +297,11 @@ abstract class ModuleBase
 	 * 	if($echo) _e('text to show about comment type', 'delibera');
 	 * 	return __('text to return about comment type', 'delibera');
 	 * }
-	 * @param WP_Comment $comment
 	 * @param string $tipo type of comment
 	 * @param boolean $echo if is to print
+	 * @param int $count number of comments
 	 */
-	abstract public function getCommentTypeLabel($comment, $tipo = false, $echo = true);
+	abstract public function getCommentTypeLabel($tipo = false, $echo = true, $count = false);
 	
 	/**
 	 * return module comments types
@@ -311,6 +311,32 @@ abstract class ModuleBase
 	public static function getComments($post_id, $args = array())
 	{
 		return delibera_get_comments($post_id, $this->comment_types. $args);
+	}
+	
+	/**
+	 * Retorna uma string com a quantidade de comentários
+	 * associados a pauta do tipo correspondente a situação
+	 * atual.
+	 *
+	 * @param int $postId
+	 * @return string (exemplo: "5 votos")
+	 */
+	public function getCommentsCountByType($post_id, $label = true)
+	{
+		$current = \Delibera\Flow::getCurrentModule($post_id);
+		if(is_object($current))
+		{
+			$count = $current->getComments($post_id);
+			if($label)
+			{
+				return $current->getCommentTypeLabel(false, false, $count);
+			}
+			else 
+			{
+				return $count;
+			}
+		}
+		return 0;
 	}
 	
 }

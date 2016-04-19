@@ -366,10 +366,25 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::getCommentTypeLabel()
 	 */
-	public function getCommentTypeLabel($comment, $tipo = false, $echo = true)
+	public function getCommentTypeLabel($tipo = false, $echo = true, $count = false)
 	{
-		if($echo) _e('Validação', 'delibera');
-		return __('Validação', 'delibera');
+		if($count !== false)
+		{
+			if ($count == 0) {
+				$label = __('Nenhuma validação', 'delibera');
+			} else if ($count == 1) {
+				$label = __('1 validação', 'delibera');
+			} else {
+				$label = sprintf(__('%d validações', 'delibera'), $count);
+			}
+			if($echo) echo $label;
+			return $label;
+		}
+		else 
+		{
+			if($echo) _e('Validação', 'delibera');
+			return __('Validação', 'delibera');
+		}
 	}
 	
 	
