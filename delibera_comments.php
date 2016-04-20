@@ -83,83 +83,14 @@ function delibera_comment_text($commentText)
 		$tipo = get_comment_meta($commentId, "delibera_comment_tipo", true);
 		$total = 0;
 		$nvotos = 0;
-		switch ($tipo)
+		
+		$module = \Delibera\Flow::getCurrentCommentModule($post->ID, $comment, $tipo);
+		
+		$commentText = $module->commentText($commentText, $post, $comment, $tipo);
+		
+		if(has_filter('delibera_comment_text'))
 		{
-			case 'validacao':
-			{
-				$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
-				$sim = ($validacao == "S" ? true : false);
-				$commentText = '
-					<div id="painel_validacao" class="delibera-comment-text">
-						'.($sim ? '
-						<label class="delibera-aceitou-view">'.__('Aceitou','delibera').'</label>
-						' : '
-						<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>
-					</div>
-				');
-			}break;
-			case 'discussao':
-			case 'encaminhamento':
-			case 'relatoria':
-			{
-				$situacao = delibera_get_situacao($comment->comment_post_ID);
-				if($situacao->slug == 'discussao' || $situacao->slug == 'relatoria')
-				{
-					if ($tipo == "discussao")
-					{
-						$class_comment = "discussao delibera-comment-text";
-					}
-					else
-					{
-						$class_comment = "encaminhamento delibera-comment-text";
-					}
-					$commentText = "<div id=\"delibera-comment-text-".$comment->comment_ID."\" class='".$class_comment."'>".$commentText."</div>";
-				}
-				elseif($situacao->slug == 'comresolucao' && !defined('PRINT'))
-				{
-					$total = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', true);
-					$nvotos = get_comment_meta($comment->comment_ID, "delibera_comment_numero_votos", true);
-					$commentText = '
-						<div id="delibera-comment-text-'.$comment->comment_ID.'" class="comentario_coluna1 delibera-comment-text">
-							'.$commentText.'
-						</div>
-						<div class="comentario_coluna2 delibera-comment-text">
-							'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
-						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
-						</div>
-					';
-				}
-				if(has_filter('delibera_mostra_discussao'))
-				{
-					$commentText = apply_filters('delibera_mostra_discussao', $commentText, $total, $nvotos, $situacao->slug);
-				}
-			}break;
-			case 'resolucao':
-			{
-				$total = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', true);
-				$nvotos = get_comment_meta($comment->comment_ID, "delibera_comment_numero_votos", true);
-				$commentText = '
-					<div class="comentario_coluna1 delibera-comment-text">
-						'.$commentText.'
-					</div>
-					<div class="comentario_coluna2 delibera-comment-text">
-						'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
-						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
-					</div>
-				';
-			}break;
-			case 'voto':
-			{
-				$commentText = '
-				<div class="comentario_coluna1 delibera-comment-text">
-					'.$commentText.'
-				</div>
-				';
-			}break;
-		}
-		if(has_filter('delibera_mostra_discussao'))
-		{
-			$commentText = apply_filters('delibera_mostra_discussao', $commentText, $tipo, $total, $nvotos);
+			$commentText = apply_filters('delibera_comment_text', $commentText, $post, $comment, $tipo);
 		}
 		return $commentText;
 	}

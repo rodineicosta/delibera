@@ -339,4 +339,14 @@ abstract class ModuleBase
 		return 0;
 	}
 	
+	/**
+	 * Comment Text View
+	 * @param WP_Post $post
+	 * @param WP_Comment $comment
+	 * @param string $commentText
+	 * 
+	 * @return string $commentText
+	 */
+	abstract public function commentText($commentText, $post, $comment, $tipo);
+	
 }

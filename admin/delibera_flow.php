@@ -278,6 +278,24 @@ class Flow
 	}
 	
 	/**
+	 * Return Current Flow Comment Module
+	 * @param int $post_id
+	 * @return \Delibera\Modules\ModuleBase
+	 */
+	public static function getCurrentCommentModule($post_id, $comment, $type = false)
+	{
+		if($type === false) $type = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
+		global $DeliberaFlow;
+		$modules = $DeliberaFlow->getFlowModules();
+		
+		if(array_key_exists('comments_types', $modules) && array_key_exists($type, $modules['comments_types']))
+		{
+			return $modules['comments_types'][$type];
+		}
+		wp_die(__('Nenhum modulo encontrado para esse tipo de comentário', 'delibera'));
+	}
+	
+	/**
 	 * Go to the next module on flow
 	 * @param string $post_id
 	 */

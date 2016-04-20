@@ -242,6 +242,26 @@ class Result extends \Delibera\Modules\ModuleBase
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::commentText()
+	 */
+	public function commentText($commentText, $post, $comment, $tipo)
+	{
+		$total = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', true);
+		$nvotos = get_comment_meta($comment->comment_ID, "delibera_comment_numero_votos", true);
+		$commentText = '
+			<div id="delibera-comment-text-'.$comment->comment_ID.'" class="comentario_coluna1 delibera-comment-text">
+				'.$commentText.'
+			</div>
+			<div class="comentario_coluna2 delibera-comment-text">
+				'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
+						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
+			</div>
+		';
+		return $commentText;
+	}
+	
 }
 $DeliberaResult = new \Delibera\Modules\Result();
 

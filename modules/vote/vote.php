@@ -469,6 +469,20 @@ class Vote extends \Delibera\Modules\ModuleBase
 		return $tipos;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::commentText()
+	 */
+	public function commentText($commentText, $post, $comment, $tipo)
+	{
+		$commentText = '
+			<div class="comentario_coluna1 delibera-comment-text">
+				'.$commentText.'
+			</div>
+		';
+		return $commentText;
+	}
+	
 }
 $DeliberaVote = new \Delibera\Modules\Vote();
 

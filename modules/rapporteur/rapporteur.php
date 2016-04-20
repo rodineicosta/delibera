@@ -347,6 +347,24 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::commentText()
+	 */
+	public function commentText($commentText, $post, $comment, $tipo)
+	{
+		if ($tipo == "discussao")
+		{
+			$class_comment = "discussao delibera-comment-text";
+		}
+		else
+		{
+			$class_comment = "encaminhamento delibera-comment-text";
+		}
+		$commentText = "<div id=\"delibera-comment-text-".$comment->comment_ID."\" class='".$class_comment."'>".$commentText."</div>";
+		return $commentText;
+	}
+	
 }
 $DeliberaRapporteur = new \Delibera\Modules\Rapporteur();
 

@@ -387,7 +387,24 @@ class Validation extends \Delibera\Modules\ModuleBase
 		}
 	}
 	
-	
+	/**
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::commentText()
+	 */
+	public function commentText($commentText, $post, $comment, $tipo)
+	{
+		$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
+		$sim = ($validacao == "S" ? true : false);
+		$commentText = '
+			<div id="painel_validacao" class="delibera-comment-text">
+				'.($sim ? '
+				<label class="delibera-aceitou-view">'.__('Aceitou','delibera').'</label>
+				' : '
+				<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>
+			</div>
+		');
+		return $commentText;
+	}
 	
 }
 $DeliberaValidation = new \Delibera\Modules\Validation();
