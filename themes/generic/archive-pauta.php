@@ -12,9 +12,12 @@
 			<div class="actions">
 				<a href="/wp-admin/post-new.php?post_type=pauta" class="button">nova pauta</a>
 			</div>
+                        <div class="filters">
+                                <?php delibera_filtros_gerar(); ?>
+                        </div>
 		</div>
 
-		<div class="lista-de-pautas">
+		<div id="lista-de-pautas" class="lista-de-pautas">
 			<?php
 			global $deliberaThemes;
 			$deliberaThemes->archiveLoop();

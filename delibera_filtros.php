@@ -16,10 +16,14 @@ function delibera_filtros_gerar()
 	<div id="filtro-horizontal">
 		<h4><?php _e( 'Filtros de conteúdo', 'delibera' ); ?><span id="delibera-filtros-archive-mostrar" onclick="delibera_filtros_archive_mostrar()" class="delibera-filtros-mostrar" style="display: none" title="Mostrar Filtros" ></span><span id="delibera-filtros-archive-esconder" onclick="delibera_filtros_archive_esconder()" class="delibera-filtros-esconder" title="Esconder Filtros"></span></h4>
 		<form action="<?php the_permalink(); ?>" id="form-filtro" method="post">
+
 		<?php
+
 			delibera_filtros_get_filtros('tema');
+
 		?>
 		<div style="clear:both;"> </div>
+
 		<span id="form-filtro-button"><?php _e("Recarregar", 'delibera')?></span>
 		</form>
 	</div><!-- #filtro -->
@@ -170,18 +174,16 @@ function delibera_filtros_get_filtros($tax, $value = false, $linha = "<br/>")
 
 	<div class="form-filtro-ultimos-div">
 	<?php
+
 	foreach ($terms as $term)
 	{
-
 		?>
 				<span class="form-filtro-ultimos-chebox-span">
 				<label class="form-filtro-ultimos-chebox-label"><input type="checkbox" name="<?php echo "{$tax}_filtro[]"; ?>" value="<?php echo $term->slug; ?>" class="form-filtro-ultimos-chebox" autocomplete="off" /><?php _e($term->name, 'delibera'); ?></label><?php echo $linha; ?>
 				</span>
 				<?php
-		
 	}
 	?>
-		
 	</div>
 	<?php
 	if($value !== false)
@@ -196,9 +198,13 @@ function delibera_filtros_get_filtros($tax, $value = false, $linha = "<br/>")
 					//<![CDATA[
 						jQuery("input[value='<?php echo $value; ?>']").attr('checked', true);
 					//]]>
+
 					</script>
+
 				<?php
+
 			}
+
 		}
 		else 
 		{
@@ -208,6 +214,7 @@ function delibera_filtros_get_filtros($tax, $value = false, $linha = "<br/>")
 				jQuery("input[value='<?php echo $value; ?>']").attr('checked', true);
 			//]]>
 			</script>
+
 		<?php
 		}
 	}
@@ -225,25 +232,61 @@ function delibera_filtros_archive_callback()
 	$action->canQuery = true;
 
 	$args = delibera_filtros_get_tax_filtro($_POST, array('post_type' => 'pauta', 'post_status' => 'publish'));
-	
 	$paged = ( array_key_exists('paged', $_POST) && $_POST['paged'] > 0 ) ? $_POST['paged'] : 1;
 	$args['paged'] = $paged;
-
 	$args = apply_filters('delibera_filtros_archive_callback_filter', $args);
-	
+
 	query_posts($args);
 	?>
-	<div id="lista-de-pautas">
-		<?php $deliberaThemes->archiveLoop(); // Chama o loop do arquivo ?>
-		
-		<div id="nav-below" class="navigation">
-			<?php if ( function_exists( 'wp_pagenavi' ) ) wp_pagenavi(); ?>
-		</div><!-- #nav-below -->
-		
-	</div>
+
+		<div id="lista-de-pautas" class="lista-de-pautas">
+			<?php
+			global $deliberaThemes;
+			$deliberaThemes->archiveLoop();
+
+			$options_plugin_delibera = delibera_get_config();
+			$default_flow = isset($options_plugin_delibera['delibera_flow']) ? $options_plugin_delibera['delibera_flow'] : array();
+			$default_flow = apply_filters('delibera_flow_list', $default_flow);
+			?>
+
+			<div class="banner-ciclo">
+				<h3 class="title">Ciclo de vida de uma pauta</h3>
+				<p class="description">
+					Entenda como funciona o ciclo de pautas dentro do Delibera, <br>abaixo os possíveis ciclos.
+				</p>
+				<ul class="ciclos"><?php
+				$i = 1;
+				foreach ($default_flow as $situacao)
+				{
+					switch($situacao)
+					{
+						case 'validacao':?>
+						<li class="validacao"><?php echo $i; ?><br>Validação</li><?php
+						break;
+						case 'discussao': ?>
+						<li class="discussao"><?php echo $i; ?><br>Discussão</li><?php
+						break;
+						case 'relatoria':
+						case 'eleicao_relator': ?>
+						<li class="relatoria"><?php echo $i; ?><br>Relatoria</li><?php
+						break;
+						case 'emvotacao': ?>
+						<li class="emvotacao"><?php echo $i; ?><br>Votação</li><?php
+						break;
+						case 'naovalidada':
+						case 'comresolucao': ?>
+						<li class="comresolucao"><?php echo $i; ?><br>Resolução</li><?php
+						break;
+					}
+					$i++;
+				}?>
+			</ul>
+		</div>
 	<?php
 	die();
+
 }
+
 add_action('wp_ajax_delibera_filtros_archive', 'delibera_filtros_archive_callback');
 add_action('wp_ajax_nopriv_delibera_filtros_archive', 'delibera_filtros_archive_callback');
 
@@ -254,10 +297,10 @@ add_action('wp_ajax_nopriv_delibera_filtros_archive', 'delibera_filtros_archive_
  * @param array $args Query
  * @param string $field
  */
+
 function delibera_filtros_get_tax_filtro($dados, $args, $field = "slug")
 {
 	$tax_query = array();
-
 	if(array_key_exists('tema_filtro', $dados) && is_array($dados['tema_filtro']))
 	{
 		$terms = array();
@@ -271,6 +314,7 @@ function delibera_filtros_get_tax_filtro($dados, $args, $field = "slug")
 					'taxonomy' => 'tema',
 					'field' => $field,
 					'terms' => $terms,
+
 					//'operator' => 'OR'
 			);
 		}
@@ -288,7 +332,9 @@ function delibera_filtros_get_tax_filtro($dados, $args, $field = "slug")
 		$args["tax_query"]['relation'] = 'AND';
 	}
 
+
 	return $args;
+
 }
 
 /**
