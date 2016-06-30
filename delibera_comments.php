@@ -22,19 +22,20 @@ function delibera_get_comment_type_label($comment, $tipo = false, $echo = true)
 {
 	if($tipo === false) $tipo = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
 	global $DeliberaFlow;
-	$modules = $DeliberaFlow->getFlowModules();
+	$comments_types = $DeliberaFlow->getFlowCommentsTypes();
 	
-	if(array_key_exists('comments_types', $modules) && array_key_exists($tipo, $modules['comments_types']))
+	if(array_key_exists($tipo, $comments_types))
 	{
-		$modules['comments_types'][$tipo]->getCommentTypeLabel($tipo, $echo);
+		$comments_types[$tipo]->getCommentTypeLabel($tipo, $echo);
 	}
 	
 }
 
 function delibera_get_comments_types()
 {
-	$modules = $DeliberaFlow->getFlowModules();
-	return $modules['comments_types'];
+	global $DeliberaFlow;
+	$comments_types = $DeliberaFlow->getFlowCommentsTypes();
+	return array_keys($comments_types);
 }
 
 function delibera_get_comments_link() {

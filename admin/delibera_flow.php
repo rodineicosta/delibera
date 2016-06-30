@@ -161,6 +161,23 @@ class Flow
 	}
 	
 	/**
+	 * List of comments types and each situation for get information about the comment_type
+	 * Comment_type need to register to make part of flow
+	 * Form: $comments_types['situacao'] = ModuleObject;
+	 *
+	 * @return \Delibera\Modules\ModuleBase[]
+	 */
+	public function getFlowCommentsTypes()
+	{
+		$comments_types = array();
+		/* Modules need to register to make part of flow
+		 * Form: $comments_types['situacao'] = ModuleObject;
+		 */
+		$comments_types = apply_filters('delibera_register_flow_comment_type', $comments_types);
+		return $comments_types;
+	}
+	
+	/**
 	 * Get the last deadline before current module
 	 * @param string $situacao
 	 * @param int $post_id
@@ -323,11 +340,11 @@ class Flow
 	{
 		if($type === false) $type = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
 		global $DeliberaFlow;
-		$modules = $DeliberaFlow->getFlowModules();
+		$comments_types = $DeliberaFlow->getFlowCommentsTypes();
 		
-		if(array_key_exists('comments_types', $modules) && array_key_exists($type, $modules['comments_types']))
+		if(array_key_exists($type, $comments_types))
 		{
-			return $modules['comments_types'][$type];
+			return $comments_types[$type];
 		}
 		wp_die(__('Nenhum modulo encontrado para esse tipo de comentário', 'delibera'));
 	}

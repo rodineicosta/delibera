@@ -45,6 +45,7 @@ abstract class ModuleBase
 	public function __construct()
 	{
 		add_filter('delibera_register_flow_module', array($this, 'registerFlowModule'));
+		add_filter('delibera_register_flow_comment_type', array($this, 'registerFlowCommentType'));
 		add_action('delibera_situacao_register', array($this, 'registerTax'));
 		add_filter('delibera_get_config', array($this, 'getMainConfig'));
 		//add_filter('delivera_config_page_rows', array($this, 'configPageRows'), 10, 2);
@@ -71,15 +72,20 @@ abstract class ModuleBase
 		{
 			$modules[$situacao] = $this;
 		}
-		if(!array_key_exists('comments_types', $modules))
-		{
-			$modules['comments_types'] = array();
-		}
+		return $modules;
+	}
+	
+	/**
+	 * Register situacao objects for comment flow treat
+	 * @param array $modules
+	 */
+	public function registerFlowCommentType($comments_types)
+	{
 		foreach ($this->comment_types as $comment_type)
 		{
-			$modules['comments_types'][$comment_type] = $this;
+			$comments_types[$comment_type] = $this;
 		}
-		return $modules;
+		return $comments_types;
 	}
 	
 	/**
