@@ -479,8 +479,6 @@ function delibera_pre_edit_comment($dados)
 
 //add_filter('comment_save_pre', 'delibera_pre_edit_comment'); //TODO Verificar edição
 
-// require_once __DIR__.DIRECTORY_SEPARATOR.'delibera_template.php';
-
 function delibera_get_comments_padrao($args = array(), $file = '/comments.php' )
 {
 	global $delibera_comments_padrao;

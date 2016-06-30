@@ -72,9 +72,11 @@ class FakePage
 		$this->NewFakePage('delibera-template-archive', 'Delibera Template Archive', false, "", true);
 		$this->NewFakePage('delibera-template-validacao', 'Delibera Template Validação', 'validacao', "", false);
 		$this->NewFakePage('delibera-template-discussao', 'Delibera Template Discussão', 'discussao', "", false);
-		$this->NewFakePage('delibera-template-votacao-relatoria', 'Delibera Template Votação Relatoria', '', "", false);
+		//$this->NewFakePage('delibera-template-votacao-relatoria', 'Delibera Template Votação Relatoria', '', "", false);
 		$this->NewFakePage('delibera-template-relatoria', 'Delibera Template Relatoria', '', "", false);
-		$this->NewFakePage('delibera-template-votacao', 'Delibera Template Votação', '', "", false);
+		$this->NewFakePage('delibera-template-emvotacao', 'Delibera Template Votação', '', "", false);
+		$this->NewFakePage('delibera-template-comresolucao', 'Delibera Template Resolução', '', "", false);
+		
 		
 		/**
 		 * We'll wait til WordPress has looked for posts, and then
@@ -248,7 +250,8 @@ class FakePage
 	 
 	function getContent()
 	{
-		//require dirname(__FILE__).DIRECTORY_SEPARATOR.'themes'.DIRECTORY_SEPARATOR.'archive-pauta.php';
+		global $deliberaThemes;
+		$deliberaThemes->archiveTemplate($archive);
 	}
 	 
 	function detectPost($posts){
@@ -268,6 +271,7 @@ class FakePage
 			{
 				foreach ($this->pages as $page_slug => $page)
 				{
+					if($page_slug == 'delibera-template-archive') continue;
 					$posts[]=$this->createPost($page_slug, $page);
 				}
 			}
@@ -283,7 +287,8 @@ class FakePage
 			 */
 			$wp_query->is_page = false;
 			//Not sure if this one is necessary but might as well set it like a true page
-			$wp_query->is_singular = !$this->pages[$slug]->is_archive;
+			$wp_query->is_singular = $this->pages[$slug]->is_archive ? 0 : 1;
+			$wp_query->is_single = $this->pages[$slug]->is_archive ? 0 : 1;
 			$wp_query->is_home = false;
 			$wp_query->is_archive = $this->pages[$slug]->is_archive;
 			$wp_query->is_post_type_archive = $this->pages[$slug]->is_archive;
@@ -293,7 +298,7 @@ class FakePage
 			$wp_query->query_vars["error"]="";
 			$wp_query->is_404=false;
 			$wp_query->queried_object = $posts[0];
-			
+			//print_r($wp_query);die();
 		}
 		return $posts;
 	}
@@ -312,10 +317,11 @@ class FakePage
 	{
 		if($this->is_fake())
 		{
-			$sitName = is_string($this->pages[$this->getReq()]->situacao) ? $this->pages[$this->getReq()]->situacao : 'validacao';
-			$sit = new stdClass();
-			$sit->name = $sitName;
-			return $sit;
+			global $post;
+			$slug = get_post( $post )->post_name;
+			$sit_slug = str_replace('delibera-template-', '', $slug);
+			$situacao = get_term_by('slug', $sit_slug, 'situacao');
+			//var_dump($situacao);die();
 		}
 		return $situacao;
 	}
