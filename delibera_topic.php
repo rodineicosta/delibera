@@ -511,13 +511,6 @@ function deliberaCreateTopic($args = array())
 			//TODO tratar as categorias e tags
 			deliberaAddTerms($pauta_id, $args, 'tema', true);
 			
-			if(defined('WP_DEBUG') && WP_DEBUG)
-			{
-				ini_set('display_errors', 1);
-				ini_set('display_startup_errors', 1);
-				error_reporting(E_ALL & ~E_STRICT);
-			}
-			
 			// publica o post
 			wp_publish_post($pauta_id);
 			

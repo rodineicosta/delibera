@@ -29,6 +29,16 @@ if(!defined('__DIR__')) {
     define("__DIR__", substr(__FILE__, 0, $iPos) . DIRECTORY_SEPARATOR);
 }
 
+/**
+ * Force Debug
+ */
+if(defined('WP_DEBUG') && WP_DEBUG)
+{
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL & ~E_STRICT);
+}
+
 define('DELIBERA_ABOUT_PAGE', __('sobre-a-plataforma', 'delibera'));
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_shortcodes.php';
