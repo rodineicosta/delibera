@@ -34,7 +34,8 @@ class MemberPath
 	{
 		$vars[] = 'pautasfor';
 		$vars[] = 'commentsfor';
-		$vars[] = 'merbers';
+		$vars[] = 'members';
+		$vars[] = 'delibera_author';
 		return $vars;
 	}
 	
@@ -50,6 +51,9 @@ class MemberPath
 		add_rewrite_tag('%members%', '');
 		add_rewrite_rule('^delibera/membros', 'index.php?members&paged=1', 
 				'top');
+		add_rewrite_rule('^delibera/([^/]*)/autor?', 
+				'index.php?delibera_author=$matches[1]', 'top');
+		add_rewrite_tag('%delibera_author%', '([^&]+)');
 	}
 	
 	// Catch the URL and redirect it to a template file
@@ -85,6 +89,12 @@ class MemberPath
 			
 			$conf = delibera_get_config();
 			load_template($conf['theme'] . '/page-authors.php', true);
+			exit();
+		}
+		if(array_key_exists('delibera_author', $wp_query->query_vars))
+		{
+			$conf = delibera_get_config();
+			load_template($conf['theme'] . '/page-author.php', true);
 			exit();
 		}
 	}
