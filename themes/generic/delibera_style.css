@@ -775,6 +775,61 @@ span.read-more, span.re-collapse {
 	margin-top: 20px;
 }
 
+
+/* AUTHOR PAGE */
+
+.author-content-actions {
+    display: inline-block;
+    width: 80%;
+    float: left;
+}
+
+.all-authors {
+	float: left;
+}
+
+.author-search {
+	float: left;
+}
+
+.author-search input.search-field {
+    width: auto;
+    margin: auto;
+    border: none;
+    color: #333;
+    background: #FFF;
+}
+
+.author-search input.search-button {
+    background-color: #166e87;
+    opacity: 1;
+    color: #FFF;
+    display: inline-block;
+    padding: 1px 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.author-controls {
+	float: right;
+	width: 20%;
+	color: #000;
+}
+
+.author-header {
+	background-color: #eee;
+	padding: 50px 50px;
+}
+
+.author-data {
+	float: right;
+}
+.author-comment-button {
+    background-color: #3dcff4;
+}
+
+
+
 /* Debug em outros temas */
 
 a.button {
