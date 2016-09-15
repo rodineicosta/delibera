@@ -203,6 +203,16 @@ class Themes
     
     	return $path;
     }
+    
+    public function checkPath($path)
+    {
+    	if(strpos($path, 'home/hacklab') !== false) // need to remove old hardcode path from config
+    	{
+    		$theme = basename($path);
+    		$path = $this->baseDir . $theme;
+    	}
+    	return $path;
+    }
 }
 global $DeliberaThemes;
 $DeliberaThemes = new \Delibera\Themes();
@@ -210,3 +220,4 @@ $DeliberaThemes = new \Delibera\Themes();
 // inclui arquivos específicos do tema
 require_once(\Delibera\Themes::themeFilePath('functions.php'));
 require_once(\Delibera\Themes::themeFilePath('delibera_comments_template.php'));
+

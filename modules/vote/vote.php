@@ -30,6 +30,12 @@ class Vote extends \Delibera\Modules\ModuleBase
 	 */
 	protected $days = array('dias_votacao');
 	
+	/**
+	 * Display priority
+	 * @var int
+	 */
+	public $priority = 4;
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -87,7 +93,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		$rows[] = array(
 			"id" => "dias_votacao",
 			"label" => __('Dias para votação de encaminhamentos:', 'delibera'),
-			"content" => '<input type="text" name="dias_votacao" id="dias_votacao" value="'.htmlspecialchars_decode($opt['dias_votacao']).'"/>'
+			"content" => '<input type="text" name="dias_votacao" id="dias_votacao" value="'.htmlspecialchars_decode($opt['dias_votacao']).'" autocomplete="off" />'
 		);
 		return $rows;
 	}
@@ -311,11 +317,12 @@ class Vote extends \Delibera\Modules\ModuleBase
 	
 	public function createPautaAtFront($opt)
 	{
-		if (trim($opt['data_fixa_nova_pauta_externa']) != '') {
-			$prazo_discussao = DateTime::createFromFormat('d/m/Y', $opt['data_fixa_nova_pauta_externa']);
-			$_POST['prazo_votacao'] = date('d/m/Y', strtotime ('+'.$opt['dias_votacao'].' DAYS', $prazo_discussao->getTimestamp()));
+		$data_externa = trim($opt['data_fixa_nova_pauta_externa']);
+		if ( !empty($data_externa) && strlen($data_externa) == 10) {
+			$prazo_votacao = \DateTime::createFromFormat('d/m/Y', $data_externa);
+			$_POST['prazo_votacao'] = $prazo_votacao->format('d/m/Y');
 		} else {
-			$_POST['prazo_votacao'] = date('d/m/Y', strtotime ('+'.$opt['dias_votacao'].' DAYS'));
+			$_POST['prazo_votacao'] = $this->generateDeadline($opt);
 		}
 	}
 	
