@@ -284,7 +284,7 @@ add_action('wp_enqueue_scripts', function()
 {
     if (get_post_type() == 'pauta')
     {
-    	global $deliberaThemes, $post;
+    	global $DeliberaThemes, $post;
 
     	$situacao = delibera_get_situacao($post->ID);
         wp_enqueue_script('atenas', \Delibera\Themes::getThemeUrl() . '/js/atenas.js', array('jquery'));
@@ -376,7 +376,7 @@ function delibera_gerar_curtir($ID, $type ='pauta')
 	$num_curtiu = intval($type == 'pauta' || $type == 'post' ? get_post_meta($ID, 'delibera_numero_curtir', true) : get_comment_meta($ID, 'delibera_numero_curtir', true));
 	$situacao = delibera_get_situacao($postID);
 
-	global $deliberaThemes;
+	global $DeliberaThemes;
 
 	$html = '<div id="thebutton'.$type.$ID.'" class="delibera-like" title="Demonstre que você concorda com o assunto" >';
 
@@ -453,7 +453,7 @@ function delibera_gerar_discordar($ID, $type ='pauta')
 	$ndiscordou = intval($type == 'pauta' || $type == 'post' ? get_post_meta($ID, 'delibera_numero_discordar', true) : get_comment_meta($ID, 'delibera_numero_discordar', true));
 	$situacao = delibera_get_situacao($postID);
 
-	global $deliberaThemes;
+	global $DeliberaThemes;
 	$html = '<div id="thebuttonDiscordo'.$type.$ID.'" class="delibera-unlike" title="Demostre sua discordância com o assunto" >';
 	if ($ndiscordou > 0) {
 		$html .= '<span class="delibera-unlike-count">' . $ndiscordou .'</span>';
