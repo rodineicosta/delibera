@@ -40,6 +40,12 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 * @var array
 	 */
 	protected $comment_types = array('validacao');
+
+	/**
+         * Display priority
+	 * @var int
+	 */
+	public $priority = 1;
 	
 	public function __construct()
 	{

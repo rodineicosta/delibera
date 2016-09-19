@@ -32,7 +32,7 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 			<?php echo get_avatar( get_post(), 85 ); ?>
 			<span class="author-text"><?php _e( 'Por', 'delibera' ); ?></span>
 			<span class="author vcard">
-				<a class="url fn n" href="<?php echo get_site_url().'/delibera/' . get_the_author_meta( 'ID' ) . '/pautas' ; ?>" title="<?php printf( __( 'Ver o perfil de %s', 'delibera' ), get_the_author() ); ?>">
+				<a class="url fn n" href="<?php echo \Delibera\Member\MemberPath::getAuthorPautasUrl(get_the_author_meta( 'ID' )) ; ?>" title="<?php printf( __( 'Ver o perfil de %s', 'delibera' ), get_the_author() ); ?>">
 					<?php the_author(); ?>
 				</a>
 			</span>
@@ -74,7 +74,15 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 				<?php printf( __( 'Arquivado em', 'delibera' ), 'entry-utility-prep entry-utility-prep-cat-links', get_the_category_list( ', ' ) ); ?>
 			</span>
 			<span class="meta-sep">|</span>
-		<?php endif;?>
+		<?php endif;
+		$tags_list = get_the_tag_list( '', ', ' );
+		if ( $tags_list ):
+			?>
+			<span class="tag-links">
+				<?php printf( __( 'Palavras-chave', 'delibera' ), 'entry-utility-prep entry-utility-prep-tag-links', $tags_list ); ?>
+			</span>
+			<span class="meta-sep">|</span>
+		<?php endif; ?>
 		<div id="delibera-comment-botoes-<?php echo get_the_ID(); ?>" class="delibera-comment-botoes">
 				<div class="archive-botoes"><?php
 				echo delibera_gerar_curtir($post->ID, 'pauta');
@@ -86,16 +94,6 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 			{
 				echo social_buttons(get_permalink(), get_the_title());
 			}
-			/*
-			$tags_list = get_the_tag_list( '', ', ' );
-			if ( $tags_list ):
-			?>
-			<span class="tag-links">
-			<?php printf( __( 'Palavras-chave', 'delibera' ), 'entry-utility-prep entry-utility-prep-tag-links', $tags_list ); ?>
-			</span>
-			<span class="meta-sep">|</span>
-			<?php endif;
-			*/
 			?>
 			<span class="comments-link button">
 				<a href="<?php echo delibera_get_comments_link(); ?>">

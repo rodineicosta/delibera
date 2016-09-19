@@ -35,8 +35,6 @@ function delibera_get_config() {
     return $opt;
 }
 
-require_once('delibera_conf_themes.php');
-
 /**
  * Return Main Configuration from database
  * there are two level of config, main (required) and others configs
@@ -47,10 +45,6 @@ require_once('delibera_conf_themes.php');
  *
  */
 function delibera_get_main_config($config = array()) {
-    global $deliberaThemes;
-
-    if(!is_object($deliberaThemes)) $deliberaThemes = new DeliberaThemes;
-
     $opt = array();
     $opt['theme'] = plugin_dir_path(__FILE__)."/themes/generic";
     

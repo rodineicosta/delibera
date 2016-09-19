@@ -36,6 +36,12 @@ class Result extends \Delibera\Modules\ModuleBase
 	protected $comment_types = array('resolucao');
 
 	/**
+	 * Display priority
+	 * @var int
+	 */
+	public $priority = 5;
+	
+	/**
 	 * Register Tax for the module
 	 */
 	public function registerTax()
