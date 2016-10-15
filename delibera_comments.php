@@ -124,14 +124,21 @@ function delibera_get_comment_link($comment_pass = false)
 	return str_replace('#comment', '#delibera-comment', get_comment_link($comment));
 }
 
-function delibera_comment_post_redirect( $location ) {
-	global $post, $comment_id;
+/**
+ * where to return after comment post
+ * 
+ * @param string $location return to
+ * @param WP_Comment $comment
+ * @return unknown|mixed
+ */
+function delibera_comment_post_redirect( $location, $comment ) {
+	global $post;
     return ( is_object($post) &&
              property_exists($post, 'post_type') &&
              $post->post_type == 'pauta' )
-        ? preg_replace("/#comment-([\d]+)/", "#delibera-comment-" . $comment_id, $location) : $location;
+        ? preg_replace("/#comment-([\d]+)/", "#delibera-comment-" . $comment->comment_ID, $location) : $location;
 }
-add_filter( 'comment_post_redirect', 'delibera_comment_post_redirect' );
+add_filter( 'comment_post_redirect', 'delibera_comment_post_redirect', 10, 2 );
 
 /**
  *
@@ -386,9 +393,19 @@ function delibera_save_comment_metas($comment_id)
 				$nencaminhamentos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', true);
 				$nencaminhamentos++;
 				update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', $nencaminhamentos);
-				if(array_key_exists('delibera-baseouseem', $_POST))
+				if(array_key_exists('delibera-baseouseem', $_POST) && !empty($_POST['delibera-baseouseem']))
 				{
 					add_comment_meta($comment_id, 'delibera-baseouseem', $_POST['delibera-baseouseem'], true);
+					$based_list = explode(',', $_POST['delibera-baseouseem']);
+					foreach ($based_list as $baseouseem_element)
+					{
+						$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
+						if(!is_array($atts)) continue;
+						if(array_key_exists('id', $atts))
+						{
+							update_comment_meta($atts['id'], 'delibera-hasbasedon', $comment_id);
+						}
+					}
 				}
 			}
 			else
