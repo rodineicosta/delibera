@@ -192,7 +192,8 @@ class Vote extends \Delibera\Modules\ModuleBase
 			<?php
 				foreach (delibera_get_comments_encaminhamentos($post->ID) as $comment)
 				{?>
-					<p><textarea id="vote-comment-id-<?php echo $comment->comment_ID; ?>" name="delibera_comment_add_list[]"><?php echo get_comment_text($comment->comment_ID); ?></textarea><a href="#" class="delibera_comment_input_bt_remove delibera-icon-cancel"></a></p><?php	
+					<p><textarea id="vote-comment-id-<?php echo $comment->comment_ID; ?>" name="delibera_comment_add_list[]"><?php echo get_comment_text($comment->comment_ID); ?></textarea><a href="#" class="delibera_comment_input_bt_remove delibera-icon-cancel"></a>
+					<input type="hidden" name="delibera_comment_add_list_ids[]" value="<?php echo $comment->comment_ID; ?>"></p><?php	
 				}
 			?>
 			</ul>
@@ -286,15 +287,21 @@ class Vote extends \Delibera\Modules\ModuleBase
 			{
 				get_currentuserinfo();
 				
+				$index = 0;
+				$comment_saved_ids = array_key_exists('delibera_comment_add_list_ids', $_POST) ? $_POST['delibera_comment_add_list_ids'] : array();
+				
+				/**
+				 * Colect all comments for delete who is deleted at front
+				 */
 				$all_saved_vote_options = delibera_get_comments_encaminhamentos($post->ID);
 				if(!is_array($all_saved_vote_options)) $all_saved_vote_options = array();
 				$all_saved_vote_options = array_object_value_recursive('comment_ID', $all_saved_vote_options);
 				
 				foreach ($_POST['delibera_comment_add_list'] as $vote_option)
 				{
-					$vote_option = explode(',', $vote_option, 2);
+					$vote_option = explode(',', $vote_option, 2); // ajax save
 					if(count($vote_option) == 1) $vote_option = array('', $vote_option[0]);
-					if($vote_option[0] == '')
+					if($vote_option[0] == '' && !array_key_exists($index, $comment_saved_ids) ) // has ajax info or post info
 					{
 						$commentdata = array(
 								'comment_post_ID' => (int) $post->ID, 
@@ -324,27 +331,35 @@ class Vote extends \Delibera\Modules\ModuleBase
 							update_post_meta($comment_id, 'delibera_numero_comments_encaminhamentos', $nencaminhamentos);
 						}
 					}
-					else 
+					else
 					{
-						$comment_tmp_id = substr($vote_option[0], strlen('vote-comment-id-'));
+						$comment_tmp_id = -1;
+						if($vote_option[0] != '')
+						{
+							$comment_tmp_id = substr($vote_option[0], strlen('vote-comment-id-'));
+						}
+						else
+						{
+							$comment_tmp_id = $comment_saved_ids[$index];
+						}
 						$comment = get_comment($comment_tmp_id, ARRAY_A);
 						if(is_array($comment))
 						{
 							$comment['comment_content'] = wp_kses_data( (string) $vote_option[1]);
 							wp_update_comment($comment);
-							$all_saved_vote_options = array_diff($all_saved_vote_options, array($comment_tmp_id));	
+							$all_saved_vote_options = array_diff($all_saved_vote_options, array($comment_tmp_id));
 						}
 						else 
 						{
 							//TODO parse comment error
 						}
 					}
+					$index++;
 				}
 				foreach ($all_saved_vote_options as $comment_delete_id)
 				{
 					wp_delete_comment($comment_delete_id);
 				}
-				
 			}
 		}
 		return $events_meta;

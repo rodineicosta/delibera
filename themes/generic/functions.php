@@ -235,6 +235,9 @@ function delibera_comment_form($defaults)
 								/* @var WP_Comment $encaminhamento */
 								foreach ($encaminhamentos as $encaminhamento)
 								{
+									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
+									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
+									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
 									$users[$encaminhamento->comment_author]++;
 									
@@ -244,7 +247,7 @@ function delibera_comment_form($defaults)
 										$form .= '</div>';
 									$form .= '</div></div>';
 									$form .= '
-									<div id="delibera-voto-option-'.$i.'" class="delibera-voto-option radio-voto">
+									<div id="delibera-voto-option-'.$i.'" class="delibera-voto-option radio-voto '.$hasbasedon_class.'">
 										<input type="radio" name="delibera_voto" id="delibera_voto'.$i.'" value="'.$encaminhamento->comment_ID.'" />
 										<label id="delibera-label-voto-'.$i.'" for="delibera_voto'.$i.'" class="label-voto">
 											<div class="delibera-voto-content">
@@ -280,6 +283,9 @@ function delibera_comment_form($defaults)
 								$form .= '<h3 class="comment-respond">'.__('Escolha os encaminhamentos que deseja aprovar e depois clique em "Votar":','delibera').'</h3>';
 								foreach ($encaminhamentos as $encaminhamento)
 								{
+									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
+									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
+									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
 									$users[$encaminhamento->comment_author]++;
 										
@@ -289,7 +295,7 @@ function delibera_comment_form($defaults)
 									$form .= '</div>';
 									$form .= '</div></div>';
 									$form .= '
-										<div id="delibera-voto-option-'.$i.'" class="delibera-voto-option checkbox-voto">
+										<div id="delibera-voto-option-'.$i.'" class="delibera-voto-option checkbox-voto '.$hasbasedon_class.'">
 											<input type="checkbox" name="delibera_voto'.$i.'" id="delibera_voto'.$i.'" value="'.$encaminhamento->comment_ID.'" />
 											<label id="delibera-label-voto-'.$i.'" for="delibera_voto'.$i.'" class="label-voto">
 												<div class="delibera-voto-content">
