@@ -532,9 +532,6 @@ function delibera_get_comments($post_id, $tipo, $args = array())
 	return $ret;
 }
 
-require_once __DIR__.DIRECTORY_SEPARATOR.'delibera_comments.php';
-
-
 function delibera_wp_list_comments($args = array(), $comments = null)
 {
 	global $post;
