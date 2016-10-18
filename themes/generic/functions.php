@@ -236,6 +236,7 @@ function delibera_comment_form($defaults)
 								foreach ($encaminhamentos as $encaminhamento)
 								{
 									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
+									if(!empty($hasbasedon)) continue; // TODO module and general option to show original proposals
 									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
@@ -284,6 +285,7 @@ function delibera_comment_form($defaults)
 								foreach ($encaminhamentos as $encaminhamento)
 								{
 									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
+									if(!empty($hasbasedon)) continue; // TODO module and general option to show original proposals
 									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
