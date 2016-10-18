@@ -39,9 +39,11 @@ function deliberaUpdateFlow()
 	jQuery('#delibera-flow-column2').trigger('deliberaUpdateFlow');
 	if(deliberaIsConfig())
 	{
-		updateDates();
 		deliberaHideUsedModules()
-		
+	}
+	else
+	{
+		updateDates();
 	}
 }
 
