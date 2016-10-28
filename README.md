@@ -4,9 +4,9 @@
 Delibera
 ========
 
-O Delibera é um plugin para WordPress para democracia online. Ele permite a discussão e deliberação de encaminhamentos relacionados a uma pauta por uma comunidade de usuários.
+O Delibera é um plugin para WordPress para democracia digital. Ele permite a discussão e deliberação de encaminhamentos relacionados a uma pauta por uma comunidade de usuários.
 
-Inspirado em conceitos de redes sociais e outras mídias digitais, tão amplamente apropriadas pela sociedade atual, o Delibera é feito para que pessoas possam interagir, trocar conteúdo e tomar decisões acerca dos assuntos de interesse para todo tipo de organização ou evento, potencializando o ambiente virtual para a transformação do mundo real.
+Inspirado em conceitos de redes sociais e outras mídias digitais, tão amplamente apropriadas pela sociedade atual, o Delibera é feito para que pessoas possam interagir, trocar conteúdo e tomar decisões acerca dos assuntos de interesse para diversos tipos de organização ou evento, potencializando o ambiente virtual para a transformação do mundo real.
 
 Ele funciona em quatro momentos:
 
