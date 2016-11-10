@@ -208,7 +208,7 @@ abstract class ModuleBase
 	{
 		if(get_post_status($post_id) == 'publish')
 		{
-			if($appendDays == false)
+			if($appendDays === false)
 			{
 				$opts = delibera_get_config();
 				$appendDays = $opts['dias_novo_prazo'];
