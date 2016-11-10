@@ -113,6 +113,7 @@ function delibera_publish_pauta($post)
 	{
 		return $postID;
 	}
+	$status = get_post_status($post->ID);
 	
 	$opt = delibera_get_config();
 	
@@ -129,13 +130,23 @@ function delibera_publish_pauta($post)
 		$events_meta['delibera_numero_seguir'] = 0;
 		$events_meta['delibera_seguiram'] = array();
 	}
-
-	delibera_notificar_nova_pauta($postID);
+	
+	if($status != 'private') // do not send when is private TODO send to right people
+	{
+		delibera_notificar_nova_pauta($postID);
+	}
 }
 add_action ('draft_to_publish', 'delibera_publish_pauta', 1, 1);
 add_action ('pending_to_publish', 'delibera_publish_pauta', 1, 1);
 add_action ('auto-draft_to_publish', 'delibera_publish_pauta', 1, 1);
 add_action ('new_to_publish', 'delibera_publish_pauta', 1, 1);
+add_action ('future_to_publish', 'delibera_publish_pauta', 1, 1);
+
+add_action ('draft_to_private', 'delibera_publish_pauta', 1, 1);
+add_action ('pending_to_private', 'delibera_publish_pauta', 1, 1);
+add_action ('auto-draft_to_private', 'delibera_publish_pauta', 1, 1);
+add_action ('new_to_private', 'delibera_publish_pauta', 1, 1);
+add_action ('future_to_private', 'delibera_publish_pauta', 1, 1);
 
 /**
  * 
