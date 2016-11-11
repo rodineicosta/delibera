@@ -318,21 +318,34 @@ class Flow
 	 */
 	public static function next($post_id = false)
 	{
+		$next = self::getNext($post_id);
+		if($next)
+		{
+			$next->initModule($post_id);
+		}
+	}
+	
+	/**
+	 * return the next module on flow
+	 * @param string $post_id
+	 * 
+	 * @return \Delibera\Modules\ModuleBase
+	 */
+	public static function getNext($post_id = false)
+	{
 		global $DeliberaFlow;
-		
+	
 		$flow = $DeliberaFlow->get($post_id);
 		$situacao = delibera_get_situacao($post_id);
 		$current = array_search($situacao->slug, $flow);
 		$modules = $DeliberaFlow->getFlowModules(); //TODO cache?
-		
+	
 		if(array_key_exists($current+1, $flow))
 		{
-			$modules[$flow[$current+1]]->initModule($post_id);
+			return $modules[$flow[$current+1]];
 		}
-		else 
-		{
-			//TODO the end?
-		}
+		
+		return false;
 	}
 	
 	/**
@@ -405,6 +418,16 @@ class Flow
 		if($diff->d > 0)
 		{
 			$ret = $diff->format('%r%a');
+			if($ret < -1) // Pauta travada see https://github.com/redelivre/delibera/issues/135
+			{
+				//let's check why
+				$next = self::getNext($post_id);
+				if($next) // Ops have more in flow
+				{
+					$next->initModule($post_id);
+				}
+				//TODO better error treat
+			}
 			return $ret;
 		}
 		if($diff->d < 1 && ($diff->i || $diff->h || $diff->s)) 

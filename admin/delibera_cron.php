@@ -48,12 +48,20 @@ class Cron
 							{
 								call_user_func($value['call_back'], $value['args']);
 							}
+							else
+							{
+								throw new Exception('invalid callback array. dump: '.print_r($value, true));
+							}
 						}
 						else 
 						{
 							if(function_exists($value['call_back']))
 							{
 								call_user_func($value['call_back'], $value['args']);
+							}
+							else
+							{
+								throw new Exception('invalid callback function. dump: '.print_r($value, true));
 							}
 						}
 					}
