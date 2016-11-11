@@ -392,7 +392,7 @@ class Flow
 	
 		$deadline = $module->getDeadline($post_id);
 		
-		if($deadline == -1) return $deadline;
+		if($deadline <= -1) return -1;
 	
 		$dateTimeNow = new \DateTime();
 		$deadlineDate = \DateTime::createFromFormat('d/m/Y H:i:s', $deadline." 23:59:59");
@@ -404,7 +404,8 @@ class Flow
 		}
 		if($diff->d > 0)
 		{
-			return $diff->format('%r%a');
+			$ret = $diff->format('%r%a');
+			return $ret;
 		}
 		if($diff->d < 1 && ($diff->i || $diff->h || $diff->s)) 
 		{

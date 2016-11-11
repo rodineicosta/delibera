@@ -49,7 +49,7 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 
 		<span class="entry-prazo">
 			<?php
-			if ( \Delibera\Flow::getDeadlineDays( $post->ID ) == -1 )
+			if ( \Delibera\Flow::getDeadlineDays( $post->ID ) <= -1 )
 			_e( 'Prazo encerrado', 'delibera' );
 			else
 			printf( _n( 'Por mais <br><span class="numero">1</span> dia', 'Por mais <br><span class="numero">%1$s</span> dias', \Delibera\Flow::getDeadlineDays( $post->ID ), 'delibera' ), number_format_i18n( \Delibera\Flow::getDeadlineDays( $post->ID ) ) );
