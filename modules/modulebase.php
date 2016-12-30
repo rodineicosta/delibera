@@ -282,4 +282,16 @@ abstract class ModuleBase
 	 */
 	abstract public function getCommentListLabel();
 	
+	protected function treatFixedDateToEndExtTopic($opt = false)
+	{
+		if(!is_array($opt)) $opt = delibera_get_config();
+	
+		$data_externa = trim($opt['data_fixa_nova_pauta_externa']);
+		if ( !empty($data_externa) && strlen($data_externa) == 10) {
+			$date = \DateTime::createFromFormat('d/m/Y', $data_externa);
+			return $date->format('d/m/Y');
+		} else {
+			return false;
+		}
+	}
 }

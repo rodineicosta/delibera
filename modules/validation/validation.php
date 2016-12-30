@@ -303,7 +303,15 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 */
 	public function createPautaAtFront($opt)
 	{
-		$_POST['prazo_validacao'] = $this->generateDeadline($opt);
+		$data_externa = $this->treatFixedDateToEndExtTopic($opt);
+		if ( $data_externa )
+		{
+			$_POST['prazo_validacao'] = $data_externa;
+		}
+		else
+		{
+			$_POST['prazo_validacao'] = $this->generateDeadline($opt);
+		}
 		$_POST['min_validacoes'] = $opt['minimo_validacao'];
 	}
 	

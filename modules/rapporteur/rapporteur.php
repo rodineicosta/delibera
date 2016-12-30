@@ -258,7 +258,16 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	
 	public function createPautaAtFront($opt)
 	{
-		$_POST['prazo_relatoria'] = $this->generateDeadline($opt);
+		$data_externa = $this->treatFixedDateToEndExtTopic($opt);
+		if ( $data_externa )
+		{
+			$_POST['prazo_relatoria'] = $data_externa;
+		}
+		else
+		{
+			$_POST['prazo_relatoria'] = $this->generateDeadline($opt);
+		}
+		
 	}
 	
 	/**
