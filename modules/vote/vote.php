@@ -421,9 +421,6 @@ class Vote extends \Delibera\Modules\ModuleBase
 		}
 		else
 		{
-			//wp_set_object_terms($postID, 'comresolucao', 'situacao', false);
-			\Delibera\Flow::next($postID);
-			
 			update_comment_meta($maisvotado[0], 'delibera_comment_tipo', 'resolucao');
 			add_post_meta($postID, 'data_resolucao', date('d/m/Y H:i:s'), true);
 			////delibera_notificar_situacao($postID);
@@ -431,6 +428,8 @@ class Vote extends \Delibera\Modules\ModuleBase
 			{
 				do_action('votacao_concluida', $post);
 			}
+			
+			\Delibera\Flow::next($postID);
 		}
 	}
 	
@@ -471,7 +470,10 @@ class Vote extends \Delibera\Modules\ModuleBase
 	{
 		$post_id = $args['post_ID'];
 		$current = \Delibera\Flow::getCurrentModule($post_id);
-		$current->computaVotos($post_id);
+		if($current instanceof \Delibera\Modules\Vote ) // Check if the vote was not completed before deadline 
+		{
+			$current->computaVotos($post_id);
+		}
 	}
 	
 	public function unfilterDuplicate($tipos)
