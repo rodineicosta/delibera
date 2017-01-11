@@ -31,4 +31,8 @@ jQuery(document).ready(function(){
 	jQuery('input[name=\'baseadoem-checkbox[]\']').each(function(){
 		jQuery(this).click(function (){delibera_basearse(this);});
 	});
+	jQuery('.comment-painel-baseouseem a').click(function(){
+	  var hash = jQuery(this).attr('href').split("#")[1];
+	  jQuery('#'+hash).show();
+	});
 });

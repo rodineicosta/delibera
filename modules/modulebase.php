@@ -271,7 +271,7 @@ abstract class ModuleBase
 		{
 			if(array_key_exists($day, $opt))
 			{
-				$days += $opt[$day];
+				$days += apply_filters('delibera-deadline-days', $opt[$day], $day);
 			}
 		}
 		return $days;

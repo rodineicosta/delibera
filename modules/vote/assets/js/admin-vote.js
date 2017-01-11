@@ -38,12 +38,4 @@ jQuery(document).ready(function() {
 		delibera_check_discussion();
 	});
 	delibera_check_discussion();
-	
-	jQuery('.delibera-voto-modal-close').click(function (){
-		jQuery(this).parent().parent().hide();
-	});
-	jQuery('.label-voto').click(function () {
-		var id = jQuery(this).attr('id').replace('delibera-voto-option-', '');
-		jQuery('#delibera-voto-option-' + id).show();
-	});
 });
