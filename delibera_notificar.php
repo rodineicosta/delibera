@@ -199,16 +199,16 @@ function delibera_get_notification_config($config = array())
 // inicio mensagem_criacao_pauta
 	$opt['mensagem_criacao_pauta_assunto'] = __('Nova Pauta Criada','delibera'); 
 	$opt['mensagem_criacao_pauta'] = __('Nova Pauta: {post_title}','delibera');
-	$opt['mensagem_criacao_pauta_cabecalho'] = __('Cabeçalho','delibera');
-	$opt['mensagem_criacao_pauta_rodape'] = __('Rodapé','delibera');
+	$opt['mensagem_criacao_pauta_cabecalho'] = "";
+	$opt['mensagem_criacao_pauta_rodape'] = "";
 // fim mensagem_criacao_pauta
 // inicio mensagem_validacao
 	$opt['mensagem_validacao_assunto'] = __('Novo voto de validação: Pauta {post_title}','delibera');
 	$opt['mensagem_validacao'] = __(
 			'A validação do usuário xxx na pauta {post_title} foi registrada no sistema. Acesse a pauta para verificar a situação: 
 			{post_url}', 'delibera');
-	$opt['mensagem_validacao_cabecalho'] = __('Cabeçalho','delibera');
-	$opt['mensagem_validacao_rodape'] = __('Rodapé','delibera');
+	$opt['mensagem_validacao_cabecalho'] = "";
+	$opt['mensagem_validacao_rodape'] = "";
 // fim mensagem_validacao
 // mensagem_validacao_concluida
 	$opt['mensagem_validacao_concluida_assunto'] = __('Nova pauta validada: Pauta {post_title}','delibera');
@@ -222,8 +222,8 @@ function delibera_get_notification_config($config = array())
 
 			Agora vai em frente! Debata, proponha, fortaleça a democracia digital! 
 			{post_url}', 'delibera');
-	$opt['mensagem_validacao_concluida_cabecalho'] = __('Cabeçalho','delibera');
-	$opt['mensagem_validacao_concluida_rodape'] = __('Rodapé','delibera');
+	$opt['mensagem_validacao_concluida_cabecalho'] = "";
+	$opt['mensagem_validacao_concluida_rodape'] = "";
 // fim mensagem_validacao_concluida
 // inicio mensagem_pauta_recusada
 	$opt['mensagem_pauta_recusada_assunto'] = __('Pauta Recusada: Pauta {post_title}','delibera');
@@ -235,8 +235,8 @@ function delibera_get_notification_config($config = array())
 			A pauta {post_title} não obteve o apoio necessário, por isto ela não entrará em debate desta vez. 
 
 			{post_url}', 'delibera');
-	$opt['mensagem_pauta_recusada_cabecalho'] = __('Cabeçalho','delibera');
-	$opt['mensagem_pauta_recusada_rodape'] = __('Rodapé','delibera');
+	$opt['mensagem_pauta_recusada_cabecalho'] = "";
+	$opt['mensagem_pauta_recusada_rodape'] = "";
 // fim mensagem_pauta_recusada
 // inicio mensagem_fim_prazo_validacao
 	$opt['mensagem_fim_prazo_validacao_assunto'] = __('Fim de prazo para Validação: Pauta {post_title}' , 'delibera');
@@ -251,8 +251,8 @@ function delibera_get_notification_config($config = array())
 // inicio mensagem_novo_comentario
 	$opt['mensagem_novo_comentario_assunto'] = __('Novo Comentário em {post_title}','delibera');
 	$opt['mensagem_novo_comentario'] = __('Há um novo comentário na pauta seguida: ','delibera');
-	$opt['mensagem_novo_comentario_cabecalho'] = __('Cabeçalho','delibera');
-	$opt['mensagem_novo_comentario_rodape'] = __('Rodapé','delibera');
+	$opt['mensagem_novo_comentario_cabecalho'] = '';
+	$opt['mensagem_novo_comentario_rodape'] = '';
 
 // fim mensagem_novo_comentario
 // inicio mensagem_fim_prazo_discussao
@@ -261,8 +261,8 @@ function delibera_get_notification_config($config = array())
 
 		Falta apenas 1 dia para o fim do prazo de discussão da pauta {post_title}. Caso ainda queira comentar aproveite agora para fazê-lo agora!
 		{post_url}' , 'delibera' );
-	$opt['mensagem_fim_prazo_discussao_cabecalho'] = __( 'Cabeçalho' , 'delibera' );
-	$opt['mensagem_fim_prazo_discussao_rodape'] = __( 'Rodapé' , 'delibera' );
+	$opt['mensagem_fim_prazo_discussao_cabecalho'] = '';
+	$opt['mensagem_fim_prazo_discussao_rodape'] = '';
 	
 // fim mensagem_fim_prazo_discussao
 // inicio mensagem_discussao_concluida_relatoria
@@ -275,8 +275,8 @@ function delibera_get_notification_config($config = array())
 			O prazo para discussão da pauta {post_title} terminou, agora o relator terá o prazo de {report_deadline} para sistematizar as propostas e colocar em votação. Você continua pondendo visualizar o que foi discutido nesta pauta:
 
 			{post_url}', 'delibera');
-	$opt['mensagem_discussao_concluida_rel_cabecalho'] = __( 'Cabeçalho' , 'delibera' );
-	$opt['mensagem_discussao_concluida_rel_rodape'] = __( 'Rodapé' , 'delibera' );
+	$opt['mensagem_discussao_concluida_rel_cabecalho'] = '';
+	$opt['mensagem_discussao_concluida_rel_rodape'] = '';
 
 // fim mensagem_discussao_concluida_relatoria
 // inicio mensagem_discussao_concluida
@@ -287,8 +287,8 @@ function delibera_get_notification_config($config = array())
 			Olá {display_name},
 
 			{post_url}', 'delibera');
-	$opt['mensagem_discussao_concluida_cabecalho'] = __( 'Cabeçalho' , 'delibera' );
-	$opt['mensagem_discussao_concluida_rodape'] = __( 'Rodapé' , 'delibera' );
+	$opt['mensagem_discussao_concluida_cabecalho'] = '';
+	$opt['mensagem_discussao_concluida_rodape'] = '';
 // fim mensagem_discussao_concluida
 // inicio mensagem_relatoria_concluida
 	$opt['mensagem_relatoria_concluida_assunto'] = __('Fim do prazo da relatoria: Pauta {post_title}','delibera');
@@ -301,8 +301,8 @@ function delibera_get_notification_config($config = array())
 			Você pode acompanhar a origem de todas as propostas, de modo que garanta o controle social da sistematização das propostas.
 
 			{post_url}', 'delibera');
-	$opt['mensagem_relatoria_concluida_cabecalho'] = __( 'Cabeçalho' , 'delibera' );
-	$opt['mensagem_relatoria_concluida_rodape'] = __( 'Rodapé' , 'delibera' );
+	$opt['mensagem_relatoria_concluida_cabecalho'] = '';
+	$opt['mensagem_relatoria_concluida_rodape'] = '';
 // fim mensagem_relatoria_concluida
 // inicio mensagem_fim_prazo_relatoria
 	$opt['mensagem_fim_prazo_relatoria_assunto'] = 'Fim do prazo da relatoria: Pauta {post_title}';
@@ -311,8 +311,8 @@ function delibera_get_notification_config($config = array())
 			Você pode acompanhar a origem de todas as propostas, de modo que garanta o controle social da sistematização das propostas.
 
 			{post_url}';
-	$opt['mensagem_fim_prazo_relatoria_cabecalho'] = __( 'Cabeçalho' , 'delibera' );
-	$opt['mensagem_fim_prazo_relatoria_rodape'] = __( 'Rodapé' , 'delibera' );
+	$opt['mensagem_fim_prazo_relatoria_cabecalho'] = '';
+	$opt['mensagem_fim_prazo_relatoria_rodape'] = '';
 
 // fim mensagem_fim_prazo_relatoria
 // inicio mensagem_fim_prazo_votacao
@@ -337,8 +337,20 @@ function delibera_get_notification_config($config = array())
 			Obrigado por sua participação!
 
 			{post_url}', 'delibera');
-	$opt['mensagem_votacao_concluida_cabecalho'] = __( 'Cabeçalho' , 'delibera' );
-	$opt['mensagem_votacao_concluida_rodape'] = __( 'Rodapé' , 'delibera' );
+	$opt['mensagem_votacao_concluida_cabecalho'] = '';
+	$opt['mensagem_votacao_concluida_rodape'] = '';
+	
+	// inicio mensagem_data_externa_vencida
+	$opt['mensagem_data_externa_vencida_assunto'] = __( 'Data fixa para pauta externa vencida' , 'delibera' );
+	$opt['mensagem_data_externa_vencida'] = __( 'Olá {display_name},
+		Favor verificar suas configurações do Delibera, pois a data para pauta criada no frontend (pauta externa) já passou, ou seja,
+		está vencida. Caso queira usar o padrão do Delibera ao invés de uma data fixa, deixe a opção "Data fixa para pauta externa"
+		em branco
+		' , 'delibera'
+	);
+	$opt['mensagem_data_externa_vencida_cabecalho']  = '';
+	$opt['mensagem_data_externa_vencida_rodape']  = '';
+	// fim mensagem_data_externa_vencida
 
 	$langs = delibera_get_available_languages();
 
@@ -526,16 +538,23 @@ function delibera_nofiticar_config_page_create_checkbox(&$rows, $id, $label, $op
 	}
 }
 
-function delibera_notificar_get_mensagem_link($post, $link = false)
+function delibera_notificar_get_mensagem_link($post, $link = false, $admin = false)
 {
 	$mensage = "";
-	if($link === false)
+	if($admin)
 	{
-		$link = get_permalink($post);
+		$mensage = get_admin_url(get_current_blog_id(), '/admin.php?page=delibera-config');
 	}
-	$mensage = '<br/><br/>Origem: <a href="'.get_post_type_archive_link('pauta').'">'.get_bloginfo('name').'</a><br/>';
-	$mensage .= 'Pauta: <a href="'.$link.'">'.$post->post_title.'</a><br/><br/>';
-	$mensage .= __('Para ver a mensagem na página, clique aqui: ', 'delibera').$link;
+	elseif(is_object($post))
+	{
+		if($link === false)
+		{
+			$link = get_permalink($post);
+		}
+		$mensage = '<br/><br/>Origem: <a href="'.get_post_type_archive_link('pauta').'">'.get_bloginfo('name').'</a><br/>';
+		$mensage .= 'Pauta: <a href="'.$link.'">'.$post->post_title.'</a><br/><br/>';
+		$mensage .= __('Para ver a mensagem na página, clique aqui: ', 'delibera').$link;
+	}
 	return $mensage;
 }
 
@@ -607,7 +626,7 @@ function delibera_notificar_fim_prazo($args)
 
 	delibera_notificar_representantes($message, "mensagem_fim_prazo_{$situacao->slug}", $post);
 }
-function delibera_notificar_representantes($mensage, $tipo, $post = false, $users = false, $link = false)
+function delibera_notificar_representantes($mensage, $tipo, $post = false, $users = false, $link = false, $admin = false)
 {
 	require( ABSPATH . WPINC . '/pluggable.php' );
 	add_filter('wp_mail_content_type',create_function('', 'return "text/html"; '));
@@ -622,9 +641,8 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		$post = get_post($post);
 	}
 	
-	if(is_object($post) && $post->post_status == 'publish')
+	if( (is_object($post) && $post->post_status == 'publish') || $admin )
 	{
-
 		$options_plugin_delibera = delibera_get_config();
 
 		if(
@@ -636,11 +654,11 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 			return false;
 		}
 		$subject_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto"]);
-		$mensage_default = htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.delibera_notificar_get_mensagem_link($post, $link);
+		$mensage_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);;
 
 		if(!is_array($users))
 		{
-			$users = get_users();
+			$users = $admin ? get_users(array('role' => 'administrator')) : get_users();
 		}
 
 		if(!is_array($users))
@@ -649,8 +667,11 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		}
 
 		$autor_id = get_current_user_id();
-
-		$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
+		$seguiram = array();
+		if($post)
+		{
+			$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
+		}
 
 		foreach ($users as $user)
 		{
@@ -674,20 +695,20 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 
 				if(array_key_exists("$tipo-$lang", $options_plugin_delibera))
 				{
-					$mensage_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage . htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);
+					$mensage_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);
 				}
 				if(array_key_exists("{$tipo}_assunto-$lang", $options_plugin_delibera))
 				{
 					$subject_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto-$lang"]);
 				}
 
-				$subject_tmp = delibera_notificar_replace_vars($subject_tmp, $user, $post);
-				$mensage_tmp = delibera_notificar_replace_vars($mensage_tmp, $user, $post);
-				wp_mail($user->user_email, $subject_tmp, $mensage_tmp);
+				$subject_tmp = delibera_notificar_replace_vars($subject_tmp, $user, $post, $admin);
+				$mensage_tmp = delibera_notificar_replace_vars($mensage_tmp, $user, $post, $admin);
+				return wp_mail($user->user_email, $subject_tmp, $mensage_tmp);
 			}
 		}
 	}
-
+	return false;
 }
 
 function delibera_notificar_novo_comentario($comment)
@@ -726,7 +747,19 @@ function delibera_notificar_novo_comentario($comment)
 
 }
 
-function delibera_notificar_replace_vars($subject, $user, $postReport)
+/**
+ *
+ * Change dynamic text vars in subject. Ex: {first_name} -> João
+ *
+ * @param string $subject
+ * @param WP_User $user
+ * @param WP_Post $postReport
+ * @param boolean $admin
+ * TODO include post dates (https://github.com/redelivre/delibera/issues/149)
+ * 
+ * @return string $subject with replaced vars
+ */
+function delibera_notificar_replace_vars($subject, $user, $postReport, $admin = false)
 {
 	global $post;
 	if(!is_object($postReport))
@@ -738,21 +771,24 @@ function delibera_notificar_replace_vars($subject, $user, $postReport)
 
 	$opt = delibera_get_config();
 
-	$author = get_user_by('id', $post->post_author);
+	if($post)
+	{
+		$author = get_user_by('id', $post->post_author);
+		$subject = str_ireplace("{post_title}", $post->post_title, $subject);
+		$subject = str_ireplace("{post_url}", delibera_notificar_get_mensagem_link($post), $subject);
+		$subject = str_ireplace("{post_author}", $author->user_firstname, $subject);
+		$subject = str_ireplace("{post_content}", get_the_content(), $subject);
+		$subject = str_ireplace("{post_excerpt}", get_the_excerpt(), $subject);
+	}
 
 	$subject = str_ireplace("{first_name}", $user->user_firstname, $subject);
 	$subject = str_ireplace("{last_name}", $user->user_lastname, $subject);
 	$subject = str_ireplace("{display_name}", $user->display_name, $subject);
-	$subject = str_ireplace("{post_title}", $post->post_title, $subject);
-	$subject = str_ireplace("{post_url}", delibera_notificar_get_mensagem_link($post), $subject);
 	$subject = str_ireplace("{report_deadline}", $opt['dias_relatoria'], $subject);
 	$subject = str_ireplace("{reporter_election}", $opt['dias_votacao_relator'], $subject);
 	$subject = str_ireplace("{validation_days}", $opt['dias_validacao'], $subject);
 	$subject = str_ireplace("{discuss_days}", $opt['dias_validacao'], $subject);
 	$subject = str_ireplace("{election_days}", $opt['dias_votacao'], $subject);
-	$subject = str_ireplace("{post_author}", $author->user_firstname, $subject);
-	$subject = str_ireplace("{post_content}", get_the_content(), $subject);
-	$subject = str_ireplace("{post_excerpt}", get_the_excerpt(), $subject);
 	$subject = str_ireplace("{site_url}", get_site_url(), $subject);
 	$subject = str_ireplace("{site_name}", get_bloginfo( 'name' ), $subject);
 
@@ -833,99 +869,114 @@ function delibera_notificar_replace_vars($subject, $user, $postReport)
 
 function delibera_nofiticar_get_tipos()
 {
-	return array(
+	return 
+		array(
 			array(
 					'tipo' => 'criacao_pauta',
 					'mensagem' => 'mensagem_criacao_pauta',
 					'dica' => __('criação de pauta', 'delibera'),
 					'dica_permicao' => __('Permitir notificações na criação de uma pauta?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem de criação de novas pautas?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'validacao',
 					'mensagem' => 'mensagem_validacao',
 					'dica' => __('quando a pauta recebe uma validação', 'delibera'),
 					'dica_permicao' => __('Permitir notificações de cada validação de uma pauta?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem para cada validação de uma pauta?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'validacao_concluida',
 					'mensagem' => 'mensagem_validacao_concluida',
 					'dica' => __('quando a pauta é validada', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando a pauta é validada?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando uma pauta for aprovada?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'pauta_recusada',
 					'mensagem' => 'mensagem_pauta_recusada',
 					'dica' => __('quando a pauta é recusada (não obteve validações necessárias)', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando a pauta é recusada?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando uma pauta for recusada?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'fim_prazo_validacao',
 					'mensagem' => 'mensagem_fim_prazo_validacao',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando o fim do prazo para validações estiver próximo?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando o fim do prazo para validações estiver próximo?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'novo_comentario',
 					'mensagem' => 'mensagem_novo_comentario',
 					'dica' => __('novo comentário', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando houver interações na discussão de uma pauta?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando houver interações na discussão de uma pauta?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'discussao_concluida',
 					'mensagem' => 'mensagem_discussao_concluida',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando a discussão for encerrada?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando a discussão for encerrada?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'fim_prazo_discussao',
 					'mensagem' => 'mensagem_fim_prazo_discussao',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando o fim do prazo para discussão estiver próximo?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando o fim do prazo para discussão estiver próximo?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'discussao_concluida_rel',
 					'mensagem' => 'mensagem_discussao_concluida_rel',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando a discussão for encerrada?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando a discussão for encerrada?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'relatoria_concluida',
 					'mensagem' => 'mensagem_relatoria_concluida',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando a relatoria for encerrada?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando a relatoria for encerrada?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'fim_prazo_relatoria',
 					'mensagem' => 'mensagem_fim_prazo_relatoria',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando o fim do prazo para relatoria estiver próximo?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando o fim do prazo para relatoria estiver próximo?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'fim_prazo_votacao',
 					'mensagem' => 'mensagem_fim_prazo_votacao',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando o fim do prazo para votação estiver próximo?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando o fim do prazo para votação estiver próximo?', 'delibera')
-			     ),
+			),
 			array(
 					'tipo' => 'votacao_concluida',
 					'mensagem' => 'mensagem_votacao_concluida',
 					'dica' => __('', 'delibera'),
 					'dica_permicao' => __('Permitir notificações quando a votação for encerrada?', 'delibera'),
 					'user_panel_text' => __('Receber mensagem quando a votação for encerrada?', 'delibera')
-			     )
-		        );
+			),
+			array(
+				'tipo' => 'data_externa_vencida',
+				'mensagem' => 'mensagem_data_externa_vencida',
+				'dica' => __('', 'delibera'),
+				'dica_permicao' => __('Permitir notificações quando a data para pauta externa está vencida?', 'delibera'),
+				'user_panel_text' => __('Receber mensagem quando a data para pauta externa está vencida?', 'delibera'),
+				'admin' => true
+			)
+		);
+}
+
+function delibera_nofitica_administrators($mensage, $tipo, $post = false, $link = false)
+{
+	$users = get_users(array('role' => 'administrator'));
+	return delibera_notificar_representantes($mensage, $tipo, $post, $users, $link, true);
 }
 
 function delibera_nofitica_user_panel($forms)
@@ -960,6 +1011,7 @@ function delibera_nofitica_user_panel($forms)
 
 	foreach (delibera_nofiticar_get_tipos() as $notif)
 	{
+		if( array_key_exists('admin', $notif) && $notif['admin'] && !current_user_can('administrator') ) continue;
 		$forms[] = array(
 				'novo' => true,
 				'id' => $notif['mensagem'].'-enabled',
