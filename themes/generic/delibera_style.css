@@ -713,6 +713,10 @@ unlike_color: #ce282a
 	font-size: 1.1em;
 }
 
+.delibera-hasbasedon {
+	display: none;
+}
+
 span.read-more, span.re-collapse {
 	font-weight: bold;
 }

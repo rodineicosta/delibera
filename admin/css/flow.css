@@ -79,3 +79,20 @@ margin:0px 2px;
 .delibera-flow-panel-post #delibera-flow-column1 h2 span {
     display: none;
 }
+
+
+.delibera-flow-panel-post .delibera_comment_add_current textarea {
+    height: 120px;
+    width: 100%;
+    padding-right: 16px;
+}
+
+.delibera-flow-panel-post .delibera_comment_add_current > p {
+    position: relative;
+}
+
+.delibera-flow-panel-post .delibera_comment_input_bt_remove.delibera-icon-cancel {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

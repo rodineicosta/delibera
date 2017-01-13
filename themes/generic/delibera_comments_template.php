@@ -36,6 +36,8 @@ class Delibera_Walker_Comment extends Walker_Comment
 		$GLOBALS['comment'] = $comment;
 
 		$tipo = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
+		$hasbasedon = get_comment_meta($comment->comment_ID, "delibera-hasbasedon", true);
+		$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 		$situacao = delibera_get_situacao($comment->comment_post_ID);
 
 		extract($args, EXTR_SKIP);
@@ -50,7 +52,7 @@ class Delibera_Walker_Comment extends Walker_Comment
 
 		ob_start();
 		?>
-		<<?php echo $tag ?> <?php comment_class(empty( $args['has_children'] ) ? "delibera-comment-div-$tipo" : "parent delibera-comment-div-$tipo") ?> id="delibera-comment-<?php comment_ID() ?>">
+		<<?php echo $tag ?> <?php comment_class(empty( $args['has_children'] ) ? "delibera-comment-div-$tipo $hasbasedon_class" : "parent delibera-comment-div-$tipo $hasbasedon_class") ?> id="delibera-comment-<?php comment_ID() ?>">
 
 		<?php if ( 'div' != $args['style'] ) : ?>
 			<div id="delibera-div-comment-<?php comment_ID() ?>" class="delibera-comment-body delibera-comment-<?php echo $tipo; ?>">

@@ -39,9 +39,11 @@ function deliberaUpdateFlow()
 	jQuery('#delibera-flow-column2').trigger('deliberaUpdateFlow');
 	if(deliberaIsConfig())
 	{
-		updateDates();
 		deliberaHideUsedModules()
-		
+	}
+	else
+	{
+		updateDates();
 	}
 }
 
@@ -67,8 +69,8 @@ function deliberaHideUsedModules()
 		  //console.log(itemclass);
 		  jQuery('.delibera-flow-panel').find("#delibera-flow-column1").find("."+itemclass).hide();
 		}
-		/** END remove after multiple of the same has implemented **/
 	}
+	/** END remove after multiple of the same has implemented **/
 }
 
 Date.prototype.addDays = function(days)
@@ -93,7 +95,7 @@ function updateDates()
 }
 
 jQuery(document).ready(function() {
-	deliberaHideUsedModules();
+	//deliberaHideUsedModules();
 	jQuery('.delibera-flow-panel').find('span.maxmin').click(function() {
 		deliberaFlowToggle(this);
 	});
@@ -134,7 +136,7 @@ jQuery(document).ready(function() {
 				userLang	: 'pt-BR',
 				americanMode: false,
 			});
-			jQuery(ui.item).find("input").prop('disabled', false);
+			jQuery(ui.item).find("input,textarea").attr('disabled', false);
 			deliberaUpdateFlow();
 			if(!deliberaIsConfig() && ui.item.parent().attr('id') != 'delibera-flow-column1' ) {
 				jQuery(ui.item).find('.dragbox-content').show();
@@ -148,7 +150,9 @@ jQuery(document).ready(function() {
 			if(deliberaUsedModule(id))
 			{
 				ui.sender.sortable("cancel");
+				ui.item.remove();
 			}
+			
 		}
 	});
 	jQuery('.delibera-flow-panel').find("#delibera-flow-column1").sortable({
@@ -157,15 +161,22 @@ jQuery(document).ready(function() {
 			{
 				ui.sender.sortable("cancel");
 	        }
+			copyHelper = null;
+			var id = ui.item.attr('class').replace("dragbox ", "").replace(" clone", "");
+			if(deliberaUsedModule(id))
+			{
+				ui.sender.sortable("cancel");
+				ui.item.remove();
+			}
 		}
 	});
 	if(deliberaIsConfig())
 	{
-		jQuery('.delibera-flow-panel').find("#delibera-flow-column2").find("input").prop('disabled', true);
+		jQuery('.delibera-flow-panel').find("#delibera-flow-column2").find("input,textarea").attr('disabled', 'true');
 	}
 	else
 	{
-		jQuery('.delibera-flow-panel').find("#delibera-flow-column1").find("input").prop('disabled', true);
+		jQuery('.delibera-flow-panel').find("#delibera-flow-column1").find("input,textarea").attr('disabled', 'true');
 	}
 	
 	jQuery('.delibera-flow-panel').find("input.dragbox-bt-save").click(function(){

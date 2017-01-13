@@ -27,7 +27,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	 * Config days to make new deadline
 	 * @var array
 	 */
-	protected $days = array('dias_relatoria', 'dias_votacao_relator');
+	protected $days = array('dias_relatoria'/*, 'dias_votacao_relator'*/); // Disable until have vote
 	
 	/**
 	 * Display priority
