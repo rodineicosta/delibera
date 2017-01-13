@@ -292,7 +292,7 @@ abstract class ModuleBase
 			$date = \DateTime::createFromFormat('d/m/Y', $data_externa);
 			if( $date->getTimestamp() <= time() ) // fix https://github.com/redelivre/delibera/issues/148 avoid creation of ended topics 
 			{
-				//TODO notif admins
+				delibera_nofitica_administrators("", 'mensagem_data_externa_vencida');
 				return false;
 			}
 			return $date->format('d/m/Y');
