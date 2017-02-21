@@ -160,15 +160,21 @@ function delibera_comment_text($commentText)
 			case 'validacao':
 			{
 				$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
-				$sim = ($validacao == "S" ? true : false);
-				$commentText = '
-					<div id="painel_validacao" class="delibera-comment-text">
-						'.($sim ? '
-						<label class="delibera-aceitou-view">'.__('Aceitou','delibera').'</label>
-						' : '
-						<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>
-					</div>
-				');
+				$commentText = '<div id="painel_validacao" class="delibera-comment-text">';
+				switch ($validacao)
+				{
+					case 'S':
+						$commentText .= '<label class="delibera-aceitou-view">'.__('Aceitou','delibera').'</label>';
+					break;
+					case 'A':
+						$commentText .= '<label class="delibera-abstencao-view">'.__('Abstenção','delibera').'</label>';
+					break;
+					case 'N':
+					default:
+						$commentText .=	'<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>';
+					break;
+				}
+				$commentText .= '</div>';
 			}break;
 			case 'discussao':
 			case 'encaminhamento':
@@ -831,7 +837,8 @@ function delibera_valida_validacoes($post)
 
 	if($validacoes >= $min_validacoes)
 	{
-		wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
+		//wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
+		\Delibera\Flow::next($post);
 		if(has_action('delibera_validacao_concluida'))
 		{
 			do_action('delibera_validacao_concluida', $post);
