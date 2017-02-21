@@ -127,10 +127,14 @@ function delibera_comment_form($defaults)
 					if (delibera_current_user_can_participate()) {
 						$form = '
 						<div id="painel_validacao" >
-						<input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>
-						<input id="delibera_rejeitar" type="radio" name="delibera_validacao" value="N"	/><label for="delibera_rejeitar" class="delibera_aceitar_radio_label">'.__('Rejeitar','delibera').'</label>
-						<input name="comment" value="A validação de '.$current_user->display_name.' foi registrada no sistema." style="display:none;" />
-						<input name="delibera_comment_tipo" value="validacao" style="display:none;" />
+						<input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>'.
+						(get_post_meta($post->ID, 'delibera_validation_show_abstencao', true) == 'S' ?
+							'<input id="delibera_validation_abstencao" type="radio" name="delibera_validacao" value="A"	/><label for="delibera_validation_abstencao" class="delibera_aceitar_radio_label">'.__('Abstenção','delibera').'</label>' : '' ).
+						(get_post_meta($post->ID, 'delibera_validation_show_rejeitar', true) == 'S' ?
+							'<input id="delibera_rejeitar" type="radio" name="delibera_validacao" value="N"	/><label for="delibera_rejeitar" class="delibera_aceitar_radio_label">'.__('Rejeitar','delibera').'</label>' : '' ).
+						(get_post_meta($post->ID, 'delibera_validation_show_comment', true) == 'S' ?
+							$defaults['comment_field'] : '<input name="comment" value="A validação de '.$current_user->display_name.' foi registrada no sistema." style="display:none;" />' ).
+						'<input name="delibera_comment_tipo" value="validacao" style="display:none;" />
 						</div>
 						';
 						$defaults['comment_field'] = $form;
