@@ -22,6 +22,7 @@ class DeliberaSiCaptcha
 			if(
 				is_user_logged_in() &&
 				is_array($si_captcha_opt) &&
+				array_key_exists('si_captcha_perm_level', $si_captcha_opt) &&
 				$si_captcha_opt['si_captcha_perm_level'] == 'read' &&
 				is_array($wp_filter) &&
 				array_key_exists('comment_form_logged_in_after', $wp_filter) &&
