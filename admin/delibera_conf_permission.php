@@ -309,7 +309,7 @@ class Permission
 	 */
 	public function checkDefaultsPerm()
 	{
-		$saved = get_option('delibera_permission_saved', false) || get_option('delibera_permission_fixed1', false);
+		$saved = get_option('delibera_permission_saved', false) || get_option('delibera_permission_fixed2', false);
 		if(!$saved)
 		{
 			$delibera_permissoes = array();
@@ -362,7 +362,7 @@ class Permission
 			$roles = $this->get_editable_roles();
 			foreach ($roles as $role => $label)
 			{
-				if(is_super_admin() || $role != 'administrator')
+				//if(is_super_admin() || $role != 'administrator')
 				{
 					$saverole = get_role($role);
 					foreach ($defaults_perm as $perm)
@@ -400,7 +400,7 @@ class Permission
 					}
 				}
 			}
-			update_option('delibera_permission_fixed1', true);
+			update_option('delibera_permission_fixed2', true);
 		}
 	}
 	
