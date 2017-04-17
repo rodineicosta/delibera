@@ -128,6 +128,7 @@ class Permission
 	public function admin_init()
 	{
 		add_action('delibera_menu_itens', array($this, 'addMenu'));
+		$this->checkDefaultsPerm();
 	}
 	
 	public function addMenu($base_page)
@@ -184,6 +185,7 @@ class Permission
 				}
 			}
 		}
+		update_option('delibera_permission_saved', true);
 	}
 	
 	function GenerateCheckbox($id, $role, $echo = false, $label = "", $checked = '')
@@ -299,6 +301,114 @@ class Permission
 			$wp_taxonomies[ 'category' ]->cap->edit_terms = 'edit_delibera_cat_term';
 			$wp_taxonomies[ 'category' ]->cap->delete_terms = 'delete_delibera_cat_term';
 			$wp_taxonomies[ 'category' ]->cap->assign_terms = 'assign_delibera_cat_term';
+		}
+		elseif( ! ( ( is_string($object_type) && 'pauta' == $object_type ) || (is_array($object_type) && in_array('pauta', $object_type) ) ) )
+		{
+			//TODO check if was manage_categories
+			/*$wp_taxonomies[ 'category' ]->cap->manage_terms = 'manage_categories';
+			$wp_taxonomies[ 'category' ]->cap->edit_terms = 'manage_categories';
+			$wp_taxonomies[ 'category' ]->cap->delete_terms = 'manage_categories';
+			$wp_taxonomies[ 'category' ]->cap->assign_terms = 'manage_categories';*/
+		}
+	}
+	
+	/**
+	 * Set defaults permissions when not yet customized, useful for new terms slugs
+	 */
+	public function checkDefaultsPerm()
+	{
+		$saved = get_option('delibera_permission_saved', false) || get_option('delibera_permission_fixed2', false);
+		if(!$saved)
+		{
+			$delibera_permissoes = array();
+			if(file_exists(__DIR__.DIRECTORY_SEPARATOR.'../delibera_conf_roles.php'))
+			{
+				include __DIR__.DIRECTORY_SEPARATOR.'../delibera_conf_roles.php';
+			}
+			$defaults_perm = array( //TODO add param to main array and loop all permission
+				array(
+					'id' => 'manage_tema_term',
+					'from' => 'delibera',
+					'permisson' => 'manage_tema_term'
+				),
+				array(
+					'id' => 'edit_tema_term',
+					'from' => 'delibera',
+					'permisson' => 'edit_tema_term'
+				),
+				array(
+					'id' => 'delete_tema_term',
+					'from' => 'delibera',
+					'permisson' => 'delete_tema_term'
+				),
+				array(
+					'id' => 'assign_tema_term',
+					'from' => 'delibera',
+					'permisson' => 'assign_tema_term'
+				),
+				array(
+					'id' => 'manage_delibera_cat_term',
+					'from' => 'category',
+					'permisson' => 'manage_categories'
+				),
+				array(
+					'id' => 'edit_delibera_cat_term',
+					'from' => 'category',
+					'permisson' => 'manage_categories'
+				),
+				array(
+					'id' => 'delete_delibera_cat_term',
+					'from' => 'category',
+					'permisson' => 'manage_categories'
+				),
+				array(
+					'id' => 'assign_delibera_cat_term',
+					'from' => 'category',
+					'permisson' => 'manage_categories'
+				)
+			);
+			$roles = $this->get_editable_roles();
+			foreach ($roles as $role => $label)
+			{
+				//if(is_super_admin() || $role != 'administrator')
+				{
+					$saverole = get_role($role);
+					foreach ($defaults_perm as $perm)
+					{
+						if($perm['from'] == 'delibera') // check from delibera config not from WordPress
+						{
+							if(array_key_exists($role, $delibera_permissoes) )
+							{
+								if( array_search($perm['permisson'], $delibera_permissoes[$role]['Caps']) )
+								{
+									$saverole->add_cap( $perm['id']);
+									//echo "$label -> {$perm['id']} -> {$perm['permisson']}:have<br/>";
+								}
+								else
+								{
+									$saverole->remove_cap($perm['id']);
+									//echo "$label -> {$perm['id']} -> {$perm['permisson']}:not<br/>";
+								}
+								
+							}
+						}
+						else
+						{
+							if( $saverole->has_cap($perm['permisson']) )
+							{
+								$saverole->add_cap( $perm['id']);
+								//echo "$label -> {$perm['id']} -> {$perm['permisson']}:have<br/>";
+							}
+							else
+							{
+								$saverole->remove_cap($perm['id']);
+								//echo "$label -> {$perm['id']} -> {$perm['permisson']}:not<br/>";
+							}
+						}
+					}
+				}
+			}
+			update_option('delibera_permission_fixed2', true);
 		}
 	}
 	

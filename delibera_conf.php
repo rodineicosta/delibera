@@ -205,7 +205,7 @@ function delibera_conf_page()
 				{
 					$table = apply_filters('delibera_config_form', $table, $opt);
 				}
-				echo $table.'<div class="submit"><input type="submit" class="button-primary" name="submit" value="'.__('Save Changes').'" /></form></div>';
+				echo $table.'<div class="submit"><input type="submit" class="button-primary" name="submit" value="'.__('Save Changes').'" /></div>';
 			?>
 
 				</form>

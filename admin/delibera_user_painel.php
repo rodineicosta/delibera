@@ -286,13 +286,6 @@ function delibera_profile_update($user_id)
 add_action('profile_update', 'delibera_profile_update');
 
 
-
-
-
-
-
-
-
 /*
  * Allowing user Admin on Multisite intalation to edit users on his blog.
  * */

@@ -51,3 +51,7 @@ Se você é um desenvolvedor, sinta-se livre para fazer um fork e contribuir com
 | relatoria       | Mod. rapporteur | o Relator vai editar os encaminhamentos para criar opções válidas para votação   |
 | emvotacao       | Mod. vote       |  Pauta em votação, aqui o comentário é um voto simples  |
 | comresolucao    | Mod. result     |  Pauta chegou ao fim, apresentar resultado  |
+
+## Licença
+
+[GPL-3.0+](LICENSE.txt)

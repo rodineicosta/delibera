@@ -173,8 +173,8 @@ function deliberaLoadModules()
 
 function delibera_init()
 {
-	define('DELIBERA_DIR_URL', plugin_dir_url(__FILE__));
-	define('DELIBERA_DIR_PATH', plugin_dir_path(__FILE__));
+	if(!defined('DELIBERA_DIR_URL')) define('DELIBERA_DIR_URL', plugin_dir_url(__FILE__));
+	if(!defined('DELIBERA_DIR_PATH')) define('DELIBERA_DIR_PATH', plugin_dir_path(__FILE__));
 	
 	deliberaLoadModules();
 
