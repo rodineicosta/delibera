@@ -653,6 +653,11 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		{
 			return false;
 		}
+		
+		$lang = get_user_meta($user->ID, 'user_idioma', true);
+		
+		if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
+		
 		$subject_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto"]);
 		$mensage_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);;
 
@@ -688,10 +693,6 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 
 				$mensage_tmp = $mensage_default;
 				$subject_tmp = $subject_default;
-
-				$lang = get_user_meta($user->ID, 'user_idioma', true);
-
-				if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
 
 				if(array_key_exists("$tipo-$lang", $options_plugin_delibera))
 				{
