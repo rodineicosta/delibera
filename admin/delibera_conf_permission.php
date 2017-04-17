@@ -302,6 +302,14 @@ class Permission
 			$wp_taxonomies[ 'category' ]->cap->delete_terms = 'delete_delibera_cat_term';
 			$wp_taxonomies[ 'category' ]->cap->assign_terms = 'assign_delibera_cat_term';
 		}
+		elseif( ! ( ( is_string($object_type) && 'pauta' == $object_type ) || (is_array($object_type) && in_array('pauta', $object_type) ) ) )
+		{
+			//TODO check if was manage_categories
+			/*$wp_taxonomies[ 'category' ]->cap->manage_terms = 'manage_categories';
+			$wp_taxonomies[ 'category' ]->cap->edit_terms = 'manage_categories';
+			$wp_taxonomies[ 'category' ]->cap->delete_terms = 'manage_categories';
+			$wp_taxonomies[ 'category' ]->cap->assign_terms = 'manage_categories';*/
+		}
 	}
 	
 	/**
