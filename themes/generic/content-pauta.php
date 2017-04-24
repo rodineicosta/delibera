@@ -83,6 +83,9 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 		</div><!-- .entry-author -->
 		<div class="entry-date">
 			<?php the_date(); ?>
+			<div class="entry-time">
+				<?php the_time(); ?>
+			</div>
 		</div>
 	</div> <!-- entry-blame -->
 	<div class="entry-seguir button">

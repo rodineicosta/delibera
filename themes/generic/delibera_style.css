@@ -420,7 +420,12 @@ display: block;
 }
 
 .single-pauta .entry-date {
-	display: none;
+	/*display: none;*/
+}
+
+.single-pauta .entry-time {
+	display: inline;
+    font-weight: bold;
 }
 
 /* COMMENTS */

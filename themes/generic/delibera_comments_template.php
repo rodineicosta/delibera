@@ -83,9 +83,13 @@ class Delibera_Walker_Comment extends Walker_Comment
 						$time_diff = time() - $time;
 
 						if ( $time_diff > 0 && $time_diff < 30*24*60*60 )
+						{
 							printf( '&nbsp;' . __( 'há %s', 'delibera' ), human_time_diff( mysql2date( 'U', get_comment_date('Y-m-d H:i:s'), true ), current_time('timestamp') ) );
+						}
 						else
-						echo '&nbsp;' .	__( 'em', 'delibera' ) . '&nbsp;' .	get_comment_date();
+						{
+							echo '&nbsp;' .	__( 'em', 'delibera' ) . '&nbsp;' .	get_comment_date() . '&nbsp;-&nbsp;' . get_comment_time();
+						}
 
 						?>
 					</a>
