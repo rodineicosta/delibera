@@ -105,8 +105,8 @@ class Vote extends \Delibera\Modules\ModuleBase
 			//"content" => '<input type="text" name="dias_votacao" id="dias_votacao" value="'.htmlspecialchars_decode($opt['dias_votacao']).'" autocomplete="off" />'
 			"content" => '
 				<select name="'.$id.'" id="'.$id.'" autocomplete="off" >
-					<option value="checkbox" '.($value == 'checkbox' ? 'selected="selected"' : '').'>'.__('Checkbox', 'delibera').'</option>
-					<option value="radio" '.($value == 'radio' ? 'selected="selected"' : '').'>'.__('Radio Buttons', 'delibera').'</option>
+					<option value="checkbox" '.($value == 'checkbox' ? 'selected="selected"' : '').'>'.__('Multipla escolha', 'delibera').'</option>
+					<option value="radio" '.($value == 'radio' ? 'selected="selected"' : '').'>'.__('Opção única', 'delibera').'</option>
 					<!-- <option value="dropdown" '.($value == 'dropdown' ? 'selected="selected"' : '').'>'.__('Dropdown', 'delibera').'</option> -->
 				</select>
 			'
@@ -179,8 +179,8 @@ class Vote extends \Delibera\Modules\ModuleBase
 		<p>
 			<label class="label_tipo_votacao"><?php _e('Tipo de Votação','delibera') ?>:</label>
 			<select name="tipo_votacao" id="tipo_votacao" class="tipo_votacao widefat" autocomplete="off" >
-				<option value="checkbox" <?php echo $tipo_votacao == 'checkbox' ? 'selected="selected"' : ''; ?>><?php _e('Checkbox', 'delibera'); ?></option>
-				<option value="radio" <?php echo $tipo_votacao == 'radio' ? 'selected="selected"' : ''; ?>><?php _e('Radio Buttons', 'delibera'); ?></option>
+				<option value="checkbox" <?php echo $tipo_votacao == 'checkbox' ? 'selected="selected"' : ''; ?>><?php _e('Multipla escolha', 'delibera'); ?></option>
+				<option value="radio" <?php echo $tipo_votacao == 'radio' ? 'selected="selected"' : ''; ?>><?php _e('Opção única', 'delibera'); ?></option>
 				<!-- <option value="dropdown" <?php echo $tipo_votacao == 'dropdown' ? 'selected="selected"' : ''; ?>><?php _e('Dropdown', 'delibera'); ?></option> -->
 			</select>
 		</p>
