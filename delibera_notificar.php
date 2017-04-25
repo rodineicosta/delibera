@@ -653,8 +653,7 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		{
 			return false;
 		}
-		
-		$lang = get_user_meta($user->ID, 'user_idioma', true);
+		$lang = get_user_meta(get_current_user_id(), 'user_idioma', true);
 		
 		if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
 		
