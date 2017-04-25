@@ -43,7 +43,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_permission.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_conf_themes.php';
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'print' . DIRECTORY_SEPARATOR . 'wp-print.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'print' . DIRECTORY_SEPARATOR . 'wp-print.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'delibera_admin_functions.php';
 
@@ -103,6 +103,9 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'delibera_conf_permission.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'si-captcha.php';
+
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+
 
  /**
    * Redir e ciona usuários que não são membros do site
