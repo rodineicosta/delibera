@@ -144,6 +144,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	public function topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao)
 	{
 		$prazo_discussao = $this->generateDeadline($options_plugin_delibera);
+		$tipo_discussao = array_key_exists("tipo_discussao", $custom) ?  $custom["tipo_discussao"][0] : 'forum';
 		
 		if(!($post->post_status == 'draft' ||
 				$post->post_status == 'auto-draft' ||
@@ -156,6 +157,10 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		<p>
 			<label class="label_prazo_discussao"><?php _e('Prazo para Discussões','delibera') ?>:</label>
 			<input <?php echo $disable_edicao ?> name="prazo_discussao" class="prazo_discussao widefat hasdatepicker" value="<?php echo $prazo_discussao; ?>"/>
+		</p>
+		<p>
+			<label class="label_tipo_discussao"><?php _e('Tipo de Discussões','delibera') ?>:</label>
+			<input <?php echo $disable_edicao ?> name="tipo_discussao" class="tipo_discussao widefat" value="<?php echo $tipo_discussao; ?>"/>
 		</p>
 		<?php
 		
@@ -221,6 +226,10 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		if(array_key_exists('prazo_discussao', $_POST))
 		{
 			$events_meta['prazo_discussao'] = sanitize_text_field($_POST['prazo_discussao']);
+		}
+		if(array_key_exists('tipo_discussao', $_POST))
+		{
+			$events_meta['tipo_discussao'] = sanitize_text_field($_POST['tipo_discussao']);
 		}
 		
 		return $events_meta;
