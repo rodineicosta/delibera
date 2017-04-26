@@ -12,7 +12,7 @@
 	// PHP 5.3 and later:
 	namespace Delibera\Plugins; // let's not conflict classes's names
 	
-	error_reporting(E_ALL & ~E_STRICT);
+	error_reporting(E_ALL ^ E_STRICT);
 	
 	if( !defined( 'ABSPATH' ) ){
 		die( '-1' );
