@@ -17,7 +17,7 @@ function get_delibera_header() {
                 <?php
                 if (is_user_logged_in() && delibera_current_user_can_participate()) {
                     global $current_user;
-                    get_currentuserinfo();
+                    wp_get_current_user();
 
                     printf(
                         __('Você está logado como %1$s. Caso deseje sair de sua conta, <a href="%2$s" title="Sair">faça o logout</a>.', 'delibera'),
@@ -26,7 +26,7 @@ function get_delibera_header() {
                     );
                 } else if (is_user_logged_in() && !delibera_current_user_can_participate()) {
                     global $current_user;
-                    get_currentuserinfo();
+                    wp_get_current_user();
 
                     printf(
                         __('Você está logado como %1$s mas seu usuário não tem permissão para participar desta pauta. Caso deseje entrar com outra conta, <a href="%2$s" title="Sair">faça o logout</a>.', 'delibera'),

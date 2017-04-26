@@ -285,7 +285,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		{
 			if(is_array($_POST['delibera_comment_add_list']))
 			{
-				get_currentuserinfo();
+				wp_get_current_user();
 				
 				$index = 0;
 				$comment_saved_ids = array_key_exists('delibera_comment_add_list_ids', $_POST) ? $_POST['delibera_comment_add_list_ids'] : array();
