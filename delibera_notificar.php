@@ -659,10 +659,13 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		
 		$subject_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto"]);
 		$mensage_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);;
-
+		
+		$loop = false; // do a query loop?
+		
 		if(!is_array($users))
 		{
-			$users = $admin ? get_users(array('role' => 'administrator')) : get_users();
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => 1000)) : get_users(array('number' => 1000));
+			$loop = true;
 		}
 
 		if(!is_array($users))
@@ -676,36 +679,46 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		{
 			$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
 		}
-
-		foreach ($users as $user)
+		$paged = 1;
+		while(count($users > 0))
 		{
-			if(user_can($user->ID, 'votar') && isset($user->user_email) && $user->ID != $autor_id)
+			foreach ($users as $user)
 			{
-				$segue = array_search($user->ID, $seguiram);
-
-				$user_notificacoes = get_user_meta($user->ID, 'delibera_notificacoes_email', true);
-
-				if(!$segue && ($user_notificacoes == "N" || get_user_meta($user->ID, "$tipo-enabled", true) == "N"))
+				if(user_can($user->ID, 'votar') && isset($user->user_email) && $user->ID != $autor_id)
 				{
-					continue;
+					$segue = array_search($user->ID, $seguiram);
+	
+					$user_notificacoes = get_user_meta($user->ID, 'delibera_notificacoes_email', true);
+	
+					if(!$segue && ($user_notificacoes == "N" || get_user_meta($user->ID, "$tipo-enabled", true) == "N"))
+					{
+						continue;
+					}
+	
+					$mensage_tmp = $mensage_default;
+					$subject_tmp = $subject_default;
+					
+					$lang = get_user_meta($user->ID, 'user_idioma', true);
+					
+					if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
+	
+					if(array_key_exists("$tipo-$lang", $options_plugin_delibera))
+					{
+						$mensage_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);
+					}
+					if(array_key_exists("{$tipo}_assunto-$lang", $options_plugin_delibera))
+					{
+						$subject_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto-$lang"]);
+					}
+	
+					$subject_tmp = delibera_notificar_replace_vars($subject_tmp, $user, $post, $admin);
+					$mensage_tmp = delibera_notificar_replace_vars($mensage_tmp, $user, $post, $admin);
+					return wp_mail($user->user_email, $subject_tmp, $mensage_tmp);
 				}
-
-				$mensage_tmp = $mensage_default;
-				$subject_tmp = $subject_default;
-
-				if(array_key_exists("$tipo-$lang", $options_plugin_delibera))
-				{
-					$mensage_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);
-				}
-				if(array_key_exists("{$tipo}_assunto-$lang", $options_plugin_delibera))
-				{
-					$subject_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto-$lang"]);
-				}
-
-				$subject_tmp = delibera_notificar_replace_vars($subject_tmp, $user, $post, $admin);
-				$mensage_tmp = delibera_notificar_replace_vars($mensage_tmp, $user, $post, $admin);
-				return wp_mail($user->user_email, $subject_tmp, $mensage_tmp);
 			}
+			if (!$loop) break;
+			$paged++;
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => 1000, 'paged' => $paged)) : get_users(array('number' => 1000, 'paged' => $paged));
 		}
 	}
 	return false;
