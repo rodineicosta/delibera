@@ -283,6 +283,20 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		return __('Discussão sobre a Pauta', 'delibera');
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::template_redirect()
+	 */
+	public function template_redirect()
+	{
+		$tipo = get_post_meta(get_the_ID(), 'tipo_discussao', true);
+		if($tipo == 'side')
+		{
+			require_once DELIBERA_DIR_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+		}
+	}
+	
 }
 $DeliberaDiscussion = new \Delibera\Modules\Discussion();
 

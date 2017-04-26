@@ -32,6 +32,8 @@ class Flow
 		
 		add_action('wp_ajax_delibera_save_flow', array($this, 'saveFlowCallback'));
 		
+		add_action('template_redirect', array($this, 'template_redirect'));
+		
 	}
 	
 	/**
@@ -704,6 +706,19 @@ class Flow
 			}
 		}
 		return $dates;
+	}
+	
+	/**
+	 * hook WordPress template_redirect to execute after everything are setup and the query has been done 
+	 */
+	public function template_redirect()
+	{
+		$post_id = get_the_ID();
+		if(intval($post_id) > 0)
+		{
+			$currentModule = $this->getCurrentModule($post_id);
+			$currentModule->template_redirect();
+		}
 	}
 	
 }

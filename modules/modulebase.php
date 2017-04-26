@@ -302,4 +302,9 @@ abstract class ModuleBase
 			return false;
 		}
 	}
+	
+	/**
+	 * hook WordPress template_redirect to execute after everything are setup and the query has been done
+	 */
+	public function template_redirect() { /* overload this to do things on WordPress template_redirect */  }
 }
