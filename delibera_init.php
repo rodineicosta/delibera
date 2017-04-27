@@ -476,4 +476,13 @@ function fb_opengraph() {
         return;
     }
 }
-add_action('wp_head', 'fb_opengraph', 20);
+
+function delibera_plugins_loaded_fb_opengraph()
+{
+	if( ! class_exists('general_setting_default_fb_thumb') )
+	{
+		add_action('wp_head', 'fb_opengraph', 20);
+	}
+}
+add_action('plugins_loaded', 'delibera_plugins_loaded_fb_opengraph');
+
