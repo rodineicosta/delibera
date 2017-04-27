@@ -310,7 +310,8 @@ class ET_Builder_Module_Delibera_Categoria2 extends ET_Builder_Module {
 			'orderby'			=> $orderby,
 			'order'				=> $order,
 			'post_status'       => 'publish',
-			'posts_per_page'	=> $num_posts
+			'posts_per_page'	=> $num_posts,
+			'suppress_filters'	=> false
 		);
 		
 		if($include_categories)
