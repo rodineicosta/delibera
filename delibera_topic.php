@@ -489,6 +489,7 @@ function deliberaCreateTopic($args = array())
 			$pauta['post_category'] = $args['post_category'];
 		}
 		
+		$_POST['delibera_flow'] = $args['delibera_flow'];
 		// Load defaults modules values at $_POST
 		do_action('delibera_create_pauta_frontend', $opt);
 		
