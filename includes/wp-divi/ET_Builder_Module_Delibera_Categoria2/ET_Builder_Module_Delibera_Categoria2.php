@@ -2,7 +2,7 @@
 
 class ET_Builder_Module_Delibera_Categoria2 extends ET_Builder_Module {
 	function init() {
-		$this->name = esc_html__( 'Delibera categoria2', 'et_builder' );
+		$this->name = esc_html__( 'Delibera: Lista de Pautas por Tema', 'et_builder' );
 		$this->slug = 'et_pb_delibera_categoria2';
 
 		$this->whitelisted_fields = array(
@@ -314,6 +314,11 @@ class ET_Builder_Module_Delibera_Categoria2 extends ET_Builder_Module {
 			'suppress_filters'	=> false
 		);
 		
+		if(!is_array($include_categories))
+		{
+			$include_categories = explode(',', $include_categories);
+		}
+		
 		if($include_categories)
 		{
 			$args['tax_query']	= array(
@@ -325,6 +330,7 @@ class ET_Builder_Module_Delibera_Categoria2 extends ET_Builder_Module {
 				)
 			);
 		}
+		explo
 
 		$wp_posts = get_posts($args);
 
