@@ -736,6 +736,19 @@ class Flow
 		}
 		return $dates;
 	}
+
+	/**
+	 * Return module index on flow or false if flow do not have the module/situacao
+	 * @param string $situacao term slug for taxonomy situacao
+	 * @param int $post_id
+	 * @return mixed flow index or false
+	 */
+	public static function hasModule($situacao, $post_id = false)
+	{
+		global $DeliberaFlow;
+		$flow = $DeliberaFlow->get($post_id);
+		return array_search($situacao, $flow);
+	}
 	
 }
 
