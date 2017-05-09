@@ -130,7 +130,7 @@ function delibera_comment_form($defaults)
                     $defaults['must_log_in'] = sprintf(__('Você precisar <a href="%s">estar logado</a> e ter permissão para votar.','delibera'),wp_login_url( apply_filters( 'the_permalink', get_permalink( $post->ID ))));                
                     if (delibera_current_user_can_participate()) {
                         $form = '
-                            <div id="painel_validacao" >
+                            <div class="painel_validacao" >
                                 <input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>
                                 <input id="delibera_rejeitar" type="radio" name="delibera_validacao" value="N"  /><label for="delibera_rejeitar" class="delibera_aceitar_radio_label">'.__('Rejeitar','delibera').'</label>
                                 <input name="comment" value="A validação de '.$current_user->display_name.' foi registrada no sistema." style="display:none;" />

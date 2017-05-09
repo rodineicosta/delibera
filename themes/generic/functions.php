@@ -126,7 +126,7 @@ function delibera_comment_form($defaults)
 					$defaults['must_log_in'] = sprintf(__('Você precisar <a href="%s">estar logado</a> e ter permissão para votar.','delibera'),wp_login_url( apply_filters( 'the_permalink', get_permalink( $post->ID ))));
 					if (delibera_current_user_can_participate()) {
 						$form = '
-						<div id="painel_validacao" >
+						<div class="painel_validacao" >
 						<input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>'.
 						(get_post_meta($post->ID, 'delibera_validation_show_abstencao', true) == 'S' ?
 							'<input id="delibera_validation_abstencao" type="radio" name="delibera_validacao" value="A"	/><label for="delibera_validation_abstencao" class="delibera_aceitar_radio_label">'.__('Abstenção','delibera').'</label>' : '' ).
