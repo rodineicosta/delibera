@@ -297,7 +297,7 @@ add_action('wp_enqueue_scripts', function()
         
         if ($situacao->slug == 'relatoria')
         {
-            wp_enqueue_script('delibera_relatoria_js', WP_CONTENT_URL . '/plugins/delibera/js/delibera_relatoria.js', array('jquery'));
+            wp_enqueue_script('delibera_relatoria_js', WP_PLUGIN_URL.'/delibera/js/delibera_relatoria.js', array('jquery'));
         }
     }
 });
