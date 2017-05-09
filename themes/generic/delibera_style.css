@@ -669,7 +669,9 @@ unlike_color: #ce282a
     border-radius: 4px;
 }
 
-.delibera-aceitou-view {
+.delibera-aceitou-view,
+.delibera-rejeitou-view,
+.delibera-abstencao-view {
     font-weight: bold;
 }
 
