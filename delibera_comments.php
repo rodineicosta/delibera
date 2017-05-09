@@ -160,7 +160,8 @@ function delibera_comment_text($commentText)
 			case 'validacao':
 			{
 				$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
-				$commentText = '<div id="painel_validacao" class="delibera-comment-text">';
+				$commentTextTmp = $commentText;
+				$commentText = '<div class="painel_validacao delibera-comment-text">';
 				switch ($validacao)
 				{
 					case 'S':
@@ -173,6 +174,12 @@ function delibera_comment_text($commentText)
 					default:
 						$commentText .=	'<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>';
 					break;
+				}
+				if(get_post_meta($comment->comment_post_ID, 'delibera_validation_show_comment', true) == 'S')
+				{
+					$commentText .= '<div class="delibera-comment-validacao-text">';
+						$commentText .= $commentTextTmp;
+					$commentText .= '</div>';
 				}
 				$commentText .= '</div>';
 			}break;
