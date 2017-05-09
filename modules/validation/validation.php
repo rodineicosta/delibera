@@ -44,6 +44,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 	public function __construct()
 	{
 		add_action('delibera_pauta_recusada', array('\Delibera\Cron', 'del'));
+		add_filter('delibera_unfilter_duplicate', array($this, 'unfilterDuplicate'));
 		parent::__construct();
 	}
 	
@@ -310,7 +311,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 		{
 			$events_meta['prazo_validacao'] = sanitize_text_field($_POST['prazo_validacao']);
 			$events_meta['min_validacoes'] = sanitize_text_field($_POST['min_validacoes']);
-			$events_meta['delibera_validation_show_rejeitar'] = array_key_exists('delibera_validation_show_rejeitar', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_rejeitar']) : 'S';
+			$events_meta['delibera_validation_show_rejeitar'] = array_key_exists('delibera_validation_show_rejeitar', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_rejeitar']) : 'N';
 			$events_meta['delibera_validation_show_abstencao'] = array_key_exists('delibera_validation_show_abstencao', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_abstencao']) : 'N';
 			$events_meta['delibera_validation_show_comment'] = array_key_exists('delibera_validation_show_comment', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_comment']) : 'N';
 		}
@@ -371,6 +372,12 @@ class Validation extends \Delibera\Modules\ModuleBase
 	public function getCommentListLabel()
 	{
 		return __('Validação da Pauta', 'delibera');
+	}
+	
+	public function unfilterDuplicate($tipos)
+	{
+		$tipos[] = 'validacao';
+		return $tipos;
 	}
 	
 }
