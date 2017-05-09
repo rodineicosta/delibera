@@ -43,7 +43,7 @@ class delibera_timeline
 			$events[$data][] = array(
 				'type' => 'comment-'.get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true),
 				'title' => "@".$comment->comment_author,
-				'body' => apply_filters('comment_text', get_comment_text($comment->comment_ID)),
+				'body' => apply_filters('comment_text', get_comment_text($comment->comment_ID), $comment),
 				//'date_event' => date('d/m/Y H:i:s', $data)
 				'date_event' => $data
 			);
