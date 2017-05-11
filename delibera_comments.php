@@ -210,7 +210,7 @@ function delibera_comment_text($commentText)
 						</div>
 						<div class="comentario_coluna2 delibera-comment-text">
 							'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
-						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
+						'('.number_format_i18n( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0, 2).'%)
 						</div>
 					';
 				}
@@ -229,7 +229,7 @@ function delibera_comment_text($commentText)
 					</div>
 					<div class="comentario_coluna2 delibera-comment-text">
 						'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
-						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
+						'('.number_format_i18n( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0, 2).'%)
 					</div>
 				';
 			}break;
