@@ -834,28 +834,30 @@ add_filter('get_comments_number', 'delibera_comment_number_filtro', 10, 2);
  * atingido e se sim muda a situação da pauta de
  * "emvotacao" para "discussao".
  *
- * @param unknown $post
+ * @param int $postID
  * @return null
  */
-function delibera_valida_validacoes($post)
+function delibera_valida_validacoes($postID)
 {
-	$validacoes = get_post_meta($post, 'numero_validacoes', true);
-	$min_validacoes = get_post_meta($post, 'min_validacoes', true);
-
-	if($validacoes >= $min_validacoes)
+	$validacoes = get_post_meta($postID, 'numero_validacoes', true);
+	$min_validacoes = get_post_meta($postID, 'min_validacoes', true);
+	
+	$situacao = delibera_get_situacao($postID);
+	
+	if($validacoes >= $min_validacoes && $situacao->slug == 'validacao') // check situacao to avoid same time final validation to avoid topic advancing 2 stages
 	{
 		//wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
-		\Delibera\Flow::next($post);
+		\Delibera\Flow::next($postID);
 		if(has_action('delibera_validacao_concluida'))
 		{
-			do_action('delibera_validacao_concluida', $post);
+			do_action('delibera_validacao_concluida', $postID);
 		}
 	}
 	else
 	{
 		if(has_action('delibera_validacao'))
 		{
-			do_action('delibera_validacao', $post);
+			do_action('delibera_validacao', $postID);
 		}
 	}
 }
