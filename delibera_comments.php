@@ -894,3 +894,23 @@ function delibera_duplicate_comment_id($dupe_id, $commentdata )
 }
 add_filter('duplicate_comment_id', 'delibera_duplicate_comment_id', 10, 2);
 
+/**
+ * Stop comment flood filter from filter votes and validations
+ * @param bool $block
+ * @param int $time_lastcomment Timestamp for last comment.
+ * @param int $time_newcomment Timestamp for new comment.
+ * @return bool Whether comment should be blocked.
+ */
+function delibera_comment_flood_filter($block, $time_lastcomment, $time_newcomment)
+{
+	$situacao = delibera_get_situacao();
+	if(is_object($situacao))
+	{
+		if(in_array($situacao->slug, array('emvotacao', 'validacao')))
+		{
+			return false;
+		}
+	}
+	return $block;
+}
+add_filter( 'comment_flood_filter', 'delibera_comment_flood_filter', 10, 3 );
