@@ -117,6 +117,9 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 </div>
 </div><!-- #post-## -->
 <h2 class="discussion-title"><?php echo $current_module->getCommentListLabel(); ?></h2>
-	<?php comments_template( '', true ); ?>
+	<?php
+		comments_template( '', true );
+		do_action('delibera-comments-list', $post);
+	?>
 </div>
 <?php endwhile; // end of the loop. ?>
