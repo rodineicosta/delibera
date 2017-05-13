@@ -10,29 +10,64 @@ $temas = wp_get_post_terms(get_the_ID(), 'tema');
 <div class="pauta-content <?php echo $status_pauta; ?>">
 
 	<div class="banner-ciclo status-ciclo">
-		<h3 class="title">Estágio da pauta</h3>
+		<h3 class="title"><?php _e('Estágio da pauta', 'delibera'); ?></h3>
 		<ul class="ciclos"><?php
 		$i = 1;
 		foreach ($flow as $situacao)
 		{
 			switch($situacao)
 			{
-				case 'validacao':?>
-				<li class="validacao <?php echo ($status_pauta != "validacao" ? "inactive" : ""); ?>"><?php echo $i; ?><br>Validação</li><?php
+				case 'validacao':
+					if($status_pauta != "validacao")
+					{?>
+						<a href="<?php echo get_the_permalink()."?delibera-view-stage=validacao" ?>" class="delibera-ciclos-validacao-link" ><li class="validacao inactive"><?php echo $i; ?><br><?php _e('Validação', 'delibera'); ?></li></a><?php
+					}
+					else
+					{?>
+						<li class="validacao"><?php echo $i; ?><br><?php _e('Validação', 'delibera'); ?></li></a><?php
+					}
 				break;
-				case 'discussao': ?>
-				<li class="discussao <?php echo ($status_pauta != "discussao" ? "inactive" : ""); ?>"><?php echo $i; ?><br>Discussão</li><?php
+				case 'discussao':
+					if($status_pauta != "discussao")
+					{?>
+						<a href="<?php echo get_the_permalink()."?delibera-view-stage=discussao" ?>" class="delibera-ciclos-validacao-link" ><li class="discussao inactive"><?php echo $i; ?><br><?php _e('Discussão', 'delibera'); ?></li></a><?php
+					}
+					else
+					{?>
+						<li class="discussao"><?php echo $i; ?><br><?php _e('Discussão', 'delibera'); ?></li><?php
+					}
 				break;
 				case 'relatoria':
-				case 'eleicao_relator': ?>
-				<li class="relatoria <?php echo ($status_pauta != "relatoria" ? "inactive" : ""); ?>"><?php echo $i; ?><br>Relatoria</li><?php
+				case 'eleicao_relator':
+					if($status_pauta != "relatoria" && $status_pauta != "eleicao_relator" )
+					{?>
+						<a href="<?php echo get_the_permalink()."?delibera-view-stage=relatoria" ?>" class="delibera-ciclos-validacao-link" ><li class="relatoria inactive"><?php echo $i; ?><br><?php _e('Relatoria', 'delibera'); ?></li></a><?php
+					}
+					else
+					{?>
+						<li class="relatoria"><?php echo $i; ?><br><?php _e('Relatoria', 'delibera'); ?></li><?php
+					}
 				break;
-				case 'emvotacao': ?>
-				<li class="emvotacao <?php echo ($status_pauta != "emvotacao" ? "inactive" : ""); ?>"><?php echo $i; ?><br>Votação</li><?php
+				case 'emvotacao':
+					if($status_pauta != "emvotacao")
+					{?>
+						<a href="<?php echo get_the_permalink()."?delibera-view-stage=emvotacao" ?>" class="delibera-ciclos-validacao-link" ><li class="emvotacao inactive"><?php echo $i; ?><br><?php _e('Votação', 'delibera'); ?></li></a><?php
+					}
+					else
+					{?>
+						<li class="emvotacao"><?php echo $i; ?><br><?php _e('Votação', 'delibera'); ?></li><?php
+					}
 				break;
 				case 'naovalidada':
-				case 'comresolucao': ?>
-				<li class="comresolucao <?php echo ($status_pauta != "comresolucao" && $status_pauta != "naovalidada" ? "inactive" : ""); ?>"><?php echo $i; ?><br>Resolução</li><?php
+				case 'comresolucao':
+					if($status_pauta != "naovalidada" && $status_pauta != "comresolucao" )
+					{?>
+						<a href="<?php echo get_the_permalink()."?delibera-view-stage=comresolucao" ?>" class="delibera-ciclos-validacao-link" ><li class="comresolucao inactive"><?php echo $i; ?><br><?php _e('Resolução', 'delibera'); ?></li></a><?php
+					}
+					else
+					{?>
+						<li class="comresolucao"><?php echo $i; ?><br><?php _e('Resolução', 'delibera'); ?></li><?php
+					}
 				break;
 			}
 			$i++;
