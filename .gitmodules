@@ -1,3 +1,0 @@
-[submodule "includes/wp-side-comments"]
-	path = includes/wp-side-comments
-	url = git@github.com:redelivre/wp-side-comments.git
