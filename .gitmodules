@@ -1,0 +1,4 @@
+[submodule "includes/wp-side-comments"]
+	path = includes/wp-side-comments
+	url = git@github.com:jacsonp/wp-side-comments.git
+	branch = master
