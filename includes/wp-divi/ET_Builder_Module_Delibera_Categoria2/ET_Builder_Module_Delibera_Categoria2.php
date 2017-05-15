@@ -2,7 +2,7 @@
 
 class ET_Builder_Module_Delibera_Categoria2 extends ET_Builder_Module {
 	function init() {
-		$this->name = esc_html__( 'Delibera categoria2', 'et_builder' );
+		$this->name = esc_html__( 'Delibera: Lista de Pautas por Tema', 'et_builder' );
 		$this->slug = 'et_pb_delibera_categoria2';
 
 		$this->whitelisted_fields = array(
@@ -310,8 +310,14 @@ class ET_Builder_Module_Delibera_Categoria2 extends ET_Builder_Module {
 			'orderby'			=> $orderby,
 			'order'				=> $order,
 			'post_status'       => 'publish',
-			'posts_per_page'	=> $num_posts
+			'posts_per_page'	=> $num_posts,
+			'suppress_filters'	=> false
 		);
+		
+		if(!is_array($include_categories))
+		{
+			$include_categories = explode(',', $include_categories);
+		}
 		
 		if($include_categories)
 		{

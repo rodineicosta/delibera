@@ -110,7 +110,7 @@ function delibera_edit_comment($comment)
 			{
 				$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
 				?>
-				<div id="painel_validacao delibera-comment-text" ><?php
+				<div class="painel_validacao delibera-comment-text" ><?php
 					switch ($validacao)
 					{
 						case 'S':?>

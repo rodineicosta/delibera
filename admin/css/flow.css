@@ -96,3 +96,7 @@ margin:0px 2px;
     right: 0;
     top: 0;
 }
+
+.delibera-flow-panel .comresolucao .delete {
+    display: none;
+}

@@ -83,6 +83,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 	{
 		$opts['dias_votacao'] = '5';
 		$opts['tipo_votacao'] = 'checkbox';
+		$opts['show_based_proposals'] = 'S';
 		return $opts;
 	}
 	
@@ -110,6 +111,11 @@ class Vote extends \Delibera\Modules\ModuleBase
 					<!-- <option value="dropdown" '.($value == 'dropdown' ? 'selected="selected"' : '').'>'.__('Dropdown', 'delibera').'</option> -->
 				</select>
 			'
+		);
+		$rows[] = array(
+			"id" => "show_based_proposals",
+			"label" => __('Votar em propostas que tiveram outras propostas derivadas?', 'delibera'),
+			"content" => '<input type="checkbox" name="show_based_proposals" id="show_based_proposals" value="S" '.(htmlspecialchars_decode($opt['show_based_proposals']) == 'S' ? 'checked="checked"' : '').' /><p class="description">' . __('Mostrar para os participantes como opção de votação as propostas originais e não somente a que foi baseada na etapa de relatoria', 'delibera'). '</p>'
 		);
 		return $rows;
 	}
@@ -161,6 +167,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		
 		$prazo_votacao = $this->generateDeadline($options_plugin_delibera);
 		$tipo_votacao = $options_plugin_delibera['tipo_votacao'];
+		$show_based_proposals = array_key_exists("show_based_proposals", $custom) ?  $custom["show_based_proposals"][0] : 'S';
 		
 		if(!($post->post_status == 'draft' ||
 			$post->post_status == 'auto-draft' ||
@@ -183,6 +190,11 @@ class Vote extends \Delibera\Modules\ModuleBase
 				<option value="radio" <?php echo $tipo_votacao == 'radio' ? 'selected="selected"' : ''; ?>><?php _e('Opção única', 'delibera'); ?></option>
 				<!-- <option value="dropdown" <?php echo $tipo_votacao == 'dropdown' ? 'selected="selected"' : ''; ?>><?php _e('Dropdown', 'delibera'); ?></option> -->
 			</select>
+		</p>
+		<p>
+			<label class="label_show_based_proposals" title="<?php _e('Mostrar para os participantes como opção de votação as propostas originais e não somente a que foi baseada na etapa de relatoria', 'delibera'); ?>" ><?php _e('Votar em propostas que tiveram outras propostas derivadas?','delibera') ?>:
+				<input <?php echo $disable_edicao ?> name="show_based_proposals" type="checkbox" value="S" class="show_based_proposals widefat delibera-admin-checkbox" <?php echo $show_based_proposals == 'S' ? 'checked="checked"' : ''; ?> />
+			</label>
 		</p>
 		
 		<div class="delibera_comment_list_panel" style="display: none;">
@@ -267,6 +279,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		{
 			$events_meta['tipo_votacao'] = sanitize_text_field($_POST['tipo_votacao']);
 		}
+		$events_meta['show_based_proposals'] = array_key_exists('show_based_proposals', $_POST) ? sanitize_text_field($_POST['show_based_proposals']) : 'N';
 		
 		global $post, $current_user;
 		if(!is_object($post))

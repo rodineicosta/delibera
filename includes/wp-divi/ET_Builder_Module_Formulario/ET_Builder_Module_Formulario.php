@@ -9,6 +9,7 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 
 		$this->whitelisted_fields = array(
 			'include_categories',
+			'flow',
 			'captcha',
 			'email',
 			'title',
@@ -25,7 +26,8 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 		$this->fields_defaults = array(
 			'captcha'      => array( 'off' ),
 			'use_redirect' => array( 'on' ),
-			'redirect_url' => 'pauta'
+			'redirect_url' => array('pauta'),
+			'flow' => array( 'off', 'on', 'on', 'on' )
 		);
 
 		$this->main_css_element = '%%order_class%%.et_pb_delibera_form_container';
@@ -100,6 +102,18 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 					'post_type'=>'pauta'
 				),
 				'description'      => esc_html__( 'Choose which categories you would like to include in the feed.', 'et_builder' ),
+			),
+			'flow' => array(
+				'label'           => esc_html__( 'Fluxo do Delibera', 'delibera' ),
+				'type'            => 'multiple_checkboxes',
+				'options'         => array(
+					"validacao"	  => esc_html__( 'Proposta de Pauta', 'delibera' ),
+					"discussao"	  => esc_html__( 'Pauta em discussão', 'delibera' ),
+					"relatoria"	  => esc_html__( 'Relatoria', 'delibera' ),
+					"emvotacao"	  => esc_html__( 'Regime de Votação', 'delibera' ),
+				),
+				'option_category' => 'configuration',
+				'description'     => esc_html__( 'Desmarcando essas opção irá desativar a etapa da pauta não selecionada', 'et_builder' ),
 			),
 			'captcha' => array(
 				'label'           => esc_html__( 'Display Captcha', 'et_builder' ),
@@ -217,6 +231,7 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 
 	function shortcode_callback( $atts, $content = null, $function_name ) {
 		$include_categories    = $this->shortcode_atts['include_categories'];
+		$flow				   = $this->shortcode_atts['flow'];
 		$module_id             = $this->shortcode_atts['module_id'];
 		$module_class          = $this->shortcode_atts['module_class'];
 		$captcha               = $this->shortcode_atts['captcha'];
@@ -229,7 +244,21 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 		$use_redirect          = $this->shortcode_atts['use_redirect'];
 		$redirect_url          = $this->shortcode_atts['redirect_url'];
 		$success_message       = $this->shortcode_atts['success_message'];
-
+		$flow_onoff_array	   = explode( '|', $this->shortcode_atts['flow'] );
+		
+		$delibera_flow = array();
+		$default_flow_modules = array('validacao', 'discussao', 'relatoria', 'emvotacao', 'comresolucao');
+		foreach ($flow_onoff_array as $key => $value)
+		{
+			if('on' == $value)
+			{
+				$delibera_flow[] = $default_flow_modules[$key];
+			}
+		}
+		$delibera_flow[] = 'comresolucao'; // always have result
+		
+		
+		
 		global $et_pb_contact_form_num;
 
 		$module_class = ET_Builder_Element::add_module_order_class( $module_class, $function_name );
@@ -363,12 +392,10 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 
 			$_SESSION['last_id'] = $post_id;
 
-			if($redirect_url == "pauta")
+			if($redirect_url == "pauta" || empty($redirect_url))
 			{
 				$redirect_url = esc_url( get_permalink($post_id) );
 			}
-
-			$redirect_url = esc_url( get_permalink($post_id) );
 
 			$et_error_message = sprintf( '<p>%1$s</p>', 'Obrigado por participar, você pode ver sua proposta <a href="'.$redirect_url.'">aqui</a>.' );
 
@@ -437,7 +464,7 @@ class ET_Builder_Module_Formulario extends ET_Builder_Module {
 						),
 				( '' !== $module_class ? sprintf( ' %1$s', esc_attr( $module_class ) ) : '' ),
 				esc_attr( $et_pb_contact_form_num ),
-				'on' === $use_redirect && '' !== $redirect_url ? sprintf( ' data-redirect_url="%1$s"', esc_attr( $redirect_url ) ) : ''
+				( 'on' === $use_redirect && !empty($redirect_url) ) ? sprintf( ' data-redirect_url="%1$s"', esc_attr( $redirect_url ) ) : ''
 				);
 
 		return $output;

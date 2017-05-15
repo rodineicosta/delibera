@@ -147,7 +147,7 @@ function print_comments_content($display = true) {
 		$matched_links = array();
 	}
 	$content  = get_comment_text();
-	$content = apply_filters('comment_text', $content);
+	$content = apply_filters('comment_text', $content, get_comment());
 	if(!print_can('images')) {
 		$content = remove_image($content);
 	}

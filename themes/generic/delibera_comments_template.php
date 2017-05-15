@@ -129,7 +129,7 @@ class Delibera_Walker_Comment extends Walker_Comment
 			echo '</div>';
 
 
-			delibera_comment_edit_form();
+			if($situacao->slug == 'discussao' || ($situacao->slug == 'relatoria' && current_user_can('relatoria'))) delibera_comment_edit_form();
 			if ($tipo == "encaminhamento" && current_user_can('relatoria') && (/*$situacao->slug == "discussao" || TODO Opção de baseamento na discussão */ $situacao->slug == "relatoria"))
 			{
 				?>
