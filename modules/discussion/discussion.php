@@ -294,6 +294,10 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		if($tipo == 'side')
 		{
 			require_once DELIBERA_DIR_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+			if(function_exists('\Delibera\Includes\SideComments\wpsc_init_side_comments'))
+			{
+				\Delibera\Includes\SideComments\wpsc_init_side_comments();
+			}
 		}
 	}
 	
