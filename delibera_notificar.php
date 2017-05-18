@@ -673,6 +673,7 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		
 		$loop = false; // do a query loop?
 		
+		
 		if(!is_array($users))
 		{
 			$users = $admin ? get_users(array('role' => 'administrator', 'number' => 1000)) : get_users(array('number' => 1000));
@@ -695,6 +696,11 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		{
 			foreach ($users as $user)
 			{
+				if(class_exists('Groups_Post_Access') && !Groups_Post_Access::user_can_read_post($post->ID, $user->ID)) // check groups restriction
+				{
+					continue;
+				}
+				
 				if(user_can($user->ID, 'votar') && isset($user->user_email) && $user->ID != $autor_id)
 				{
 					$segue = array_search($user->ID, $seguiram);
