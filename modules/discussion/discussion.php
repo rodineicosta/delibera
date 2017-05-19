@@ -290,7 +290,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	 */
 	public function template_redirect()
 	{
-		$tipo = get_post_meta(get_the_ID(), 'tipo_discussao', true);
+		/*$tipo = get_post_meta(get_the_ID(), 'tipo_discussao', true);
 		if($tipo == 'side')
 		{
 			require_once DELIBERA_DIR_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
@@ -298,7 +298,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 			{
 				\Delibera\Includes\SideComments\wpsc_init_side_comments();
 			}
-		}
+		}*/
 	}
 	
 }
