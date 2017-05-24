@@ -400,38 +400,8 @@ function delibera_save_comment_metas($comment_id)
 		case 'encaminhamento':
 		{
 			$encaminhamento = $_POST['delibera_encaminha'];
-			if($encaminhamento == "S")
-			{
-				add_comment_meta($comment_id, 'delibera_comment_tipo', 'encaminhamento', true);
-				$nencaminhamentos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', true);
-				$nencaminhamentos++;
-				update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', $nencaminhamentos);
-				if(array_key_exists('delibera-baseouseem', $_POST) && !empty($_POST['delibera-baseouseem']))
-				{
-					add_comment_meta($comment_id, 'delibera-baseouseem', $_POST['delibera-baseouseem'], true);
-					$based_list = explode(',', $_POST['delibera-baseouseem']);
-					foreach ($based_list as $baseouseem_element)
-					{
-						$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
-						if(!is_array($atts)) continue;
-						if(array_key_exists('id', $atts))
-						{
-							update_comment_meta($atts['id'], 'delibera-hasbasedon', $comment_id);
-						}
-					}
-				}
-			}
-			else
-			{
-				add_comment_meta($comment_id, 'delibera_comment_tipo', 'discussao', true);
-				$ndiscussoes = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_discussoes', true);
-				$ndiscussoes++;
-				update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_discussoes', $ndiscussoes);
-			}
-			if(has_action('delibera_nova_discussao'))
-			{
-				do_action('delibera_nova_discussao', $comment_id, $comment, $encaminhamento);
-			}
+			\Delibera\Modules\Discussion::treatCommentType($comment, $encaminhamento);
+			
 		}break;
 		case 'voto':
 		{
