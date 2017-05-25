@@ -582,11 +582,19 @@ function delibera_gerar_discordar($ID, $type ='pauta')
 			$ID = $ID->comment_ID;
 		}
 	}
+	elseif( !($type == 'post' || $type == 'pauta') )
+	{
+		$comment = get_comment($ID);
+		$postID = $comment->comment_post_ID;
+	}
+	
 	$ndiscordou = intval($type == 'pauta' || $type == 'post' ? get_post_meta($ID, 'delibera_numero_discordar', true) : get_comment_meta($ID, 'delibera_numero_discordar', true));
 	$situacao = delibera_get_situacao($postID);
 
 	global $deliberaThemes;
+	
 	$html = '<div id="thebuttonDiscordo'.$type.$ID.'" class="delibera-unlike" title="Demostre sua discordância com o assunto" >';
+	
 	if ($ndiscordou > 0) {
 		$html .= '<span class="delibera-unlike-count">' . $ndiscordou .'</span>';
 	} else {
