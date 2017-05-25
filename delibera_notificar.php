@@ -673,10 +673,10 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		
 		$loop = false; // do a query loop?
 		
-		
+		$users_limit = 500;
 		if(!is_array($users))
 		{
-			$users = $admin ? get_users(array('role' => 'administrator', 'number' => 1000)) : get_users(array('number' => 1000));
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => $users_limit)) : get_users(array('number' => $users_limit));
 			$loop = true;
 		}
 
@@ -692,6 +692,7 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 			$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
 		}
 		$paged = 1;
+		
 		while(count($users > 0))
 		{
 			foreach ($users as $user)
@@ -745,7 +746,7 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 			}
 			if (!$loop) break;
 			$paged++;
-			$users = $admin ? get_users(array('role' => 'administrator', 'number' => 1000, 'paged' => $paged)) : get_users(array('number' => 1000, 'paged' => $paged));
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => $users_limit, 'offset' => $users_limit * ($paged - 1) )) : get_users(array('number' => $users_limit, 'offset' => $users_limit * ($paged - 1)));
 		}
 	}
 	return false;
