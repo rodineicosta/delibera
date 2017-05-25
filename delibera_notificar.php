@@ -746,7 +746,7 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 			}
 			if (!$loop) break;
 			$paged++;
-			$users = $admin ? get_users(array('role' => 'administrator', 'number' => $users_limit, 'offset' => $users_limit * ($paged - 1) )) : get_users(array('number' => $users_limit, 'offset' => $users_limit * ($paged - 1)));
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => $users_limit, 'paged' => $paged)) : get_users(array('number' => $users_limit, 'paged' => $paged));
 		}
 	}
 	return false;
