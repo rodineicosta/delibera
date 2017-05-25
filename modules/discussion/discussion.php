@@ -338,6 +338,10 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		}
 	}
 	
+	public static function isEncaminhamento($comment_id)
+	{
+		return get_comment_meta($comment_id, 'delibera_comment_tipo', true) == 'encaminhamento';
+	}
 }
 $DeliberaDiscussion = new \Delibera\Modules\Discussion();
 
