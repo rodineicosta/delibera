@@ -692,7 +692,7 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 			$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
 		}
 		$paged = 1;
-		while(count($users > 0))
+		while(count($users) > 0)
 		{
 			foreach ($users as $user)
 			{
