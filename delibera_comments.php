@@ -304,10 +304,14 @@ function delibera_show_hide_button($comment_id, $text, $cut, $show)
 
 function delibera_comments_open($open, $post_id)
 {
-	if ( 'pauta' == get_post_type($post_id) )
-		return $open && delibera_can_comment($post_id);
-	else
-		return $open;
+	if(is_user_logged_in())
+	{
+		if ( 'pauta' == get_post_type($post_id) )
+		{
+			return $open && delibera_can_comment($post_id);
+		}
+	}
+	return $open;
 }
 add_filter('comments_open', 'delibera_comments_open', 10, 2);
 
