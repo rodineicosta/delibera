@@ -217,8 +217,32 @@ resolucao - 90248f
     display: none;
 }
 
-.lista-de-pautas .navigation {
-	display: none;
+.lista-de-pautas .navigation li a,
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a,
+.lista-de-pautas .navigation li.disabled {
+	color: #fff;
+	text-decoration:none;
+}
+
+.lista-de-pautas .navigation li {
+	display: inline;
+}
+
+.lista-de-pautas .navigation li a,
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a,
+.lista-de-pautas .navigation li.disabled {
+	background-color: #6FB7E9;
+	border-radius: 3px;
+	cursor: pointer;
+	padding: 12px;
+	padding: 0.75rem;
+}
+
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a {
+	background-color: #3C8DC5;
 }
 
 /* BANNER CICLO VIDAS */
