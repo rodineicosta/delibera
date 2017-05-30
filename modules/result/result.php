@@ -273,9 +273,9 @@ class Result extends \Delibera\Modules\ModuleBase
 								<div class="comentario_coluna1 delibera-comment-text">
 									'.__('Validações', 'delibera').'
 								</div>
-								<div class="comentario_coluna2 delibera-comment-text">
-									'.$validations." "._n('Validação','Validações', $validations, 'delibera').
-											'('.number_format_i18n( $validations > 0 && $total > 0 ? (($validations*100)/$total) : 0, 2).'%)
+								<div class="comentario_coluna2 delibera-comment-text"><span class="delibera-result-number delibera-result-number-validation">
+									'.$validations."</span> "._n('Validação','Validações', $validations, 'delibera').
+											' ('.number_format_i18n( $validations > 0 && $total > 0 ? (($validations*100)/$total) : 0, 2).'%)
 								</div>
 							</div>
 						</li>
@@ -286,9 +286,9 @@ class Result extends \Delibera\Modules\ModuleBase
 								<div class="comentario_coluna1 delibera-comment-text">
 									'.__('Rejeições', 'delibera').'
 								</div>
-								<div class="comentario_coluna2 delibera-comment-text">
-									'.$rejections." "._n('Rejeição','Rejeições', $rejections, 'delibera').
-													'('.number_format_i18n( $rejections > 0 && $total > 0 ? (($rejections*100)/$total) : 0, 2).'%)
+								<div class="comentario_coluna2 delibera-comment-text"><span class="delibera-result-number delibera-result-number-rejection">
+									'.$rejections."</span> "._n('Rejeição','Rejeições', $rejections, 'delibera').
+													' ('.number_format_i18n( $rejections > 0 && $total > 0 ? (($rejections*100)/$total) : 0, 2).'%)
 								</div>
 							</div>
 						</li>
@@ -299,9 +299,9 @@ class Result extends \Delibera\Modules\ModuleBase
 								<div class="comentario_coluna1 delibera-comment-text">
 									'.__('Abstenções', 'delibera').'
 								</div>
-								<div class="comentario_coluna2 delibera-comment-text">
-									'.$abstention." "._n('Abstenção','Abstenções', $abstention, 'delibera').
-													'('.number_format_i18n( $abstention > 0 && $total > 0 ? (($abstention*100)/$total) : 0, 2).'%)
+								<div class="comentario_coluna2 delibera-comment-text"><span class="delibera-result-number delibera-result-number-abstention">
+									'.$abstention."</span> "._n('Abstenção','Abstenções', $abstention, 'delibera').
+													' ('.number_format_i18n( $abstention > 0 && $total > 0 ? (($abstention*100)/$total) : 0, 2).'%)
 								</div>
 							</div>
 						</li>

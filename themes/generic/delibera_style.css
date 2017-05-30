@@ -1095,6 +1095,14 @@ color: #777;
     cursor: pointer;
 }
 
+.comentario_coluna1.delibera-comment-text {
+	font-weight: bolder;
+}
+
+.delibera-result-number {
+    font-weight: bold;
+}
+
 /* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */
 @media (max-width:641px) {
 	.delibera-header {
