@@ -30,3 +30,7 @@
 .delibera-icon-twitter-squared:before { content: '\e81c'; } /* '' */
 .delibera-icon-whatsapp:before { content: '\e81d'; } /* '' */
 .delibera-icon-edit:before { content: '\e81e'; } /* '' */
+.delibera-icon-down-dir:before { content: '\e81f'; } /* '' */
+.delibera-icon-left-dir:before { content: '\e820'; } /* '' */
+.delibera-icon-right-dir:before { content: '\e821'; } /* '' */
+.delibera-icon-up-dir:before { content: '\e822'; } /* '' */
