@@ -198,6 +198,19 @@ function delibera_comment_form($defaults)
 				{
 					$defaults = apply_filters('delibera_discussao_comment_form', $defaults, $situacao->slug);
 				}
+				if(
+						class_exists('\Delibera\Includes\SideComments\CTLT_WP_Side_Comments') && // have side comment module
+						\Delibera\Includes\SideComments\CTLT_WP_Side_Comments::hasSideCommentSection(get_the_ID()) && // have a side comment section
+						! \Delibera\Modules\Discussion::showDefaultCommentForm(get_the_ID()) // AND do not have default comment form enabled
+				)
+				{
+					$defaults['comment_notes_after'] = '
+					<script type="text/javascript">
+					var formdiv = document.getElementById("respond");
+					formdiv.style.display = "none";
+					</script>
+					';
+				}
 			}break;
 			case 'emvotacao':
 			{

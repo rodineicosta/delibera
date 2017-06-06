@@ -145,6 +145,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	{
 		$prazo_discussao = $this->generateDeadline($options_plugin_delibera);
 		$tipo_discussao = array_key_exists("tipo_discussao", $custom) ?  $custom["tipo_discussao"][0] : 'forum';
+		$delibera_show_default_comment_form = array_key_exists("delibera_show_default_comment_form", $custom) ?  $custom["delibera_show_default_comment_form"][0] : 'N';
 		
 		if(!($post->post_status == 'draft' ||
 				$post->post_status == 'auto-draft' ||
@@ -162,8 +163,12 @@ class Discussion extends \Delibera\Modules\ModuleBase
 			<label class="label_tipo_discussao"><?php _e('Tipo de Discussões','delibera') ?>:</label>
 			<input <?php echo $disable_edicao ?> name="tipo_discussao" class="tipo_discussao widefat" value="<?php echo $tipo_discussao; ?>"/>
 		</p>
-		<?php */
-		
+		<?php */ ?>
+		<p>
+			<label class="label_delibera_show_default_comment_form" title="<?php _e('Mostrar campo para opinião/encaminhamento padrão com o comentário por parágrafo ativo?','delibera') ?>" ><?php _e('Permitir comentários gerais?','delibera') ?>:
+				<input <?php echo $disable_edicao ?> name="delibera_show_default_comment_form" type="checkbox" value="S" class="delibera_show_default_comment_form widefat delibera-admin-checkbox" <?php echo $delibera_show_default_comment_form== 'S' ? 'checked="checked"' : ''; ?> />
+			</label>
+		</p><?php
 	}
 	
 	public function publishPauta($postID, $opt)
@@ -231,6 +236,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		{
 			$events_meta['tipo_discussao'] = sanitize_text_field($_POST['tipo_discussao']);
 		}
+		$events_meta['delibera_show_default_comment_form'] = array_key_exists('delibera_show_default_comment_form', $_POST) ? sanitize_text_field($_POST['delibera_show_default_comment_form']) : 'N';
 		
 		return $events_meta;
 	}
@@ -341,6 +347,12 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	public static function isEncaminhamento($comment_id)
 	{
 		return get_comment_meta($comment_id, 'delibera_comment_tipo', true) == 'encaminhamento';
+	}
+	
+	public static function showDefaultCommentForm($post_id = false)
+	{
+		if(!$post_id) $post_id = get_the_ID();
+		return get_post_meta($post_id, 'delibera_show_default_comment_form', true) == 'S';
 	}
 }
 $DeliberaDiscussion = new \Delibera\Modules\Discussion();
