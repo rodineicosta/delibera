@@ -317,14 +317,13 @@ add_filter('comments_open', 'delibera_comments_open', 10, 2);
 
 /**
  * Verifica se é possível fazer comentários, se o usuário tiver poder para tanto
- * @param unknown_type $postID
+ * @param mixed $postID
  */
 function delibera_comments_is_open($postID = null)
 {
 	if(is_null($postID))
 	{
-		$post = get_post($postID);
-		$postID = $post->ID;
+		$postID = get_the_ID();
 	}
 
 	$situacoes_validas = array('validacao' => true, 'discussao' => true, 'emvotacao' => true, 'elegerelator' => true,'relatoria'=>true);
