@@ -255,12 +255,15 @@ function delibera_comment_form($defaults)
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
 									$users[$encaminhamento->comment_author]++;
 									
-									$form .= '<div id="delibera-voto-modal-'.$i.'" class="delibera-voto-modal"><div class="delibera-voto-modal-window"><div class="delibera-voto-modal-close">×</div>';
+									$form .= '<div id="delibera-voto-modal-'.$i.'" class="delibera-voto-modal"><div class="delibera-voto-modal-window"><div class="delibera-voto-modal-close delibera-icon-cancel"></div>';
 										$form .= '<div id="delibera-voto-modal-content-'.$i.'" class="delibera-voto-modal-content">';
-											$form .= wpautop(apply_filters( 'get_comment_text', $encaminhamento->comment_content, $encaminhamento, array() ));
+											$form .= '<div id="delibera-voto-modal-content-text-'.$i.'" class="delibera-voto-modal-content-text">';
+												$form .= wpautop(apply_filters( 'get_comment_text', $encaminhamento->comment_content, $encaminhamento, array() ));
+											$form .= '</div>';
 											if(!empty($baseouseem))
 											{
 												$form .= '<div id="delibera-voto-modal-content-baseadaem-'.$i.'" class="delibera-voto-modal-content-baseadaem">';
+													$form .= '<div class="delibera-voto-modal-title-baseadaem-list">'.__('Proposta baseada em', 'delibera').':</div>';
 													$based_list = explode(',', $baseouseem);
 													foreach ($based_list as $baseouseem_element)
 													{
@@ -268,18 +271,18 @@ function delibera_comment_form($defaults)
 														if(!is_array($atts)) continue;
 														$comment_base = get_comment($atts['id']);
 														$form .=
-															'<label class="label-voto">
+															'<div class="delibera-based-voto-box">
 																<div class="delibera-voto-content">
 																	<div class="delibera-voto-title">
 																		'.__('Proposta', 'delibera').' de '.get_comment_author($comment_base).'
-																	</div>
+																	</div><div class="delibera-icon-plus"></div>
 																	<div class="delibera-voto-icons">
 																	</div>
 																	<div class="delibera-voto-text">
 																		'.$comment_base->comment_content.'
 																	</div>
 																</div>
-															</label>
+															</div>
 														';
 													}
 												$form .= '</div>';

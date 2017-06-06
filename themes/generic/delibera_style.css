@@ -525,7 +525,7 @@ label.delibera_aceitar_radio_label  {
 }
 
 .delibera-comment-discussao {
-		background-color: #cfcfcf;
+	background-color: #cfcfcf;
 }
 
 #delibera-comment-encaminhamento .children .delibera-comment-discussao {
@@ -1049,13 +1049,15 @@ color: #777;
 }
 
 .delibera-voto-modal-window {
-    background-color: #fff;
-    left: 25%;
+    background-color: #cfcfcf;
+    left: 20%;
     position: absolute;
-    top: 20%;
-    width: 50%;
+    top: 12%;
+    width: 60%;
     padding: 2em 1em;
     text-align: justify;
+    overflow: auto;
+	max-height: 82%;
 }
 
 .delibera-voto-modal-close {
@@ -1105,8 +1107,11 @@ color: #777;
     font-size: 1.4em;
     font-weight: bold;
     margin-bottom: 0.5em;
+    width: auto;
+    float: left;
+    cursor: pointer;
 }
-
+	
 .delibera-voto-bt-read {
     background-color: #0b5394;
     border-radius: 10px;
@@ -1117,6 +1122,40 @@ color: #777;
     padding: 0.25em 0.5em;
     text-transform: uppercase;
     cursor: pointer;
+}
+
+.delibera-voto-text {
+	display: none;
+	width: 100%;
+	float: left;
+	padding: 0.5em 0.5em 1em 1em;
+	background: rgba(255, 255, 255, 0.2);
+	max-height: 400px;
+	overflow: auto;
+}
+
+.delibera-based-voto-box {
+    width: 100%;
+    float: left;
+    overflow: hidden;
+}
+
+.delibera-voto-modal-content-text {
+    max-height: 460px;
+    display: block;
+    overflow: auto;
+    padding: 0.75em;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.delibera-voto-modal-content-baseadaem {
+	margin-top: 4em;
+}
+
+.delibera-voto-modal-content-baseadaem .delibera-icon-plus:before {
+    background-color: #afafaf;
+	border-radius: 1em;
+	padding: 0.1em;
 }
 
 .comentario_coluna1.delibera-comment-text {
