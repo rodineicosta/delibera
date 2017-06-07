@@ -15,10 +15,11 @@
 |																							|
 +----------------------------------------------------------------+
 */
-?>
 
+//PHP 5.3 and later:
+namespace Delibera\Includes\WP_Print;
 
-<?php if($comments) : ?>
+if($comments) : ?>
 	<?php global $text_direction; ?>
 	<span style='float:<?php echo ('rtl' == $text_direction) ? 'left' : 'right'; ?>' id='comments_controls'><?php print_comments_number(); ?> (<a  href="#" onclick="javascript:document.getElementById('comments_box').style.display = 'block'; return false;"><?php _e('Mostrar', 'delibera'); ?></a> | <a href="#" onclick="javascript:document.getElementById('comments_box').style.display = 'none'; return false;"><?php _e('Esconder', 'delibera'); ?></a>)</span>
 	<div id="comments_box">
