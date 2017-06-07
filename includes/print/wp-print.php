@@ -50,6 +50,7 @@ function removeAddtoanyLinks()
 ### Function: Load WP-Print
 function delibera_print()
 {
+	removeAddtoanyLinks();
 	if(intval(get_query_var('delibera_print')) == 1 || intval(get_query_var('delibera_printpage')) == 1 || intval(get_query_var('delibera_print_csv')) > 0  )
 	{
 		global $wp_query;
@@ -293,7 +294,7 @@ function print_template_comments($file = '') {
 	if(file_exists(TEMPLATEPATH.'/print-comments.php')) {
 		$file = TEMPLATEPATH.'/print-comments.php';
 	} else {
-		$file = plugin_dir_path(__FILE__).'/print-comments.php';
+		$file = plugin_dir_path(__FILE__).'print-comments.php';
 	}
 	return $file;
 }

@@ -24,7 +24,7 @@ $links_text = '';
 add_action('init', '\Delibera\Includes\WP_Print\print_content');
 
 ### Filters
-add_filter('wp_title', 'print_pagetitle');
+add_filter('wp_title', '\Delibera\Includes\WP_Print\print_pagetitle');
 add_filter('comments_template', '\Delibera\Includes\WP_Print\print_template_comments');
 //add_filter('comments_array', 'delibera_print_comments');
 remove_filter('comments_array', 'delibera_get_comments_filter');

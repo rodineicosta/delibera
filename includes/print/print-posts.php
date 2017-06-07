@@ -239,7 +239,42 @@ global $text_direction; ?>
 			<?php while (have_posts()): the_post(); ?>
 					<p id="BlogTitle"><?php the_title(); ?></p>
 					<p id="BlogDate"><?php _e('Postado por', 'delibera'); ?> <u><?php the_author(); ?></u> <?php _e('em', 'delibera'); ?> <?php the_time(sprintf(__('%s @ %s', 'delibera'), get_option('date_format'), get_option('time_format'))); ?> <?php _e('na', 'delibera'); ?> <?php print_categories('<u>', '</u>'); ?> | <u><a href='#comments_controls'><?php print_comments_number(); ?></a></u></p>
-					<div id="BlogContent"><?php print_content(); ?></div>
+					<div id="BlogContent"><?php
+						print_content();?>
+						<hr class="Divider" style="text-align: center;" /><?php
+						if(
+							class_exists('\Delibera\Includes\SideComments\CTLT_WP_Side_Comments') &&
+							\Delibera\Includes\SideComments\CTLT_WP_Side_Comments::hasSideCommentSection(get_the_ID()))
+						{
+							$sidecomments_print = true;							
+							$paragraphs = \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getPostSectionsList(get_the_ID());
+							
+							$sidecomments = \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getCommentsPerSection(get_the_ID());
+							
+							if(is_array($sidecomments) && array_key_exists('comments', $sidecomments) && is_array($sidecomments['comments']))
+							{
+								$sidecomments = $sidecomments['comments'];
+							}
+							else 
+							{
+								$sidecomments = array();
+							}
+							for($i = 1; $i <= count($paragraphs); $i++)
+							{
+								echo sprintf( '<p class="commentable-section" data-section-id="%d">', $i).$paragraphs[$i];
+								if(array_key_exists($i, $sidecomments))
+								{
+									$comments = $sidecomments[$i];
+									$comment_template = print_template_comments();
+									require $comment_template;
+								}
+								?>
+								<hr class="Divider" style="text-align: center;" /><?php
+							}
+							$sidecomments_print = false;
+						}
+						?>
+					</div>
 			<hr class="Divider" style="text-align: center;" />
 			<?php if(print_can('comments')): ?>
 				<?php comments_template(); ?>
