@@ -38,6 +38,7 @@ function print_variables($public_query_vars) {
     $public_query_vars[] = 'number-options';
     $public_query_vars[] = 'delibera_print_csv';
     $public_query_vars[] = 'delibera_print_parent';
+    $public_query_vars[] = 'delibera_print_xls';
 	return $public_query_vars;
 }
 
@@ -51,7 +52,12 @@ function removeAddtoanyLinks()
 function delibera_print()
 {
 	removeAddtoanyLinks();
-	if(intval(get_query_var('delibera_print')) == 1 || intval(get_query_var('delibera_printpage')) == 1 || intval(get_query_var('delibera_print_csv')) > 0  )
+	if(
+		intval(get_query_var('delibera_print')) == 1 ||
+		intval(get_query_var('delibera_printpage')) == 1 ||
+		intval(get_query_var('delibera_print_csv')) > 0 ||
+		intval(get_query_var('delibera_print_xls')) > 0
+	)
 	{
 		global $wp_query;
 		
@@ -79,6 +85,7 @@ function delibera_print()
 				'post_status' => 'publish',
 				'include' => $parent,
 				'delibera_print_csv' => get_query_var('delibera_print_csv', false),
+				'delibera_print_xls' => get_query_var('delibera_print_xls', false),
 			));
 		}
 		

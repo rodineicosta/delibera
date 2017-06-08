@@ -8,18 +8,34 @@
 // contorna problema com links simbolicos no ambiente de desenvolvimento
 $wp_root = dirname(dirname($_SERVER['SCRIPT_FILENAME'])) . '/../../';
 
-require_once($wp_root . 'wp-load.php');
+$is_direct_call = substr($_SERVER['SCRIPT_FILENAME'], - strlen('delibera_relatorio_xls.php')) == 'delibera_relatorio_xls.php';
+
+if($is_direct_call)
+{
+	require_once($wp_root . 'wp-load.php');
+}
 
 if (!current_user_can('manage_options')) {
     die('Você não deveria estar aqui');
 }
 
-//$pautas = get_posts(array('post_type' => 'pauta', 'post_status' => 'publish'));
-$pautas_query = new WP_Query(array(
-	'post_type' => 'pauta',
-	'post_status' => 'publish',
-	'posts_per_page' => -1
-));
+$pautas_query = false;
+
+if($is_direct_call)
+{
+	$query_args = array(
+		'post_type' => 'pauta',
+		'post_status' => 'publish',
+		'posts_per_page' => -1
+	);
+	
+	$pautas_query = new WP_Query($query_args);
+}
+else
+{
+	global $wp_query;
+	$pautas_query = $wp_query;
+}
 
 $comments = array();
 /* @var $pauta WP_POST */

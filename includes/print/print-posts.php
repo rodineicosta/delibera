@@ -222,6 +222,21 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 	//fclose($output);
 	die();
 }
+
+if(intval(get_query_var('delibera_print_xls')) > 0)
+{
+	if (have_posts())
+	{
+		switch (intval(get_query_var('delibera_print_xls')))
+		{
+			case 1:
+				require WP_PLUGIN_DIR.'/delibera/delibera_relatorio_xls.php';	
+			break;
+		}
+	}
+	die();
+}
+
 global $text_direction; ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
