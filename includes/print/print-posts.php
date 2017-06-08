@@ -32,14 +32,14 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 			
 		switch (intval(get_query_var('delibera_print_csv')))
 		{
-			case 1:
+			case 1: //num de comentários por parágrafo
 			default:
 				fputcsv($output, array(__('Parágrafos', 'delibera'), __('Número de cometários', 'delibera'), __('Autores', 'delibera')), ';');
 				while (have_posts())
 				{
 					the_post();
-					$regex = '|(<p)[^>]*(>)|';
-					$paragraphs = preg_split($regex, print_content(false));
+					
+					$paragraphs = \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getPostSectionsList(get_the_ID());
 					
 					global $CTLT_WP_Side_Comments;
 					if(!is_object($CTLT_WP_Side_Comments))
@@ -47,7 +47,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 						$CTLT_WP_Side_Comments = new \Delibera\Includes\SideComments\CTLT_WP_Side_Comments();
 					}
 					
-					$sidecomments = $CTLT_WP_Side_Comments->getCommentsData(get_the_ID());
+					$sidecomments = $CTLT_WP_Side_Comments->getCommentsPerSection(get_the_ID(), ARRAY_A);
 					if(is_array($sidecomments) && array_key_exists('comments', $sidecomments) && is_array($sidecomments['comments']))
 					{
 						$sidecomments = $sidecomments['comments'];
@@ -56,7 +56,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 					{
 						$sidecomments = array();
 					}
-					
+
 					for($i = 1; $i < count($paragraphs); $i++)
 					{
 						$authors = array();
@@ -68,7 +68,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 						}
 						foreach ($comments as $comment)
 						{
-							$authors[] = $comment['authorName'];
+							$authors[] = $comment['comment_author'];
 						}
 						
 						$authors = array_unique($authors);
@@ -82,8 +82,8 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 					}
 				}
 			break;
-			case 2:
-				fputcsv($output, array(__('Data', 'delibera'), __('Número de cometários', 'delibera')), ';');
+			case 2: //num de comentários por dia
+				fputcsv($output, array(__('Data', 'delibera'), __('Número de comentários', 'delibera')), ';');
 				while (have_posts())
 				{
 					the_post();
@@ -94,11 +94,15 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 					);
 					$comments = get_comments( $getCommentArgs );
 					
+					$comments = delibera_comments_filter_portipo($comments, array('discussao', 'encaminhamento', 'resolucao'));
+					
 					$allcomments = array_merge($allcomments, $comments);
 				}
+				
 				$commentsDates = array();
 				foreach ($allcomments as $comment)
 				{
+					
 					$date = date('Y/m/d', strtotime($comment->comment_date));
 					if(!array_key_exists($date, $commentsDates)) $commentsDates[$date] = 0;
 					$commentsDates[$date] += 1;
@@ -112,7 +116,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 					), ';');
 				}
 			break;
-			case 3:
+			case 3: //num de comentários por usuário
 				
 				while (have_posts())
 				{
@@ -123,7 +127,9 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 							'status' => 'approve'
 					);
 					$comments = get_comments( $getCommentArgs );
-						
+					
+					$comments = delibera_comments_filter_portipo($comments, array('discussao', 'encaminhamento', 'resolucao'));
+					
 					$allcomments = array_merge($allcomments, $comments);
 				}
 				$commentsUsers = array();
@@ -160,10 +166,15 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 						$commentsUsers[$user] = array('count' => 0);
 						if($user_id > 0)
 						{
-							$metas = get_user_meta($user_id, '', true);
+							//$metas = get_user_meta($user_id, '', true); //TODO create option to show a defined user metas
+							$metas = array();
 							if(is_array($metas))
 							{
 								$metas = array_diff_key($metas, $defaults_metas);
+								foreach ($metas as $key => $value)
+								{
+									if( substr($key, 0, 1) == '_' ) unset($metas[$key]);
+								}
 							
 								$allmetas = array_merge($allmetas, array_keys($metas));
 								$commentsUsers[$user]['metas'] = $metas;
