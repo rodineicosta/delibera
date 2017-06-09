@@ -96,14 +96,14 @@ if($pautas_query->have_posts())
 	}
 }
 
-/*header('Pragma: public');
+header('Pragma: public');
 header('Cache-Control: no-store, no-cache, must-revalidate'); // HTTP/1.1
 header("Pragma: no-cache");
 header("Expires: 0");
 header('Content-Transfer-Encoding: none');
 header('Content-Type: application/vnd.ms-excel; charset=UTF-8'); // This should work for IE & Opera
 header("Content-type: application/x-msexcel; charset=UTF-8"); // This should work for the rest
-header('Content-Disposition: attachment; filename='.date('Ymd_His').'_'.__('relatorio', 'delibera').'.xls');*/
+header('Content-Disposition: attachment; filename='.date('Ymd_His').'_'.__('relatorio', 'delibera').'.xls');
 
 
 ob_start();
