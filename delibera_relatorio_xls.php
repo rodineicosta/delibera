@@ -68,7 +68,7 @@ if($pautas_query->have_posts())
 		$comment_fake->cats = is_array($cats) ? implode(', ',  $cats) : '';
 		$comment_fake->delibera_dates = \Delibera\Flow::getDeadlineDates($pauta->ID); 
 		
-		$comment_tmp = delibera_get_comments($pauta->ID, array('discussao', 'encaminhamento', 'encaminhamento_selecionado', 'resolucao'));
+		$comment_tmp = delibera_get_comments($pauta->ID);
 	    $comments = array_merge(
 	        $comments,
 	    	array($comment_fake),
@@ -79,9 +79,12 @@ if($pautas_query->have_posts())
 	{
 		if($comment->type == 'Pauta') continue;
 		
-		$situacao = delibera_get_situacao($comment->comment_post_ID);
+		$situacao_pauta = delibera_get_situacao($comment->comment_post_ID);
+		$situacao_comment = delibera_get_comment_situacao($comment->comment_ID);
+		$situacao_name = is_object($situacao_comment) ? $situacao_comment->name : $situacao_pauta->name;
+		
 	    $comment->pauta_title = get_the_title($comment->comment_post_ID);
-	    $comment->pauta_status = $situacao->name;
+	    $comment->pauta_status = $situacao_name;
 	    $comment->type = delibera_get_comment_type_label($comment, false, false);
 	    $comment->link = get_comment_link($comment);
 	    $comment->concordaram = (int) get_comment_meta($comment->comment_ID, 'delibera_numero_curtir', true);
@@ -93,14 +96,14 @@ if($pautas_query->have_posts())
 	}
 }
 
-header('Pragma: public');
+/*header('Pragma: public');
 header('Cache-Control: no-store, no-cache, must-revalidate'); // HTTP/1.1
 header("Pragma: no-cache");
 header("Expires: 0");
 header('Content-Transfer-Encoding: none');
 header('Content-Type: application/vnd.ms-excel; charset=UTF-8'); // This should work for IE & Opera
 header("Content-type: application/x-msexcel; charset=UTF-8"); // This should work for the rest
-header('Content-Disposition: attachment; filename='.date('Ymd_His').'_'.__('relatorio', 'delibera').'.xls');
+header('Content-Disposition: attachment; filename='.date('Ymd_His').'_'.__('relatorio', 'delibera').'.xls');*/
 
 
 ob_start();
