@@ -814,7 +814,12 @@ function delibera_notificar_replace_vars($subject, $user, $postReport, $admin = 
 
 	if($post)
 	{
-		$author = get_user_by('id', $post->post_author);
+		$author = get_user_by('id', $post->post_author); 
+		if($author === false) //is anonimous post?
+		{
+			$author = new stdClass();
+			$author->user_firstname = 'Anonymous';
+		}
 		$subject = str_ireplace("{post_title}", $post->post_title, $subject);
 		$subject = str_ireplace("{post_url}", delibera_notificar_get_mensagem_link($post), $subject);
 		$subject = str_ireplace("{post_author}", $author->user_firstname, $subject);
