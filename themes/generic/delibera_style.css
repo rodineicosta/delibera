@@ -217,8 +217,32 @@ resolucao - 90248f
     display: none;
 }
 
-.lista-de-pautas .navigation {
-	display: none;
+.lista-de-pautas .navigation li a,
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a,
+.lista-de-pautas .navigation li.disabled {
+	color: #fff;
+	text-decoration:none;
+}
+
+.lista-de-pautas .navigation li {
+	display: inline;
+}
+
+.lista-de-pautas .navigation li a,
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a,
+.lista-de-pautas .navigation li.disabled {
+	background-color: #6FB7E9;
+	border-radius: 3px;
+	cursor: pointer;
+	padding: 12px;
+	padding: 0.75rem;
+}
+
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a {
+	background-color: #3C8DC5;
 }
 
 /* BANNER CICLO VIDAS */
@@ -645,7 +669,7 @@ unlike_color: #ce282a
 	border-radius: 4px;
 }
 
-#painel_validacao p {
+.painel_validacao p {
 	font-weight: 700;
 	margin-bottom: 0px;
 	text-align: center;
@@ -658,6 +682,21 @@ unlike_color: #ce282a
 
 .delibera_lista_validacoes a.comment-reply-link {
 	display: none;
+}
+
+.delibera-comment-validacao-text {
+    float: left;
+    width: 100%;
+    padding: 2px 4px;
+    background-color: #ddd;
+    margin-top: 1em;
+    border-radius: 4px;
+}
+
+.delibera-aceitou-view,
+.delibera-rejeitou-view,
+.delibera-abstencao-view {
+    font-weight: bold;
 }
 
 .delibera-comment-author img {
@@ -1078,6 +1117,14 @@ color: #777;
     padding: 0.25em 0.5em;
     text-transform: uppercase;
     cursor: pointer;
+}
+
+.comentario_coluna1.delibera-comment-text {
+	font-weight: bolder;
+}
+
+.delibera-result-number {
+    font-weight: bold;
 }
 
 /* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */

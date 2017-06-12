@@ -657,10 +657,22 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		
 		if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
 		
+		$header = '';
+		$footer = '';
+		if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) != __( 'Cabeçalho' , 'delibera' ) )
+		{
+			$header = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).'<br/>'; //TODO better way to resolv this by forcing a new line (<br/>)
+		}
+		if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]) != __( 'Rodapé' , 'delibera' ) )
+		{
+			$footer = '<br/>'.htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]); //TODO better way to resolv this by forcing a new line (<br/>)
+		}
+		$mensage_default = $header.htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).$footer;
+		
 		$subject_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto"]);
-		$mensage_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);;
 		
 		$loop = false; // do a query loop?
+		
 		
 		if(!is_array($users))
 		{
@@ -680,10 +692,15 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 			$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
 		}
 		$paged = 1;
-		while(count($users > 0))
+		while(count($users) > 0)
 		{
 			foreach ($users as $user)
 			{
+				if(class_exists('Groups_Post_Access') && !Groups_Post_Access::user_can_read_post($post->ID, $user->ID)) // check groups restriction
+				{
+					continue;
+				}
+				
 				if(user_can($user->ID, 'votar') && isset($user->user_email) && $user->ID != $autor_id)
 				{
 					$segue = array_search($user->ID, $seguiram);
@@ -695,16 +712,26 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 						continue;
 					}
 	
-					$mensage_tmp = $mensage_default;
+					$mensage_tmp = $mensage_default; //TODO better name this vars
 					$subject_tmp = $subject_default;
 					
 					$lang = get_user_meta($user->ID, 'user_idioma', true);
 					
 					if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
 	
-					if(array_key_exists("$tipo-$lang", $options_plugin_delibera))
+					if(array_key_exists("$tipo-$lang", $options_plugin_delibera)) // Translating to user lang if we have
 					{
-						$mensage_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);
+						$header_user = $header; //Using default footer and header and replace if have translation 
+						$footer_user = $footer;
+						if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) != __( 'Cabeçalho' , 'delibera' ) )
+						{
+							$header_user = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).'<br/>'; //TODO better way to resolv this by forcing a new line (<br/>)
+						}
+						if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]) != __( 'Rodapé' , 'delibera' ) )
+						{
+							$footer_user = '<br/>'.htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]); //TODO better way to resolv this by forcing a new line (<br/>)
+						}
+						$mensage_tmp = $header_user . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin) . $footer_user;
 					}
 					if(array_key_exists("{$tipo}_assunto-$lang", $options_plugin_delibera))
 					{

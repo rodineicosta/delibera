@@ -52,7 +52,8 @@ function delibera_slug_under($label)
 
 function is_pauta($post = false)
 {
-	return get_post_type($post) == 'pauta' ? true : false;
+	$is_pauta = get_post_type($post) == 'pauta' ? true : false;
+	return apply_filters('delibera_is_pauta', $is_pauta, $post);
 }
 
 /**
@@ -235,7 +236,7 @@ if(!function_exists('array_value_recursive'))
 	/**
 	 * Get all values from specific key in a multidimensional array
 	 * based on php.net http://php.net/manual/en/function.array-values.php
-	 * 
+	 *
 	 * @param $key string
 	 * @param $arr array
 	 * @return null|string|array
@@ -291,5 +292,3 @@ if(is_plugin_active('mention-comments-authors/mention-comments-authors.php'))
 		 wp_localize_script( 'mca-comment-script', 'mcaAuthors', $authors );
 	}
 }
-
-

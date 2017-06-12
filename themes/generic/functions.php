@@ -126,7 +126,7 @@ function delibera_comment_form($defaults)
 					$defaults['must_log_in'] = sprintf(__('Você precisar <a href="%s">estar logado</a> e ter permissão para votar.','delibera'),wp_login_url( apply_filters( 'the_permalink', get_permalink( $post->ID ))));
 					if (delibera_current_user_can_participate()) {
 						$form = '
-						<div id="painel_validacao" >
+						<div class="painel_validacao" >
 						<input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>'.
 						(get_post_meta($post->ID, 'delibera_validation_show_abstencao', true) == 'S' ?
 							'<input id="delibera_validation_abstencao" type="radio" name="delibera_validacao" value="A"	/><label for="delibera_validation_abstencao" class="delibera_aceitar_radio_label">'.__('Abstenção','delibera').'</label>' : '' ).
@@ -229,6 +229,7 @@ function delibera_comment_form($defaults)
 						$tipo_votacao = get_post_meta($post->ID, 'tipo_votacao', true);
 						$form = '<div class="delibera_'.$tipo_votacao.'_voto">';
 						$encaminhamentos = delibera_get_comments_encaminhamentos($post->ID);
+						$show_based_proposals = null;
 						
 						$i = 0;
 						$users = array();
@@ -240,7 +241,15 @@ function delibera_comment_form($defaults)
 								foreach ($encaminhamentos as $encaminhamento)
 								{
 									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
-									if(!empty($hasbasedon)) continue; // TODO module and general option to show original proposals
+									$baseouseem = get_comment_meta($encaminhamento->comment_ID, "delibera-baseouseem", true);
+									
+									if(is_null($show_based_proposals))
+									{
+										$show_based_proposals = get_post_meta($encaminhamento->comment_post_ID, 'show_based_proposals', true);
+									}
+									
+									if(!empty($hasbasedon) && !$show_based_proposals) continue;
+									
 									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
@@ -249,6 +258,32 @@ function delibera_comment_form($defaults)
 									$form .= '<div id="delibera-voto-modal-'.$i.'" class="delibera-voto-modal"><div class="delibera-voto-modal-window"><div class="delibera-voto-modal-close">×</div>';
 										$form .= '<div id="delibera-voto-modal-content-'.$i.'" class="delibera-voto-modal-content">';
 											$form .= wpautop(apply_filters( 'get_comment_text', $encaminhamento->comment_content, $encaminhamento, array() ));
+											if(!empty($baseouseem))
+											{
+												$form .= '<div id="delibera-voto-modal-content-baseadaem-'.$i.'" class="delibera-voto-modal-content-baseadaem">';
+													$based_list = explode(',', $baseouseem);
+													foreach ($based_list as $baseouseem_element)
+													{
+														$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
+														if(!is_array($atts)) continue;
+														$comment_base = get_comment($atts['id']);
+														$form .=
+															'<label class="label-voto">
+																<div class="delibera-voto-content">
+																	<div class="delibera-voto-title">
+																		'.__('Proposta', 'delibera').' de '.get_comment_author($comment_base).'
+																	</div>
+																	<div class="delibera-voto-icons">
+																	</div>
+																	<div class="delibera-voto-text">
+																		'.$comment_base->comment_content.'
+																	</div>
+																</div>
+															</label>
+														';
+													}
+												$form .= '</div>';
+											}
 										$form .= '</div>';
 									$form .= '</div></div>';
 									$form .= '
@@ -289,7 +324,14 @@ function delibera_comment_form($defaults)
 								foreach ($encaminhamentos as $encaminhamento)
 								{
 									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
-									if(!empty($hasbasedon)) continue; // TODO module and general option to show original proposals
+									
+									if(is_null($show_based_proposals))
+									{
+										$show_based_proposals = get_post_meta($encaminhamento->comment_post_ID, 'show_based_proposals', true);
+									}
+									
+									if(!empty($hasbasedon) && !$show_based_proposals) continue;
+									
 									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
@@ -381,7 +423,7 @@ add_action('wp_enqueue_scripts', function()
 
 		if ($situacao->slug == 'relatoria')
 		{
-			wp_enqueue_script('delibera_relatoria_js', plugin_dir_url(__FILE__) . '/../../../js/delibera_relatoria.js', array('jquery'));
+			wp_enqueue_script('delibera_relatoria_js', WP_PLUGIN_URL.'/delibera/js/delibera_relatoria.js', array('jquery'));
 		}
 	}
 });
