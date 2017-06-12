@@ -35,6 +35,13 @@ class Result extends \Delibera\Modules\ModuleBase
 	 */
 	public $priority = 5;
 	
+	public function __construct()
+	{
+		parent::__construct();
+		
+		add_action('delibera-comments-list', array($this, 'commentsList'), 10, 1 );
+	}
+	
 	/**
 	 * Register Tax for the module
 	 */
@@ -225,6 +232,87 @@ class Result extends \Delibera\Modules\ModuleBase
 	public function getCommentListLabel()
 	{
 		return __('Resolução da Pauta', 'delibera');
+	}
+	
+	public function commentsList($post)
+	{
+		global $DeliberaFlow;
+		$flow = $DeliberaFlow->get($post->ID);
+		$last_module = $flow[count($flow) - 2];
+		$listText = '';
+		switch ($last_module)
+		{
+			case 'validacao':
+				$comments = delibera_get_comments($post->ID, 'validacao');
+				$validations = 0;
+				$rejections = 0;
+				$abstention = 0;
+				$total = 0;
+				
+				foreach ($comments as $comment)
+				{
+					switch ( get_comment_meta($comment->comment_ID, 'delibera_validacao', true) )
+					{
+						case 'S':
+							$validations++;
+						break;
+						case 'N':
+							$rejections++;
+						break;
+						case 'A':
+						default:
+							$abstention++;
+						break;
+					}
+					$total++;
+				}
+				$listText = '<ol class="commentlist">';  //TODO put that HTML on the theme
+					$listText .= '
+						<li class="comment even thread-even depth-1 delibera-comment-div-resolucao" >
+							<div class="delibera-comment-body delibera-comment-resolucao">
+								<div class="comentario_coluna1 delibera-comment-text">
+									'.__('Validações', 'delibera').'
+								</div>
+								<div class="comentario_coluna2 delibera-comment-text"><span class="delibera-result-number delibera-result-number-validation">
+									'.$validations."</span> "._n('Validação','Validações', $validations, 'delibera').
+											' ('.number_format_i18n( $validations > 0 && $total > 0 ? (($validations*100)/$total) : 0, 2).'%)
+								</div>
+							</div>
+						</li>
+					';
+					$listText .= '
+						<li class="comment odd thread-odd depth-1 delibera-comment-div-resolucao" >
+							<div class="delibera-comment-body delibera-comment-resolucao">
+								<div class="comentario_coluna1 delibera-comment-text">
+									'.__('Rejeições', 'delibera').'
+								</div>
+								<div class="comentario_coluna2 delibera-comment-text"><span class="delibera-result-number delibera-result-number-rejection">
+									'.$rejections."</span> "._n('Rejeição','Rejeições', $rejections, 'delibera').
+													' ('.number_format_i18n( $rejections > 0 && $total > 0 ? (($rejections*100)/$total) : 0, 2).'%)
+								</div>
+							</div>
+						</li>
+					';
+					$listText .= '
+						<li class="comment even thread-even depth-1 delibera-comment-div-resolucao" >
+							<div class="delibera-comment-body delibera-comment-resolucao">
+								<div class="comentario_coluna1 delibera-comment-text">
+									'.__('Abstenções', 'delibera').'
+								</div>
+								<div class="comentario_coluna2 delibera-comment-text"><span class="delibera-result-number delibera-result-number-abstention">
+									'.$abstention."</span> "._n('Abstenção','Abstenções', $abstention, 'delibera').
+													' ('.number_format_i18n( $abstention > 0 && $total > 0 ? (($abstention*100)/$total) : 0, 2).'%)
+								</div>
+							</div>
+						</li>
+					';
+				$listText .= '</ol>';
+			break;
+			default:
+				
+			break;
+		}
+		echo $listText;
 	}
 	
 }

@@ -41,8 +41,7 @@ function delibera_can_comment($postID = '')
 
 	if(is_null($postID))
 	{
-		$post = get_post($postID);
-		$postID = $post->ID;
+		$postID = get_the_ID();
 	}
 
 	$situacoes_validas = array('validacao' => true, 'discussao' => true, 'emvotacao' => true, 'elegerelator' => true);

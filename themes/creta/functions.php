@@ -120,7 +120,7 @@ function delibera_comment_form($defaults)
                     $defaults['must_log_in'] = sprintf(__('Você precisar <a href="%s">estar logado</a> e ter permissão para votar.','delibera'), wp_login_url(apply_filters('the_permalink', get_permalink($post->ID))));
                     if (delibera_current_user_can_participate()) {
                         $form = '
-                            <div id="painel_validacao" class="actions textcenter">
+                            <div class="painel_validacao actions textcenter">
                                 <button class="btn btn-success">Sim</button>
                                 <button class="btn btn-danger">Não</button>
                                 <input type="hidden" name="delibera_validacao" id="delibera_validacao" />

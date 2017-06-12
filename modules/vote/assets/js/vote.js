@@ -6,4 +6,10 @@ jQuery(document).ready(function() {
 		var id = jQuery(this).attr('id').replace('delibera-voto-bt-read-', '');
 		jQuery('#delibera-voto-modal-' + id).show();
 	});
+	jQuery('.delibera-voto-modal .delibera-voto-content').click(function(event){
+		jQuery(this).find('.delibera-voto-text').toggle();
+		jQuery('.delibera-voto-modal-window').animate({
+	        scrollTop: jQuery('.delibera-voto-title').offset().top
+	    }, 800);
+	});
 });

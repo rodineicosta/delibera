@@ -145,6 +145,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	{
 		$prazo_discussao = $this->generateDeadline($options_plugin_delibera);
 		$tipo_discussao = array_key_exists("tipo_discussao", $custom) ?  $custom["tipo_discussao"][0] : 'forum';
+		$delibera_show_default_comment_form = array_key_exists("delibera_show_default_comment_form", $custom) ?  $custom["delibera_show_default_comment_form"][0] : 'N';
 		
 		if(!($post->post_status == 'draft' ||
 				$post->post_status == 'auto-draft' ||
@@ -157,13 +158,17 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		<p>
 			<label class="label_prazo_discussao"><?php _e('Prazo para Discussões','delibera') ?>:</label>
 			<input <?php echo $disable_edicao ?> name="prazo_discussao" class="prazo_discussao widefat hasdatepicker" value="<?php echo $prazo_discussao; ?>"/>
-		</p>
+		</p><?php /*?>
 		<p>
 			<label class="label_tipo_discussao"><?php _e('Tipo de Discussões','delibera') ?>:</label>
 			<input <?php echo $disable_edicao ?> name="tipo_discussao" class="tipo_discussao widefat" value="<?php echo $tipo_discussao; ?>"/>
 		</p>
-		<?php
-		
+		<?php */ ?>
+		<p>
+			<label class="label_delibera_show_default_comment_form" title="<?php _e('Mostrar campo para opinião/encaminhamento padrão com o comentário por parágrafo ativo?','delibera') ?>" ><?php _e('Permitir comentários gerais?','delibera') ?>:
+				<input <?php echo $disable_edicao ?> name="delibera_show_default_comment_form" type="checkbox" value="S" class="delibera_show_default_comment_form widefat delibera-admin-checkbox" <?php echo $delibera_show_default_comment_form== 'S' ? 'checked="checked"' : ''; ?> />
+			</label>
+		</p><?php
 	}
 	
 	public function publishPauta($postID, $opt)
@@ -231,6 +236,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		{
 			$events_meta['tipo_discussao'] = sanitize_text_field($_POST['tipo_discussao']);
 		}
+		$events_meta['delibera_show_default_comment_form'] = array_key_exists('delibera_show_default_comment_form', $_POST) ? sanitize_text_field($_POST['delibera_show_default_comment_form']) : 'N';
 		
 		return $events_meta;
 	}
@@ -290,13 +296,64 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	 */
 	public function template_redirect()
 	{
-		$tipo = get_post_meta(get_the_ID(), 'tipo_discussao', true);
+		/*$tipo = get_post_meta(get_the_ID(), 'tipo_discussao', true);
 		if($tipo == 'side')
 		{
 			require_once DELIBERA_DIR_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+			if(function_exists('\Delibera\Includes\SideComments\wpsc_init_side_comments'))
+			{
+				\Delibera\Includes\SideComments\wpsc_init_side_comments();
+			}
+		}*/
+	}
+	
+	public static function treatCommentType($comment, $encaminhamento)
+	{
+		$comment_id = $comment->comment_ID;
+		if($encaminhamento == "S")
+		{
+			add_comment_meta($comment_id, 'delibera_comment_tipo', 'encaminhamento', true);
+			$nencaminhamentos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', true);
+			$nencaminhamentos++;
+			update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', $nencaminhamentos);
+			if(array_key_exists('delibera-baseouseem', $_POST) && !empty($_POST['delibera-baseouseem']))
+			{
+				add_comment_meta($comment_id, 'delibera-baseouseem', $_POST['delibera-baseouseem'], true);
+				$based_list = explode(',', $_POST['delibera-baseouseem']);
+				foreach ($based_list as $baseouseem_element)
+				{
+					$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
+					if(!is_array($atts)) continue;
+					if(array_key_exists('id', $atts))
+					{
+						update_comment_meta($atts['id'], 'delibera-hasbasedon', $comment_id);
+					}
+				}
+			}
+		}
+		else
+		{
+			add_comment_meta($comment_id, 'delibera_comment_tipo', 'discussao', true);
+			$ndiscussoes = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_discussoes', true);
+			$ndiscussoes++;
+			update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_discussoes', $ndiscussoes);
+		}
+		if(has_action('delibera_nova_discussao'))
+		{
+			do_action('delibera_nova_discussao', $comment_id, $comment, $encaminhamento);
 		}
 	}
 	
+	public static function isEncaminhamento($comment_id)
+	{
+		return get_comment_meta($comment_id, 'delibera_comment_tipo', true) == 'encaminhamento';
+	}
+	
+	public static function showDefaultCommentForm($post_id = false)
+	{
+		if(!$post_id) $post_id = get_the_ID();
+		return get_post_meta($post_id, 'delibera_show_default_comment_form', true) == 'S';
+	}
 }
 $DeliberaDiscussion = new \Delibera\Modules\Discussion();
 

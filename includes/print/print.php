@@ -38,6 +38,6 @@ $withcomments = true;
 if(file_exists(TEMPLATEPATH.'/print-posts.php')) {
 	include(TEMPLATEPATH.'/print-posts.php');
 } else {
-	include(WP_PLUGIN_DIR.'/delibera/print/print-posts.php');
+	include(plugin_dir_path(__FILE__).'/print-posts.php');
 }
 ?>

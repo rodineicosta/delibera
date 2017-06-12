@@ -104,6 +104,8 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'de
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'si-captcha.php';
 
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+
  /**
    * Redir e ciona usuários que não são membros do site
  * onde o Delibera foi instalado para a página de pautas após o

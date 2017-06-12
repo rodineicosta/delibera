@@ -42,10 +42,15 @@
 			
 			<?php if (!empty($links)) : ?>
 				<nav class="navigation">
-					<ol>
-						<?php foreach ($links as $link) : ?>
+					<ol><?php
+						/**	Previous Post Link */
+						if ( get_previous_posts_link() )
+							printf( '<li>%s</li>' . "\n", get_previous_posts_link() );
+						foreach ($links as $link) : ?>
 							<li><?php echo $link; ?></li>
-						<?php endforeach; ?>
+						<?php endforeach;
+						if ( get_next_posts_link() )
+							printf( '<li>%s</li>' . "\n", get_next_posts_link() );?>
 					</ol>
 				</nav>
 			<?php endif; ?>

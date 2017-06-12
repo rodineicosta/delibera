@@ -20,8 +20,13 @@ function delibera_pauta_custom_meta()
  * @param int $postID
  * @return mixed term name in taxonomy situacao or false
  */
-function delibera_get_situacao($postID)
+function delibera_get_situacao($postID = false)
 {
+	if($postID === false)
+	{
+		$postID = get_the_ID();
+		if($postID === false) return false;
+	}
 	$situacao = get_the_terms($postID, 'situacao');
 	$ret = false;
 	if(is_array($situacao) && count($situacao)  > 0)
@@ -489,6 +494,7 @@ function deliberaCreateTopic($args = array())
 			$pauta['post_category'] = $args['post_category'];
 		}
 		
+		$_POST['delibera_flow'] = $args['delibera_flow'];
 		// Load defaults modules values at $_POST
 		do_action('delibera_create_pauta_frontend', $opt);
 		

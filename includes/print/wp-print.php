@@ -44,7 +44,7 @@ function delibera_print()
         global $wp_query;
         $wp_query->set('posts_per_page', get_query_var('number-options'));
         query_posts($wp_query->query_vars);
-		include(WP_PLUGIN_DIR.'/delibera/print/print.php');
+		include(plugin_dir_path(__FILE__).'/print.php');
 		exit();
 	}
 }
@@ -53,10 +53,6 @@ add_action('template_redirect', 'delibera_print', 5);
 ### Function: Print Content
 function print_content($display = true) {
 	global $links_text, $link_number, $max_link_number, $matched_links,  $pages, $multipage, $numpages, $post;
-    if (!isset($link_text) && isset($link_url)) {
-        $link_text = $link_url;
-    }
-
 	if (!isset($matched_links)) {
 		$matched_links = array();
 	}
@@ -96,7 +92,12 @@ function print_content($display = true) {
 				} else {
 					$link_url =(strtolower(substr($link_url,0,7)) != 'http://') ?get_option('home') . $link_url : $link_url;
 				}
-				$link_text = $matches[4][$i];+				
+				$link_text = $matches[4][$i];
+				
+				if (!isset($link_text) && isset($link_url)) {
+					$link_text = $link_url;
+				}
+				
 				$new_link = true;
 				$link_url_hash = md5($link_url);
 				if (!isset($matched_links[$link_url_hash])) {
@@ -139,15 +140,11 @@ function print_categories($before = '', $after = '', $parents = '')
 ### Function: Print Comments Content
 function print_comments_content($display = true) {
 	global $links_text, $link_number, $max_link_number, $matched_links;
-    if (!isset($link_text) && isset($link_url)) {
-        $link_text = $link_url;
-    }
-
 	if (!isset($matched_links)) {
 		$matched_links = array();
 	}
 	$content  = get_comment_text();
-	$content = apply_filters('comment_text', $content);
+	$content = apply_filters('comment_text', $content, get_comment());
 	if(!print_can('images')) {
 		$content = remove_image($content);
 	}
@@ -167,6 +164,10 @@ function print_comments_content($display = true) {
 				$link_url = $link_url; 
 			} else {
 				$link_url =(strtolower(substr($link_url,0,7)) != 'http://') ?get_option('home') . $link_url : $link_url;
+			}
+			$link_text = $matches[4][$i];
+			if (!isset($link_text) && isset($link_url)) {
+				$link_text = $link_url;
 			}
 			$new_link = true;
 			$link_url_hash = md5($link_url);
@@ -234,7 +235,7 @@ function print_template_comments($file = '') {
 	if(file_exists(TEMPLATEPATH.'/print-comments.php')) {
 		$file = TEMPLATEPATH.'/print-comments.php';
 	} else {
-		$file = WP_PLUGIN_DIR.'/delibera/print/print-comments.php';
+		$file = plugin_dir_path(__FILE__).'/print-comments.php';
 	}
 	return $file;
 }

@@ -245,7 +245,7 @@ add_action( 'admin_print_scripts', 'delibera_admin_scripts' );
 
 function delibera_print_font_styles()
 {
-	wp_enqueue_style('delibera-font', plugin_dir_url(__FILE__). '/css/fonts/fontello-6acce062/css/delibera.css');
+	wp_enqueue_style('delibera-font', plugin_dir_url(__FILE__). '/css/fonts/fontello-9536d925/css/delibera.css');
 }
 add_action('wp_print_scripts', 'delibera_print_font_styles');
 
@@ -476,4 +476,13 @@ function fb_opengraph() {
         return;
     }
 }
-add_action('wp_head', 'fb_opengraph', 20);
+
+function delibera_plugins_loaded_fb_opengraph()
+{
+	if( ! class_exists('general_setting_default_fb_thumb') )
+	{
+		add_action('wp_head', 'fb_opengraph', 20);
+	}
+}
+add_action('plugins_loaded', 'delibera_plugins_loaded_fb_opengraph');
+
