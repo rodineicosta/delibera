@@ -186,7 +186,10 @@ function delibera_init()
 
 	global $delibera_comments_padrao;
 	$delibera_comments_padrao = false;
-
+	
+	if(! is_plugin_active('facebook-thumb-fixer'))
+		add_filter('language_attributes', 'delibera_doctype_opengraph');
+	
 }
 add_action('init','delibera_init');
 
@@ -424,14 +427,13 @@ function delibera_register_required_plugins() {
 	tgmpa( $plugins, $config );
 }
 
-function doctype_opengraph($output) {
+function delibera_doctype_opengraph($output) {
     return $output . '
     xmlns:og="http://opengraphprotocol.org/schema/"
     xmlns:fb="http://www.facebook.com/2008/fbml"';
 }
-add_filter('language_attributes', 'doctype_opengraph');
 
-function fb_opengraph() {
+function delibera_fb_opengraph() {
     global $post;
 
     if(is_single())
@@ -481,7 +483,8 @@ function delibera_plugins_loaded_fb_opengraph()
 {
 	if( ! class_exists('general_setting_default_fb_thumb') )
 	{
-		add_action('wp_head', 'fb_opengraph', 20);
+		if(! is_plugin_active('facebook-thumb-fixer'))
+			add_action('wp_head', 'delibera_fb_opengraph', 20);
 	}
 }
 add_action('plugins_loaded', 'delibera_plugins_loaded_fb_opengraph');
