@@ -1134,6 +1134,10 @@ color: #777;
 	overflow: auto;
 }
 
+.pairwise-voto .delibera-voto-text {
+	display: block;
+}
+
 .delibera-based-voto-box {
     width: 100%;
     float: left;
