@@ -522,6 +522,131 @@ class Vote extends \Delibera\Modules\ModuleBase
 		return __('Votação da Pauta', 'delibera');
 	}
 	
+	public static function updateProbabilities($post_id = false, $probabilities = false, $id1, $id2)
+	{
+		if($post_id == false) $post_id = get_the_ID();
+		if($probabilities == false) $probabilities = self::getProbabilities($post_id);
+		
+		foreach ($probabilities['probability'] as $index => $probability)
+		{
+			if( ($probabilities['id'][$index] == $id1|| $probabilities['id'][$index] == $id2) && $probabilities['probability'][$index] > 1 )
+			{
+				$probabilities['probability'][$index]--;
+			}
+			$probabilities['cumulative'][$index] = $index > 0 ?
+				$probabilities['cumulative'][$index - 1] + $probabilities['probability'][$index]:
+				$probabilities['probability'][$index]
+			;
+		}
+		update_post_meta($post_id, '_delibera_options_probabilities', $probabilities);
+		return $probabilities;
+	}
+	
+	public static function createProbabilitiesOpionsArray($post_id = false)
+	{
+		if($post_id == false) $post_id = get_the_ID();
+		
+		$options = delibera_get_comments_encaminhamentos($post_id);
+		
+		shuffle($options); // lets random the options too
+		
+		$probabilities = array('id' => array(), 'probability' => array(), 'cumulative' => array());
+		$num_options = count($options);
+		foreach ($options as $option)
+		{
+			$probabilities['id'][] = $option->comment_ID;
+			$probabilities['probability'][] = $num_options;
+			$probabilities['cumulative'][] = count($probabilities['cumulative']) > 0 ?
+				$probabilities['cumulative'][count($probabilities['cumulative']) - 1]+$num_options :
+				$num_options
+			;
+		}
+		$probabilities['cumulative'][count($probabilities['cumulative']) - 1]++;
+		update_post_meta($post_id, '_delibera_options_probabilities', $probabilities);
+		return $probabilities;
+	}
+	
+	public static function getProbabilities($post_id = false)
+	{
+		if($post_id == false) $post_id = get_the_ID();
+		
+		$options_probabilities = get_post_meta($post_id, '_delibera_options_probabilities', true);
+		if(empty($options_probabilities) || !is_array($options_probabilities))
+		{
+			$options_probabilities = self::createProbabilitiesOpionsArray($post_id);
+		}
+		return $options_probabilities;
+	}
+	
+	public static function updateCumulativeProbability($probabilities)
+	{
+		foreach ($probabilities['probability'] as $index => $probability)
+		{
+			$probabilities['cumulative'][$index] = $index > 0 ?
+				$probabilities['cumulative'][$index - 1] + $probability:
+				$probability
+			;
+		}
+		$probabilities['cumulative'][count($probabilities['cumulative']) - 1]++;
+		return $probabilities;
+	}
+	
+	public static function deleteProbability($probabilities, $index)
+	{
+		array_splice($probabilities['cumulative'], $index, 1);
+		array_splice($probabilities['probability'], $index, 1);
+		array_splice($probabilities['id'], $index, 1);
+		$probabilities = self::updateCumulativeProbability($probabilities);
+		return $probabilities;
+	}
+	
+	public static function getAPair($post_id = false)
+	{
+		$probabilities = self::getProbabilities($post_id);
+		$options_probabilities = $probabilities;
+		$options_probabilities2 = $probabilities;
+		if(count($options_probabilities['id']) > 1) // need at least a pair
+		{
+			$max = $options_probabilities['cumulative'][count($options_probabilities['cumulative']) -1] - 1;//echo "max: $max\n";
+			$min = 0;
+			$rand1 = mt_rand($min, $max);//echo "rand1: $rand1\n";
+			$index1 = -1;
+			$prev_cumulative_val = 0;
+			//print_r($options_probabilities);
+			foreach ($options_probabilities['cumulative'] as $index => $cumulative_val)
+			{
+				if($rand1 >= $prev_cumulative_val && $rand1 < $cumulative_val)
+				{
+					$index1 = $index;
+					//echo "Index1: $index\n";
+					$options_probabilities2 = self::deleteProbability($options_probabilities2, $index);
+					break;
+				}
+				$prev_cumulative_val = $cumulative_val;
+			}
+			
+			$prev_cumulative_val = 0;
+			$index2 = -1;
+			$max = $options_probabilities2['cumulative'][count($options_probabilities2['cumulative'])-1] - 1;//echo "max2: $max\n";
+			$rand2 = mt_rand($min, $max);//echo "rand2: $rand2\n";
+			//print_r($options_probabilities2);
+			foreach ($options_probabilities2['cumulative'] as $index => $cumulative_val)
+			{
+				if($rand2 >= $prev_cumulative_val && $rand2 < $cumulative_val)
+				{
+					$index2 = $index;
+					//echo "Index2: $index\n";
+					break;
+				}
+				$prev_cumulative_val = $cumulative_val;
+			}
+			if($index1 == -1 || $index2 == -1) return false;
+			
+			return array($options_probabilities['id'][$index1], $options_probabilities2['id'][$index2]);
+		}
+		return false;
+	}
+	
 }
 $DeliberaVote = new \Delibera\Modules\Vote();
 
