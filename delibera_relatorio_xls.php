@@ -10,16 +10,18 @@ use Delibera\Includes\SideComments\CTLT_WP_Side_Comments;
 // contorna problema com links simbolicos no ambiente de desenvolvimento
 $wp_root = dirname(dirname($_SERVER['SCRIPT_FILENAME'])) . '/../../';
 
-$is_direct_call = substr($_SERVER['SCRIPT_FILENAME'], - strlen('delibera_relatorio_xls.php')) == 'delibera_relatorio_xls.php';
+$is_direct_call = strpos($_SERVER['SCRIPT_FILENAME'], 'delibera_relatorio_xls.php') !== false;
 
 if($is_direct_call)
 {
 	require_once($wp_root . 'wp-load.php');
 }
 
-if (!current_user_can('manage_options')) {
+if(!is_user_logged_in()) wp_redirect(wp_login_url(get_permalink().'?delibera_print_xls=1'));
+
+/*if (!current_user_can('manage_options')) {
     die('Você não deveria estar aqui');
-}
+}*/ // Allow access to all user TODO check if do not have any retricted information, like user e-mail or IP
 
 $pautas_query = false;
 
@@ -64,7 +66,7 @@ if($pautas_query->have_posts())
 		$comment_fake->discordaram = (int) get_post_meta($pauta->ID, 'delibera_numero_discordar', true);
 		$comment_fake->votes_count = (int) get_post_meta($pauta->ID, "delibera_numero_comments_votos", true);
 		$comment_fake->comment_author = get_the_author();
-		$comment_fake->comment_author_email = get_the_author_meta('email', $pauta->post_author);
+		$comment_fake->comment_author_email = current_user_can('edit_posts') ? get_the_author_meta('email', $pauta->post_author) : '';
 		$comment_fake->comment_content = get_the_content();
 		$temas =  wp_get_object_terms($pauta->ID, 'tema', array('orderby' => 'name', 'order' => 'ASC', 'fields' => 'names'));
 		$comment_fake->temas = is_array($temas) ? implode(', ', $temas) : '';
@@ -72,7 +74,7 @@ if($pautas_query->have_posts())
 		$comment_fake->tags = is_array($tags) ? implode(', ',  $tags) : '';
 		$cats = wp_get_object_terms($pauta->ID, 'category', array('orderby' => 'name', 'order' => 'ASC', 'fields' => 'names'));
 		$comment_fake->cats = is_array($cats) ? implode(', ',  $cats) : '';
-		$comment_fake->delibera_dates = \Delibera\Flow::getDeadlineDates($pauta->ID);
+		$comment_fake->delibera_dates = \Delibera\Flow::getFlowDates($pauta->ID);
 		
 		$pauta_sessions = class_exists('\Delibera\Includes\SideComments\CTLT_WP_Side_Comments') ? \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getPostSectionsList($pauta->ID) : array();
 		$sessions[$pauta->ID] = $pauta_sessions;
@@ -162,7 +164,7 @@ $situacoes = get_terms('situacao', array('hide_empty' => false));
 	        <td><?php echo $comment->pauta_title; ?></td>
 	        <td><?php echo $comment->pauta_status; ?></td>
 	        <td><?php echo $comment->comment_author; ?></td>
-	        <td><?php echo $comment->comment_author_email; ?></td>
+	        <td><?php echo current_user_can('edit_posts') ? $comment->comment_author_email : ''; ?></td>
 	        <td><?php echo $comment->type; ?></td>
 	        <td><?php 
 	        	if(empty($comment->session))
