@@ -41,7 +41,10 @@ class Vote extends \Delibera\Modules\ModuleBase
 		parent::__construct();
 		add_action( 'admin_print_scripts', array($this, 'adminScripts') );
 		add_action( 'wp_enqueue_scripts', array($this, 'js') );
-		add_filter('delibera_unfilter_duplicate', array($this, 'unfilterDuplicate'));
+		add_filter( 'delibera_unfilter_duplicate', array($this, 'unfilterDuplicate') );
+		
+		add_action( 'wp_ajax_delibera_vote_callback', array($this, 'voteCallback') );
+		//add_action( 'wp_ajax_nopriv_delibera_vote_callback', array($this, 'voteCallback') );
 	}
 	
 	/**
@@ -476,7 +479,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 		$users_count = 0;
 		foreach ($wp_roles->roles as $nome => $role)
 		{
-			if(is_array($role['capabilities']) && array_key_exists('votar', $role['capabilities']) && $role['capabilities']['votar'] == 1 ? "SSSSSim" : "NNNnnnnnnnao")
+			if(is_array($role['capabilities']) && array_key_exists('votar', $role['capabilities']) && $role['capabilities']['votar'] == 1)
 			{
 				$result = $wpdb->get_results("SELECT count(*) as n FROM $wpdb->usermeta WHERE meta_key = 'wp_capabilities' AND meta_value LIKE '%$nome%' ");
 				$users_count += $result[0]->n;
@@ -529,18 +532,23 @@ class Vote extends \Delibera\Modules\ModuleBase
 		if($post_id == false) $post_id = get_the_ID();
 		if($probabilities == false) $probabilities = self::getProbabilities($post_id);
 		
+		$num_options = count($probabilities);
 		foreach ($probabilities['probability'] as $index => $probability)
 		{
 			if( ($probabilities['id'][$index] == $id1|| $probabilities['id'][$index] == $id2) && $probabilities['probability'][$index] > 1 )
 			{
 				$probabilities['probability'][$index]--;
 			}
+			elseif($probabilities['probability'][$index] < $num_options)
+			{
+				$probabilities['probability'][$index]++;
+			}	
 			$probabilities['cumulative'][$index] = $index > 0 ?
 				$probabilities['cumulative'][$index - 1] + $probabilities['probability'][$index]:
 				$probabilities['probability'][$index]
 			;
 		}
-		update_post_meta($post_id, '_delibera_options_probabilities', $probabilities);
+		update_post_meta($post_id, '_delibera_vote_options_probabilities', $probabilities);
 		return $probabilities;
 	}
 	
@@ -564,7 +572,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 			;
 		}
 		$probabilities['cumulative'][count($probabilities['cumulative']) - 1]++;
-		update_post_meta($post_id, '_delibera_options_probabilities', $probabilities);
+		update_post_meta($post_id, '_delibera_vote_options_probabilities', $probabilities);
 		return $probabilities;
 	}
 	
@@ -572,7 +580,7 @@ class Vote extends \Delibera\Modules\ModuleBase
 	{
 		if($post_id == false) $post_id = get_the_ID();
 		
-		$options_probabilities = get_post_meta($post_id, '_delibera_options_probabilities', true);
+		$options_probabilities = get_post_meta($post_id, '_delibera_vote_options_probabilities', true);
 		if(empty($options_probabilities) || !is_array($options_probabilities))
 		{
 			$options_probabilities = self::createProbabilitiesOpionsArray($post_id);
@@ -604,6 +612,8 @@ class Vote extends \Delibera\Modules\ModuleBase
 	
 	public static function getAPair($post_id = false)
 	{
+		if($post_id == false) $post_id = get_the_ID();
+		
 		$probabilities = self::getProbabilities($post_id);
 		$options_probabilities = $probabilities;
 		$options_probabilities2 = $probabilities;
@@ -649,6 +659,75 @@ class Vote extends \Delibera\Modules\ModuleBase
 		return false;
 	}
 	
+	public static function updatePairStats($post_id = false, $vote, $id1, $id2)
+	{
+		if($post_id == false) $post_id = get_the_ID();
+		
+		$looser = $vote == $id1 ? $id2 : $id1;
+		
+		$pairstats = get_post_meta($post_id, '_delibera_vote_pair_stats', true);
+		if(!is_array($pairstats)) $pairstats = array();
+		if(!array_key_exists($vote, $pairstats)) $pairstats[$vote] = array();
+		if(!array_key_exists($looser, $pairstats[$vote])) $pairstats[$vote][$looser] = 0;
+		$pairstats[$vote][$looser]++;
+		update_post_meta($post_id, '_delibera_vote_pair_stats', $pairstats);
+	}
+	
+	/**
+	 * Hook executado quando algum usuário escole um opção de voto
+	 *
+	 * @package Pauta\Vote
+	 */
+	public function voteCallback()
+	{
+		if(check_admin_referer( 'delibera_vote_callback', 'nonce' ) && is_user_logged_in() && current_user_can('vote') )
+		{
+			$post_id = esc_attr($_REQUEST['post_id']);
+			$situacao = delibera_get_situacao($post_id);
+			if($situacao->slug == 'emvotacao')
+			{
+				$user = get_current_user();
+				$_POST['delibera_comment_tipo'] = 'voto';
+				if(class_exists('\wpCommentAttachment')) remove_filter('comment_text', array(new \wpCommentAttachment, 'displayAttachment'), 10, 3); // remove problematic filter
+				$ret = delibera_new_comment($post_id, 'Voto de '.$user, 'voto', 0);
+				$pair = explode(',', esc_attr($_REQUEST['pair']));
+				self::updateProbabilities($post_id, false, $pair[0], $pair[1]);
+				self::updatePairStats($post_id, esc_attr($_REQUEST['delibera_voto']), $pair[0], $pair[1]);
+				$proposals = delibera_get_comments_encaminhamentos($post_id);
+				echo delibera_generateProposalPair($proposals, '', array(), $post_id);
+			}
+		}
+		die();
+	}
+	
+	public static function newVote($comment_id = false)
+	{
+		add_comment_meta($comment_id, 'delibera_comment_tipo', 'voto', true);
+		
+		$votos = array();
+		
+		foreach ($_POST as $postkey => $postvar)
+		{
+			if( substr($postkey, 0, strlen('delibera_voto')) == 'delibera_voto' )
+			{
+				$votos[] = $postvar;
+			}
+		}
+		
+		add_comment_meta($comment_id, 'delibera_votos', $votos, true);
+		
+		$comment = get_comment($comment_id);
+		//delibera_valida_votos($comment->comment_post_ID); TODO use module version
+		
+		$nvotos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', true);
+		$nvotos++;
+		update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', $nvotos);
+		
+		if(has_action('delibera_novo_voto'))
+		{
+			do_action('delibera_novo_voto', $comment_id, $comment, $votos);
+		}
+	}
 }
 $DeliberaVote = new \Delibera\Modules\Vote();
 

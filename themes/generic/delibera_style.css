@@ -1138,6 +1138,22 @@ color: #777;
 	display: block;
 }
 
+.delibera_pairwise_voto label.label-voto, #delibera-pairwise-entry {
+    position: relative;
+    display: block;
+    float: left;
+    width: 100%;
+    cursor: pointer;
+}
+
+.delibera_pairwise_voto {
+	overflow: auto;
+}
+
+#botao-oculto {
+	display: none;
+}
+
 .delibera-based-voto-box {
     width: 100%;
     float: left;
