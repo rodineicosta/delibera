@@ -1,6 +1,6 @@
 function delibera_update_vote_events()
 {
-	jQuery(".delibera_pairwise_voto label.label-voto").click(function(){
+	/*jQuery(".delibera_pairwise_voto label.label-voto").click(function(){
 		var data = {
             action : "delibera_vote_callback",
             nonce: jQuery('#_wpnonce_delibera_vote_callback').val(),
@@ -16,7 +16,7 @@ function delibera_update_vote_events()
             	delibera_update_pair_events();
             }
 		);
-	});
+	});*/
 	jQuery('.delibera-voto-modal-close').click(function (){
 		jQuery(this).parent().parent().hide();
 	});

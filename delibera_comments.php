@@ -555,6 +555,36 @@ function delibera_wp_list_comments($args = array(), $comments = null)
 
 			<?php
 		}
+		elseif($situacao->slug == 'emvotacao')
+		{
+			$tipo = \Delibera\Modules\Vote::getVoteType();
+
+			if($tipo == 'pairwise')
+			{
+				$votos = \Delibera\Modules\Vote::getVoteCount();
+				//echo $votos;
+				//TODO put that HTML on the theme
+				?>
+				<li class="comment even thread-even depth-1 delibera-comment-div-emvotacao-pairwise" >
+					<div class="delibera-comment-body delibera-comment-emvotacao delibera-comment-emvotacao-pairwise">
+						<div class="comentario_coluna1 delibera-comment-text">
+							<?php _e('Número de votos até o momento', 'delibera'); ?>
+						</div>
+						<div class="comentario_coluna2 delibera-comment-text">
+							<span class="delibera-result-number delibera-result-number-votes">
+								<?php echo $votos; ?>
+							</span>
+							<?php echo _n('Voto','Votos', $votos, 'delibera'); ?>
+						</div>
+					</div>
+				</li> 	<?php
+			}
+			else
+			{
+				$args['walker'] = new Delibera_Walker_Comment();
+				wp_list_comments($args, $comments);
+			}
+		}
 		else
 		{
 			$args['walker'] = new Delibera_Walker_Comment();

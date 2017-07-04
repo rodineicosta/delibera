@@ -336,7 +336,7 @@ function delibera_comment_form($defaults)
 							break;
 							case 'pairwise':
 								$form = delibera_generateProposalPair($encaminhamentos, $form, $users);
-								$defaults['id_submit'] = "botao-oculto"; // for click callback on option
+								//$defaults['id_submit'] = "botao-oculto"; // for click callback on option
 							break;
 							case 'checkbox':
 							default:
@@ -577,6 +577,9 @@ function delibera_generateProposalPair($proposals, $form = "", $users = array(),
 	if($post_id === false) $post_id = get_the_ID();
 	$i = 0;
 	$pair = \Delibera\Modules\Vote::getAPair($post_id);
+	
+	if(!is_array($pair) || count($pair) != 2) return $form;
+	
 	$form .= '<div id="delibera-pairwise-entry"><h3 class="comment-respond">'.__('Escolha a melhor proposta:','delibera').'</h3>';
 	$form .= wp_nonce_field('delibera_vote_callback', '_wpnonce_delibera_vote_callback', true, false);
 	$form .= '<input type="hidden" name="delibera-pair" id="delibera-votes-pair" value="'.implode(',', $pair).'" />';
@@ -634,7 +637,6 @@ function delibera_generateProposalPair($proposals, $form = "", $users = array(),
 		$form .= '
 			<div id="delibera-voto-option-'.$i.'" class="delibera-voto-option pairwise-voto '.$hasbasedon_class.'">
 				<label id="delibera-label-voto-'.$i.'" for="delibera_voto'.$i.'" class="label-voto">
-					<input type="hidden" name="delibera_voto" id="delibera_voto'.$i.'" value="'.$encaminhamento->comment_ID.'" />
 					<div class="delibera-voto-content">
 						<div class="delibera-voto-title">
 							'.__('Proposta', 'delibera').' '.$users[$encaminhamento->comment_author].' de @'.get_comment_author($encaminhamento).'
@@ -647,6 +649,7 @@ function delibera_generateProposalPair($proposals, $form = "", $users = array(),
 					</div>
 				</label>
 				<div id="delibera-voto-bt-read-'.$i.'" class="delibera-voto-bt-read">'.__('Proposta Completa', 'delibera').'</div>
+				<input type="radio" name="delibera_voto" id="delibera_voto'.$i.'" value="'.$encaminhamento->comment_ID.'" />
 			</div>
 		';
 		$i++;
