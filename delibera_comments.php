@@ -379,6 +379,9 @@ function delibera_save_comment_metas($comment_id)
 	delibera_discordar_comment_meta($comment_id);
 
 	$comment = get_comment($comment_id);
+	$situacao = delibera_get_situacao($comment->comment_post_ID);
+	
+	add_comment_meta($comment_id, 'delibera_situacao', $situacao->slug, true); // save situacao when comment has been created for better history
 
 	switch($tipo)
 	{
@@ -499,7 +502,7 @@ function delibera_get_comments_padrao($args = array(), $file = '/comments.php' )
  * @param string|array $tipo um tipo ou um array de tipos
  * @return array
  */
-function delibera_get_comments($post_id, $tipo, $args = array())
+function delibera_get_comments($post_id, $tipo = array(), $args = array())
 {
 	if (is_string($tipo)) {
 		$tipo = array($tipo);
@@ -511,7 +514,7 @@ function delibera_get_comments($post_id, $tipo, $args = array())
 	foreach ($comments as $comment)
 	{
 		$comment_tipo = get_comment_meta($comment->comment_ID, 'delibera_comment_tipo', true);
-		if (in_array($comment_tipo, $tipo)) {
+		if ( ( strlen($comment_tipo) > 0 && count($tipo) == 0 /* do not filter, but is delibera comment */) || in_array($comment_tipo, $tipo) ) {
 			$ret[] = $comment;
 		}
 	}
@@ -889,3 +892,14 @@ function delibera_comment_flood_filter($block, $time_lastcomment, $time_newcomme
 	return $block;
 }
 add_filter( 'comment_flood_filter', 'delibera_comment_flood_filter', 10, 3 );
+
+/**
+ * Return pauta situation when comment is created
+ * 
+ * @param integer $commentID
+ * @return WP_Term|boolean
+ */
+function delibera_get_comment_situacao($commentID)
+{
+	return delibera_get_situacao_by_slug(get_comment_meta($commentID, 'delibera_situacao', true));
+}

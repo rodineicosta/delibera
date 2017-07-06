@@ -8,18 +8,34 @@
 // contorna problema com links simbolicos no ambiente de desenvolvimento
 $wp_root = dirname(dirname($_SERVER['SCRIPT_FILENAME'])) . '/../../';
 
-require_once($wp_root . 'wp-load.php');
+$is_direct_call = substr($_SERVER['SCRIPT_FILENAME'], - strlen('delibera_relatorio_xls.php')) == 'delibera_relatorio_xls.php';
+
+if($is_direct_call)
+{
+	require_once($wp_root . 'wp-load.php');
+}
 
 if (!current_user_can('manage_options')) {
     die('Você não deveria estar aqui');
 }
 
-//$pautas = get_posts(array('post_type' => 'pauta', 'post_status' => 'publish'));
-$pautas_query = new WP_Query(array(
-	'post_type' => 'pauta',
-	'post_status' => 'publish',
-	'posts_per_page' => -1
-));
+$pautas_query = false;
+
+if($is_direct_call)
+{
+	$query_args = array(
+		'post_type' => 'pauta',
+		'post_status' => 'publish',
+		'posts_per_page' => -1
+	);
+	
+	$pautas_query = new WP_Query($query_args);
+}
+else
+{
+	global $wp_query;
+	$pautas_query = $wp_query;
+}
 
 $comments = array();
 /* @var $pauta WP_POST */
@@ -52,7 +68,7 @@ if($pautas_query->have_posts())
 		$comment_fake->cats = is_array($cats) ? implode(', ',  $cats) : '';
 		$comment_fake->delibera_dates = \Delibera\Flow::getDeadlineDates($pauta->ID); 
 		
-		$comment_tmp = delibera_get_comments($pauta->ID, array('discussao', 'encaminhamento', 'encaminhamento_selecionado', 'resolucao'));
+		$comment_tmp = delibera_get_comments($pauta->ID);
 	    $comments = array_merge(
 	        $comments,
 	    	array($comment_fake),
@@ -63,9 +79,12 @@ if($pautas_query->have_posts())
 	{
 		if($comment->type == 'Pauta') continue;
 		
-		$situacao = delibera_get_situacao($comment->comment_post_ID);
+		$situacao_pauta = delibera_get_situacao($comment->comment_post_ID);
+		$situacao_comment = delibera_get_comment_situacao($comment->comment_ID);
+		$situacao_name = is_object($situacao_comment) ? $situacao_comment->name : $situacao_pauta->name;
+		
 	    $comment->pauta_title = get_the_title($comment->comment_post_ID);
-	    $comment->pauta_status = $situacao->name;
+	    $comment->pauta_status = $situacao_name;
 	    $comment->type = delibera_get_comment_type_label($comment, false, false);
 	    $comment->link = get_comment_link($comment);
 	    $comment->concordaram = (int) get_comment_meta($comment->comment_ID, 'delibera_numero_curtir', true);

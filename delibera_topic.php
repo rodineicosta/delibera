@@ -18,7 +18,7 @@ function delibera_pauta_custom_meta()
  *
  * Retorna a situação do post
  * @param int $postID
- * @return mixed term name in taxonomy situacao or false
+ * @return WP_Term|boolean term name in taxonomy situacao or false
  */
 function delibera_get_situacao($postID = false)
 {
@@ -47,6 +47,16 @@ function delibera_get_situacao($postID = false)
 	}
 
 	return $ret;
+}
+
+/**
+ * Return term situacao for given slug
+ * @param string $slug term slug
+ * @return WP_Term|boolean
+ */
+function delibera_get_situacao_by_slug($slug)
+{
+	return get_term_by($slug, 'situacao');
 }
 
 /**
