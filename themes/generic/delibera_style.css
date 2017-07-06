@@ -669,6 +669,12 @@ unlike_color: #ce282a
 	border-radius: 4px;
 }
 
+.delibera-comment-body.delibera-comment-emvotacao.delibera-comment-emvotacao-pairwise {
+	min-width: 270px;
+	float: none;
+	margin: 0 auto;
+}
+
 .painel_validacao p {
 	font-weight: 700;
 	margin-bottom: 0px;
@@ -1092,15 +1098,36 @@ color: #777;
     width: 100%;
 }
 
+#delibera-pairwise-entry .delibera-voto-option {
+	width: 49%;
+	margin-bottom: 50px;
+}
+
+#delibera-pairwise-entry #delibera-voto-option-1 {
+	float: right;
+}
+
 .delibera-voto-option input {
     left: 1em;
     position: absolute;
     top: 45%;
 }
 
+#delibera-pairwise-entry .delibera-voto-option input {
+    display: block;
+    float: left;
+    width: 100%;
+    bottom: -40px;
+    top: unset;
+}
+
 .delibera-voto-content {
     margin-left: 3em;
     text-align: justify;
+}
+
+#delibera-pairwise-entry .delibera-voto-content {
+    margin-left: 0;
 }
 
 .delibera-voto-title {
@@ -1122,16 +1149,31 @@ color: #777;
     padding: 0.25em 0.5em;
     text-transform: uppercase;
     cursor: pointer;
+    margin-top: 1em;
 }
 
 .delibera-voto-text {
-	display: none;
 	width: 100%;
 	float: left;
 	padding: 0.5em 0.5em 1em 1em;
 	background: rgba(255, 255, 255, 0.2);
 	max-height: 400px;
 	overflow: auto;
+}
+
+.delibera_pairwise_voto label.label-voto, #delibera-pairwise-entry {
+    position: relative;
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+.delibera_pairwise_voto {
+	overflow: hidden;
+}
+
+#botao-oculto {
+	display: none;
 }
 
 .delibera-based-voto-box {

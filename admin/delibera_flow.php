@@ -351,6 +351,8 @@ class Flow
 	 */
 	public static function next($post_id = false)
 	{
+		$current = self::getCurrentModule($post_id);
+		$current::setSituacaoDate($post_id);
 		$next = self::getNext($post_id);
 		if($next)
 		{
@@ -734,6 +736,32 @@ class Flow
 			if(array_key_exists($situacao, $modules))
 			{
 				$dates[$situacao] = $modules[$situacao]->getDeadline($post_id);
+			}
+		}
+		return $dates;
+	}
+	
+	/**
+	 * return list of dates of post stages in format: array of [situacao] => [date]
+	 * @param int $post_id
+	 * @return array
+	 */
+	public static function getFlowDates($post_id)
+	{
+		global $DeliberaFlow;
+		
+		$dates = array();
+		$flow = $DeliberaFlow->get($post_id);
+		$modules = $DeliberaFlow->getFlowModules();
+		foreach ($flow as $situacao)
+		{
+			if(array_key_exists($situacao, $modules))
+			{
+				$dates[$situacao] = $modules[$situacao]::getSituacaoDate($post_id, $situacao);
+				if(empty($dates[$situacao]))
+				{
+					$dates[$situacao] = $modules[$situacao]->getDeadline($post_id);
+				}
 			}
 		}
 		return $dates;

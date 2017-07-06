@@ -412,31 +412,7 @@ function delibera_save_comment_metas($comment_id)
 		case 'voto':
 		{
 
-			add_comment_meta($comment_id, 'delibera_comment_tipo', 'voto', true);
-
-			$votos = array();
-
-			foreach ($_POST as $postkey => $postvar)
-			{
-				if( substr($postkey, 0, strlen('delibera_voto')) == 'delibera_voto' )
-				{
-					$votos[] = $postvar;
-				}
-			}
-
-			add_comment_meta($comment_id, 'delibera_votos', $votos, true);
-
-			$comment = get_comment($comment_id);
-			//delibera_valida_votos($comment->comment_post_ID); TODO use module version
-
-			$nvotos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', true);
-			$nvotos++;
-			update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', $nvotos);
-
-			if(has_action('delibera_novo_voto'))
-			{
-				do_action('delibera_novo_voto', $comment_id, $comment, $votos);
-			}
+			\Delibera\Modules\Vote::newVote($comment_id);
 
 		} break;
 
@@ -578,6 +554,36 @@ function delibera_wp_list_comments($args = array(), $comments = null)
 			</div>
 
 			<?php
+		}
+		elseif($situacao->slug == 'emvotacao')
+		{
+			$tipo = \Delibera\Modules\Vote::getVoteType();
+
+			if($tipo == 'pairwise')
+			{
+				$votos = \Delibera\Modules\Vote::getVoteCount();
+				//echo $votos;
+				//TODO put that HTML on the theme
+				?>
+				<li class="comment even thread-even depth-1 delibera-comment-div-emvotacao-pairwise" >
+					<div class="delibera-comment-body delibera-comment-emvotacao delibera-comment-emvotacao-pairwise">
+						<div class="comentario_coluna1 delibera-comment-text">
+							<?php _e('Número de votos até o momento', 'delibera'); ?>
+						</div>
+						<div class="comentario_coluna2 delibera-comment-text">
+							<span class="delibera-result-number delibera-result-number-votes">
+								<?php echo $votos; ?>
+							</span>
+							<?php echo _n('Voto','Votos', $votos, 'delibera'); ?>
+						</div>
+					</div>
+				</li> 	<?php
+			}
+			else
+			{
+				$args['walker'] = new Delibera_Walker_Comment();
+				wp_list_comments($args, $comments);
+			}
 		}
 		else
 		{
@@ -902,4 +908,74 @@ add_filter( 'comment_flood_filter', 'delibera_comment_flood_filter', 10, 3 );
 function delibera_get_comment_situacao($commentID)
 {
 	return delibera_get_situacao_by_slug(get_comment_meta($commentID, 'delibera_situacao', true));
+}
+
+function delibera_new_comment($comment_post_ID, $comment, $delibera_comment_tipo = 'discussao', $comment_parent = 0, $errors = array())
+{
+	if(!array_key_exists('attachment', $_FILES)) // treat comment attachment plugins erros
+	{
+		$_FILES['attachment'] = array('size' => 0, 'error' => 0);
+	}
+	$user = wp_get_current_user();
+	
+	$comment_post_ID = isset($comment_post_ID) ? (int) $comment_post_ID : 0;
+	$comment_content = ( isset($comment) ) ? trim($comment) : null;
+	
+	$post = get_post($comment_post_ID);
+	
+	if ( empty($post->comment_status) ) {
+		do_action('comment_id_not_found', $comment_post_ID);
+		exit;
+	}
+	
+	// get_post_status() will get the parent status for attachments.
+	$status = get_post_status($post);
+	
+	$status_obj = get_post_status_object($status);
+	
+	if ( !comments_open($comment_post_ID) ) {
+		do_action('comment_closed', $comment_post_ID);
+		$errors[] = __('Sorry, comments are closed for this item.');
+	} elseif ( 'trash' == $status ) {
+		do_action('comment_on_trash', $comment_post_ID);
+		exit;
+	} elseif ( !$status_obj->public && !$status_obj->private ) {
+		do_action('comment_on_draft', $comment_post_ID);
+		exit;
+	} elseif ( post_password_required($comment_post_ID) ) {
+		do_action('comment_on_password_protected', $comment_post_ID);
+		exit;
+	} else {
+		do_action('pre_comment_on_post', $comment_post_ID);
+	}
+	
+	// If the user is logged in
+	if ( $user->ID )
+	{
+		if ( empty( $user->display_name ) )
+			$user->display_name=$user->user_login;
+			
+			$comment_author       = esc_sql($user->display_name);
+			$comment_author_email = esc_sql($user->user_email);
+			$comment_author_url   = esc_sql($user->user_url);
+			
+	}
+	
+	$comment_approved = 1;
+	$comment_type = '';
+	
+	if ( '' == $comment_content )
+		$errors[] = ( __('<strong>ERROR</strong>: please type a comment.') );
+		
+	$comment_parent = isset($comment_parent) ? absint($comment_parent) : 0;
+	
+	$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_content', 'comment_type', 'comment_parent', 'user_ID', 'comment_approved');
+	
+	$comment_id = wp_new_comment( $commentdata );
+	
+	$ret = new stdClass;
+	$ret->comment_id = $comment_id;
+	$ret->errors = $errors;
+	
+	return $ret;
 }

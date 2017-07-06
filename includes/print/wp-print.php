@@ -377,11 +377,15 @@ add_filter( 'manage_pages_columns' , '\Delibera\Includes\WP_Print\delibera_manag
 
 function delibera_display_posts_print( $column, $post_id )
 {
-	if ($column == 'delibera_print'){
-		echo '<a href="'.get_the_permalink($post_id).'?delibera_print=1&delibera_print_parent=1" target="_blank" title="'.__('Imprimir textos com comentários por parágrafo.','delibera').'" ><span class="delibera-icon-print" onclick="" ></span></a>';
-		echo '<a href="'.get_the_permalink($post_id).'?delibera_print_csv=1&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por parágrafo','delibera').'" ><span class="delibera-icon-chat-empty" ></span></a>';
-		echo '<a href="'.get_the_permalink($post_id).'?delibera_print_csv=2&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por dia','delibera').'" ><span class="delibera-icon-calendar" ></span></a>';
-		echo '<a href="'.get_the_permalink($post_id).'?delibera_print_csv=3&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por usuário','delibera').'" ><span class="delibera-icon-users" ></span></a>';
+	if ($column == 'delibera_print')
+	{
+		$link = get_the_permalink($post_id);
+		$has_query_vars = strpos($link, '?') === false ? '?' : '&';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_xls=1&delibera_print_parent=1" target="_blank" title="'.__('Exportar XLS com dados da pauta','delibera').'" ><span class="delibera-icon-file-excel" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print=1&delibera_print_parent=1" target="_blank" title="'.__('Imprimir textos com comentários por parágrafo.','delibera').'" ><span class="delibera-icon-print" onclick="" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_csv=1&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por parágrafo','delibera').'" ><span class="delibera-icon-chat-empty" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_csv=2&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por dia','delibera').'" ><span class="delibera-icon-calendar" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_csv=3&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por usuário','delibera').'" ><span class="delibera-icon-users" ></span></a>';
 	}
 }
 add_action( 'manage_posts_custom_column' , '\Delibera\Includes\WP_Print\delibera_display_posts_print', 10, 2 );

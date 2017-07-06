@@ -134,7 +134,7 @@ function delibera_extra_profile_fields( $user )
 		?>
 		<h3><?php _e('Notificações por e-mail do Delibera', 'delibera'); ?></h3>
 	
-		<p><?php _e('Escolha abaixo para quais eventos do sistema do Delibera você deseja receber notificações por e-mail. As opções selecionadas aqui serão aplicadas para todas as pautas. É posssível também seguir as pautas individualmente. Para isso clique no botão "Seguir" na página de uma pauta.', 'delibera'); ?></p>
+		<p><?php _e('Escolha abaixo para quais eventos do sistema do Delibera você deseja receber notificações por e-mail. As opções selecionadas aqui serão aplicadas para todas as pautas. É possível também seguir as pautas individualmente. Para isso clique no botão "Seguir" na página de uma pauta.', 'delibera'); ?></p>
 	
 		<table class="Delibera-user-form-table">
 		<?php
