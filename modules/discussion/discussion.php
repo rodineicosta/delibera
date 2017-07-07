@@ -95,6 +95,18 @@ class Discussion extends \Delibera\Modules\ModuleBase
 			"label" => __('Dias para discussão da pauta:', 'delibera'),
 			"content" => '<input type="text" name="dias_discussao" id="dias_discussao" value="'.htmlspecialchars_decode($opt['dias_discussao']).'" autocomplete="off" />'
 		);
+		$id = 'discussion_type';
+		$value = htmlspecialchars_decode($opt[$id]);
+		$rows[] = array(
+			"id" => $id,
+			"label" => __('Tipo da discussão:', 'delibera'),
+			"content" => '
+				<select name="'.$id.'" id="'.$id.'" autocomplete="off" >
+					<option value="forum" '.($value == 'forum' ? 'selected="selected"' : '').'>'.__('Formato de forum', 'delibera').'</option>
+					<option value="side" '.($value == 'side' ? 'selected="selected"' : '').'>'.__('Por parágrafo', 'delibera').'</option>
+				</select>
+			'
+		);
 		$rows[] = array(
 			"id" => "pauta_suporta_encaminhamento",
 			"label" => __('Pautas suportam sugestão de encaminhamento?', 'delibera'),
@@ -144,7 +156,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	public function topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao)
 	{
 		$prazo_discussao = $this->generateDeadline($options_plugin_delibera);
-		$tipo_discussao = array_key_exists("tipo_discussao", $custom) ?  $custom["tipo_discussao"][0] : 'forum';
+		$discussion_type = array_key_exists("discussion_type", $custom) ?  $custom["discussion_type"][0] : 'forum';
 		$delibera_show_default_comment_form = array_key_exists("delibera_show_default_comment_form", $custom) ?  $custom["delibera_show_default_comment_form"][0] : 'N';
 		
 		if(!($post->post_status == 'draft' ||
@@ -158,12 +170,14 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		<p>
 			<label class="label_prazo_discussao"><?php _e('Prazo para Discussões','delibera') ?>:</label>
 			<input <?php echo $disable_edicao ?> name="prazo_discussao" class="prazo_discussao widefat hasdatepicker" value="<?php echo $prazo_discussao; ?>"/>
-		</p><?php /*?>
-		<p>
-			<label class="label_tipo_discussao"><?php _e('Tipo de Discussões','delibera') ?>:</label>
-			<input <?php echo $disable_edicao ?> name="tipo_discussao" class="tipo_discussao widefat" value="<?php echo $tipo_discussao; ?>"/>
 		</p>
-		<?php */ ?>
+		<p>
+			<label class="label_discussion_type"><?php _e('Tipo da Discussão','delibera') ?>:</label>
+			<select name="discussion_type" id="discussion_type" class="discussion_type widefat" autocomplete="off" >
+				<option value="forum" <?php echo $discussion_type == 'forum' ? 'selected="selected"' : ''; ?>><?php _e('Formato de forum', 'delibera'); ?></option>
+				<option value="side" <?php echo $discussion_type == 'side' ? 'selected="selected"' : ''; ?>><?php _e('Por parágrafo', 'delibera'); ?></option>
+			</select>
+		</p>
 		<p>
 			<label class="label_delibera_show_default_comment_form" title="<?php _e('Mostrar campo para opinião/encaminhamento padrão com o comentário por parágrafo ativo?','delibera') ?>" ><?php _e('Permitir comentários gerais?','delibera') ?>:
 				<input <?php echo $disable_edicao ?> name="delibera_show_default_comment_form" type="checkbox" value="S" class="delibera_show_default_comment_form widefat delibera-admin-checkbox" <?php echo $delibera_show_default_comment_form== 'S' ? 'checked="checked"' : ''; ?> />
@@ -232,9 +246,9 @@ class Discussion extends \Delibera\Modules\ModuleBase
 		{
 			$events_meta['prazo_discussao'] = sanitize_text_field($_POST['prazo_discussao']);
 		}
-		if(array_key_exists('tipo_discussao', $_POST))
+		if(array_key_exists('discussion_type', $_POST))
 		{
-			$events_meta['tipo_discussao'] = sanitize_text_field($_POST['tipo_discussao']);
+			$events_meta['discussion_type'] = sanitize_text_field($_POST['discussion_type']);
 		}
 		$events_meta['delibera_show_default_comment_form'] = array_key_exists('delibera_show_default_comment_form', $_POST) ? sanitize_text_field($_POST['delibera_show_default_comment_form']) : 'N';
 		
@@ -296,15 +310,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	 */
 	public function template_redirect()
 	{
-		/*$tipo = get_post_meta(get_the_ID(), 'tipo_discussao', true);
-		if($tipo == 'side')
-		{
-			require_once DELIBERA_DIR_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
-			if(function_exists('\Delibera\Includes\SideComments\wpsc_init_side_comments'))
-			{
-				\Delibera\Includes\SideComments\wpsc_init_side_comments();
-			}
-		}*/
+		
 	}
 	
 	public static function treatCommentType($comment, $encaminhamento)
