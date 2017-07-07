@@ -217,6 +217,10 @@ resolucao - 90248f
     display: none;
 }
 
+.lista-de-pautas .navigation {
+    text-align: center;
+}
+
 .lista-de-pautas .navigation li a,
 .lista-de-pautas .navigation li a:hover,
 .lista-de-pautas .navigation li.active a,
@@ -232,17 +236,35 @@ resolucao - 90248f
 .lista-de-pautas .navigation li a,
 .lista-de-pautas .navigation li a:hover,
 .lista-de-pautas .navigation li.active a,
-.lista-de-pautas .navigation li.disabled {
-	background-color: #6FB7E9;
-	border-radius: 3px;
+.lista-de-pautas .navigation li.disabled,
+.lista-de-pautas .navigation li span {
+	background-color: #ebebeb;
+	border-radius: 2em;
 	cursor: pointer;
-	padding: 12px;
-	padding: 0.75rem;
+	padding: 0.70em 1em;
+	font-weight: 600;
+	color: #888; 
+}
+
+.lista-de-pautas .navigation li span {
+	cursor: default;
+}
+
+.lista-de-pautas .navigation li a.page-numbers,
+.lista-de-pautas .navigation li span.dots,
+.lista-de-pautas .navigation li.active a.page-numbers {
+	background-color: #6FB7E9;
+	color: #FFF;
 }
 
 .lista-de-pautas .navigation li a:hover,
 .lista-de-pautas .navigation li.active a {
 	background-color: #3C8DC5;
+	color: #fff;
+}
+
+.lista-de-pautas .navigation li span.current {
+	color: #6FB7E9;
 }
 
 /* BANNER CICLO VIDAS */
