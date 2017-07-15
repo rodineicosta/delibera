@@ -29,6 +29,7 @@ function delibera_Add_custom_Post()
 		//'exclude_from_search' => '', // public
 		'show_ui' => true, // public
 		'show_in_menu' => true,
+		'show_in_rest' => true,
 		'menu_position' => 5,
 		// 'menu_icon' => '',
 		'capability_type' => array('pauta','pautas'),
