@@ -23,7 +23,7 @@ function delibera_relatorio_page() {
 
         <p><?php _e('Utilize esta página para exportar uma tabela do Excel com todas as opiniões e propostas de encaminhamento feitas pelos usuários nas pautas.', 'delibera'); ?></p>
 
-        <form method="post" action="<?php echo plugins_url(); ?>/delibera/delibera_relatorio_xls.php" class="clear prepend-top">
+        <form method="post" action="<?php echo plugin_dir_url(__FILE__); ?>delibera_relatorio_xls.php" class="clear prepend-top">
             <p class="clear prepend-top">
                 <input type="submit" class="button-primary" value="Exportar" />
             </p>

@@ -160,15 +160,28 @@ function delibera_comment_text($commentText)
 			case 'validacao':
 			{
 				$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
-				$sim = ($validacao == "S" ? true : false);
-				$commentText = '
-					<div id="painel_validacao" class="delibera-comment-text">
-						'.($sim ? '
-						<label class="delibera-aceitou-view">'.__('Aceitou','delibera').'</label>
-						' : '
-						<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>
-					</div>
-				');
+				$commentTextTmp = $commentText;
+				$commentText = '<div class="painel_validacao delibera-comment-text">';
+				switch ($validacao)
+				{
+					case 'S':
+						$commentText .= '<label class="delibera-aceitou-view">'.__('Aceitou','delibera').'</label>';
+					break;
+					case 'A':
+						$commentText .= '<label class="delibera-abstencao-view">'.__('Abstenção','delibera').'</label>';
+					break;
+					case 'N':
+					default:
+						$commentText .=	'<label class="delibera-rejeitou-view">'.__('Rejeitou','delibera').'</label>';
+					break;
+				}
+				if(get_post_meta($comment->comment_post_ID, 'delibera_validation_show_comment', true) == 'S')
+				{
+					$commentText .= '<div class="delibera-comment-validacao-text">';
+						$commentText .= $commentTextTmp;
+					$commentText .= '</div>';
+				}
+				$commentText .= '</div>';
 			}break;
 			case 'discussao':
 			case 'encaminhamento':
@@ -197,7 +210,7 @@ function delibera_comment_text($commentText)
 						</div>
 						<div class="comentario_coluna2 delibera-comment-text">
 							'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
-						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
+						'('.number_format_i18n( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0, 2).'%)
 						</div>
 					';
 				}
@@ -216,7 +229,7 @@ function delibera_comment_text($commentText)
 					</div>
 					<div class="comentario_coluna2 delibera-comment-text">
 						'.$nvotos.($nvotos == 1 ? " ".__('Voto','delibera') : " ".__('Votos','delibera') ).
-						'('.( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0).'%)
+						'('.number_format_i18n( $nvotos > 0 && $total > 0 ? (($nvotos*100)/$total) : 0, 2).'%)
 					</div>
 				';
 			}break;
@@ -291,23 +304,26 @@ function delibera_show_hide_button($comment_id, $text, $cut, $show)
 
 function delibera_comments_open($open, $post_id)
 {
-	if ( 'pauta' == get_post_type($post_id) )
-		return $open && delibera_can_comment($post_id);
-	else
-		return $open;
+	if(is_user_logged_in())
+	{
+		if ( 'pauta' == get_post_type($post_id) )
+		{
+			return $open && delibera_can_comment($post_id);
+		}
+	}
+	return $open;
 }
 add_filter('comments_open', 'delibera_comments_open', 10, 2);
 
 /**
  * Verifica se é possível fazer comentários, se o usuário tiver poder para tanto
- * @param unknown_type $postID
+ * @param mixed $postID
  */
 function delibera_comments_is_open($postID = null)
 {
 	if(is_null($postID))
 	{
-		$post = get_post($postID);
-		$postID = $post->ID;
+		$postID = get_the_ID();
 	}
 
 	$situacoes_validas = array('validacao' => true, 'discussao' => true, 'emvotacao' => true, 'elegerelator' => true,'relatoria'=>true);
@@ -363,6 +379,9 @@ function delibera_save_comment_metas($comment_id)
 	delibera_discordar_comment_meta($comment_id);
 
 	$comment = get_comment($comment_id);
+	$situacao = delibera_get_situacao($comment->comment_post_ID);
+	
+	add_comment_meta($comment_id, 'delibera_situacao', $situacao->slug, true); // save situacao when comment has been created for better history
 
 	switch($tipo)
 	{
@@ -387,67 +406,13 @@ function delibera_save_comment_metas($comment_id)
 		case 'encaminhamento':
 		{
 			$encaminhamento = $_POST['delibera_encaminha'];
-			if($encaminhamento == "S")
-			{
-				add_comment_meta($comment_id, 'delibera_comment_tipo', 'encaminhamento', true);
-				$nencaminhamentos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', true);
-				$nencaminhamentos++;
-				update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_encaminhamentos', $nencaminhamentos);
-				if(array_key_exists('delibera-baseouseem', $_POST) && !empty($_POST['delibera-baseouseem']))
-				{
-					add_comment_meta($comment_id, 'delibera-baseouseem', $_POST['delibera-baseouseem'], true);
-					$based_list = explode(',', $_POST['delibera-baseouseem']);
-					foreach ($based_list as $baseouseem_element)
-					{
-						$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
-						if(!is_array($atts)) continue;
-						if(array_key_exists('id', $atts))
-						{
-							update_comment_meta($atts['id'], 'delibera-hasbasedon', $comment_id);
-						}
-					}
-				}
-			}
-			else
-			{
-				add_comment_meta($comment_id, 'delibera_comment_tipo', 'discussao', true);
-				$ndiscussoes = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_discussoes', true);
-				$ndiscussoes++;
-				update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_discussoes', $ndiscussoes);
-			}
-			if(has_action('delibera_nova_discussao'))
-			{
-				do_action('delibera_nova_discussao', $comment_id, $comment, $encaminhamento);
-			}
+			\Delibera\Modules\Discussion::treatCommentType($comment, $encaminhamento);
+			
 		}break;
 		case 'voto':
 		{
 
-			add_comment_meta($comment_id, 'delibera_comment_tipo', 'voto', true);
-
-			$votos = array();
-
-			foreach ($_POST as $postkey => $postvar)
-			{
-				if( substr($postkey, 0, strlen('delibera_voto')) == 'delibera_voto' )
-				{
-					$votos[] = $postvar;
-				}
-			}
-
-			add_comment_meta($comment_id, 'delibera_votos', $votos, true);
-
-			$comment = get_comment($comment_id);
-			//delibera_valida_votos($comment->comment_post_ID); TODO use module version
-
-			$nvotos = get_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', true);
-			$nvotos++;
-			update_post_meta($comment->comment_post_ID, 'delibera_numero_comments_votos', $nvotos);
-
-			if(has_action('delibera_novo_voto'))
-			{
-				do_action('delibera_novo_voto', $comment_id, $comment, $votos);
-			}
+			\Delibera\Modules\Vote::newVote($comment_id);
 
 		} break;
 
@@ -513,7 +478,7 @@ function delibera_get_comments_padrao($args = array(), $file = '/comments.php' )
  * @param string|array $tipo um tipo ou um array de tipos
  * @return array
  */
-function delibera_get_comments($post_id, $tipo, $args = array())
+function delibera_get_comments($post_id, $tipo = array(), $args = array())
 {
 	if (is_string($tipo)) {
 		$tipo = array($tipo);
@@ -525,7 +490,7 @@ function delibera_get_comments($post_id, $tipo, $args = array())
 	foreach ($comments as $comment)
 	{
 		$comment_tipo = get_comment_meta($comment->comment_ID, 'delibera_comment_tipo', true);
-		if (in_array($comment_tipo, $tipo)) {
+		if ( ( strlen($comment_tipo) > 0 && count($tipo) == 0 /* do not filter, but is delibera comment */) || in_array($comment_tipo, $tipo) ) {
 			$ret[] = $comment;
 		}
 	}
@@ -589,6 +554,36 @@ function delibera_wp_list_comments($args = array(), $comments = null)
 			</div>
 
 			<?php
+		}
+		elseif($situacao->slug == 'emvotacao')
+		{
+			$tipo = \Delibera\Modules\Vote::getVoteType();
+
+			if($tipo == 'pairwise')
+			{
+				$votos = \Delibera\Modules\Vote::getVoteCount();
+				//echo $votos;
+				//TODO put that HTML on the theme
+				?>
+				<li class="comment even thread-even depth-1 delibera-comment-div-emvotacao-pairwise" >
+					<div class="delibera-comment-body delibera-comment-emvotacao delibera-comment-emvotacao-pairwise">
+						<div class="comentario_coluna1 delibera-comment-text">
+							<?php _e('Número de votos até o momento', 'delibera'); ?>
+						</div>
+						<div class="comentario_coluna2 delibera-comment-text">
+							<span class="delibera-result-number delibera-result-number-votes">
+								<?php echo $votos; ?>
+							</span>
+							<?php echo _n('Voto','Votos', $votos, 'delibera'); ?>
+						</div>
+					</div>
+				</li> 	<?php
+			}
+			else
+			{
+				$args['walker'] = new Delibera_Walker_Comment();
+				wp_list_comments($args, $comments);
+			}
 		}
 		else
 		{
@@ -821,27 +816,30 @@ add_filter('get_comments_number', 'delibera_comment_number_filtro', 10, 2);
  * atingido e se sim muda a situação da pauta de
  * "emvotacao" para "discussao".
  *
- * @param unknown $post
+ * @param int $postID
  * @return null
  */
-function delibera_valida_validacoes($post)
+function delibera_valida_validacoes($postID)
 {
-	$validacoes = get_post_meta($post, 'numero_validacoes', true);
-	$min_validacoes = get_post_meta($post, 'min_validacoes', true);
-
-	if($validacoes >= $min_validacoes)
+	$validacoes = get_post_meta($postID, 'numero_validacoes', true);
+	$min_validacoes = get_post_meta($postID, 'min_validacoes', true);
+	
+	$situacao = delibera_get_situacao($postID);
+	
+	if($validacoes >= $min_validacoes && $situacao->slug == 'validacao') // check situacao to avoid same time final validation to avoid topic advancing 2 stages
 	{
-		wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
+		//wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
+		\Delibera\Flow::next($postID);
 		if(has_action('delibera_validacao_concluida'))
 		{
-			do_action('delibera_validacao_concluida', $post);
+			do_action('delibera_validacao_concluida', $postID);
 		}
 	}
 	else
 	{
 		if(has_action('delibera_validacao'))
 		{
-			do_action('delibera_validacao', $post);
+			do_action('delibera_validacao', $postID);
 		}
 	}
 }
@@ -880,3 +878,104 @@ function delibera_duplicate_comment_id($dupe_id, $commentdata )
 }
 add_filter('duplicate_comment_id', 'delibera_duplicate_comment_id', 10, 2);
 
+/**
+ * Stop comment flood filter from filter votes and validations
+ * @param bool $block
+ * @param int $time_lastcomment Timestamp for last comment.
+ * @param int $time_newcomment Timestamp for new comment.
+ * @return bool Whether comment should be blocked.
+ */
+function delibera_comment_flood_filter($block, $time_lastcomment, $time_newcomment)
+{
+	$situacao = delibera_get_situacao();
+	if(is_object($situacao))
+	{
+		if(in_array($situacao->slug, array('emvotacao', 'validacao')))
+		{
+			return false;
+		}
+	}
+	return $block;
+}
+add_filter( 'comment_flood_filter', 'delibera_comment_flood_filter', 10, 3 );
+
+/**
+ * Return pauta situation when comment is created
+ * 
+ * @param integer $commentID
+ * @return WP_Term|boolean
+ */
+function delibera_get_comment_situacao($commentID)
+{
+	return delibera_get_situacao_by_slug(get_comment_meta($commentID, 'delibera_situacao', true));
+}
+
+function delibera_new_comment($comment_post_ID, $comment, $delibera_comment_tipo = 'discussao', $comment_parent = 0, $errors = array())
+{
+	if(!array_key_exists('attachment', $_FILES)) // treat comment attachment plugins erros
+	{
+		$_FILES['attachment'] = array('size' => 0, 'error' => 0);
+	}
+	$user = wp_get_current_user();
+	
+	$comment_post_ID = isset($comment_post_ID) ? (int) $comment_post_ID : 0;
+	$comment_content = ( isset($comment) ) ? trim($comment) : null;
+	
+	$post = get_post($comment_post_ID);
+	
+	if ( empty($post->comment_status) ) {
+		do_action('comment_id_not_found', $comment_post_ID);
+		exit;
+	}
+	
+	// get_post_status() will get the parent status for attachments.
+	$status = get_post_status($post);
+	
+	$status_obj = get_post_status_object($status);
+	
+	if ( !comments_open($comment_post_ID) ) {
+		do_action('comment_closed', $comment_post_ID);
+		$errors[] = __('Sorry, comments are closed for this item.');
+	} elseif ( 'trash' == $status ) {
+		do_action('comment_on_trash', $comment_post_ID);
+		exit;
+	} elseif ( !$status_obj->public && !$status_obj->private ) {
+		do_action('comment_on_draft', $comment_post_ID);
+		exit;
+	} elseif ( post_password_required($comment_post_ID) ) {
+		do_action('comment_on_password_protected', $comment_post_ID);
+		exit;
+	} else {
+		do_action('pre_comment_on_post', $comment_post_ID);
+	}
+	
+	// If the user is logged in
+	if ( $user->ID )
+	{
+		if ( empty( $user->display_name ) )
+			$user->display_name=$user->user_login;
+			
+			$comment_author       = esc_sql($user->display_name);
+			$comment_author_email = esc_sql($user->user_email);
+			$comment_author_url   = esc_sql($user->user_url);
+			
+	}
+	
+	$comment_approved = 1;
+	$comment_type = '';
+	
+	if ( '' == $comment_content )
+		$errors[] = ( __('<strong>ERROR</strong>: please type a comment.') );
+		
+	$comment_parent = isset($comment_parent) ? absint($comment_parent) : 0;
+	
+	$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_content', 'comment_type', 'comment_parent', 'user_ID', 'comment_approved');
+	
+	$comment_id = wp_new_comment( $commentdata );
+	
+	$ret = new stdClass;
+	$ret->comment_id = $comment_id;
+	$ret->errors = $errors;
+	
+	return $ret;
+}

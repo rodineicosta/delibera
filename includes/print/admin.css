@@ -1,0 +1,3 @@
+.wp-admin [class^="delibera-icon-"]:before, .wp-admin [class*=" delibera-icon-"]:before {
+	/*font-size: 22px;*/
+}

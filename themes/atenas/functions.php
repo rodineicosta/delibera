@@ -40,7 +40,7 @@ function get_delibera_header() {
 			if ( is_user_logged_in() )
 			{
 				global $current_user;
-				get_currentuserinfo();
+				wp_get_current_user();
 				
             	printf(
             		__( 'Você está logado como <a href="%1$s" title="Ver meu perfil" class="profile">%2$s</a>. Caso deseje sair de sua conta, <a href="%3$s" title="Sair">faça o logout</a>.', 'delibera' ),
@@ -130,7 +130,7 @@ function delibera_comment_form($defaults)
                     $defaults['must_log_in'] = sprintf(__('Você precisar <a href="%s">estar logado</a> e ter permissão para votar.','delibera'),wp_login_url( apply_filters( 'the_permalink', get_permalink( $post->ID ))));                
                     if (delibera_current_user_can_participate()) {
                         $form = '
-                            <div id="painel_validacao" >
+                            <div class="painel_validacao" >
                                 <input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>
                                 <input id="delibera_rejeitar" type="radio" name="delibera_validacao" value="N"  /><label for="delibera_rejeitar" class="delibera_aceitar_radio_label">'.__('Rejeitar','delibera').'</label>
                                 <input name="comment" value="A validação de '.$current_user->display_name.' foi registrada no sistema." style="display:none;" />
@@ -297,7 +297,7 @@ add_action('wp_enqueue_scripts', function()
         
         if ($situacao->slug == 'relatoria')
         {
-            wp_enqueue_script('delibera_relatoria_js', WP_CONTENT_URL . '/plugins/delibera/js/delibera_relatoria.js', array('jquery'));
+            wp_enqueue_script('delibera_relatoria_js', WP_PLUGIN_URL.'/delibera/js/delibera_relatoria.js', array('jquery'));
         }
     }
 });

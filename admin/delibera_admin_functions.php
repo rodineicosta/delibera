@@ -109,14 +109,21 @@ function delibera_edit_comment($comment)
 			case 'validacao':
 			{
 				$validacao = get_comment_meta($comment->comment_ID, "delibera_validacao", true);
-				$sim = ($validacao == "S" ? true : false);
 				?>
-				<div id="painel_validacao delibera-comment-text" >
-					<?php if($sim){ ?>
-					<label class="delibera-aceitou-view"><?php _e('Aceitou','delibera'); ?></label>
-					<?php }else { ?>
-					<label class="delibera-rejeitou-view"><?php _e('Rejeitou','delibera'); ?></label>
-					<?php } ?>
+				<div class="painel_validacao delibera-comment-text" ><?php
+					switch ($validacao)
+					{
+						case 'S':?>
+							<label class="delibera-aceitou-view"><?php _e('Aceitou','delibera'); ?></label><?php
+						break;
+						case 'A':?>
+							<label class="delibera-abstencao-view"><?php _e('Abstenção','delibera'); ?></label><?php
+						break;
+						case 'N':
+						default:?>
+							<label class="delibera-rejeitou-view"><?php _e('Rejeitou','delibera'); ?></label><?php
+						break;
+					}?>
 				</div>
 				<script type="text/javascript">
 					var quickdiv = document.getElementById('postdiv');

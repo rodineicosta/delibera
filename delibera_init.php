@@ -187,7 +187,10 @@ function delibera_init()
 
 	global $delibera_comments_padrao;
 	$delibera_comments_padrao = false;
-
+	
+	if(! is_plugin_active('facebook-thumb-fixer'))
+		add_filter('language_attributes', 'delibera_doctype_opengraph');
+	
 }
 add_action('init','delibera_init');
 
@@ -246,7 +249,7 @@ add_action( 'admin_print_scripts', 'delibera_admin_scripts' );
 
 function delibera_print_font_styles()
 {
-	wp_enqueue_style('delibera-font', plugin_dir_url(__FILE__). '/css/fonts/fontello-6acce062/css/delibera.css');
+	wp_enqueue_style('delibera-font', plugin_dir_url(__FILE__). '/css/fonts/fontello-9536d925/css/delibera.css');
 }
 add_action('wp_print_scripts', 'delibera_print_font_styles');
 
@@ -425,14 +428,13 @@ function delibera_register_required_plugins() {
 	tgmpa( $plugins, $config );
 }
 
-function doctype_opengraph($output) {
+function delibera_doctype_opengraph($output) {
     return $output . '
     xmlns:og="http://opengraphprotocol.org/schema/"
     xmlns:fb="http://www.facebook.com/2008/fbml"';
 }
-add_filter('language_attributes', 'doctype_opengraph');
 
-function fb_opengraph() {
+function delibera_fb_opengraph() {
     global $post;
 
     if(is_single())
@@ -477,4 +479,14 @@ function fb_opengraph() {
         return;
     }
 }
-add_action('wp_head', 'fb_opengraph', 20);
+
+function delibera_plugins_loaded_fb_opengraph()
+{
+	if( ! class_exists('general_setting_default_fb_thumb') )
+	{
+		if(! is_plugin_active('facebook-thumb-fixer'))
+			add_action('wp_head', 'delibera_fb_opengraph', 20);
+	}
+}
+add_action('plugins_loaded', 'delibera_plugins_loaded_fb_opengraph');
+

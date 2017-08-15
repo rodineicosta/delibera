@@ -263,6 +263,10 @@ abstract class ModuleBase
 		}
 	}
 	
+	/**
+	 * Return Deadline days
+	 * @return number
+	 */
 	public function getDeadlineDays()
 	{
 		$days = 0;
@@ -282,6 +286,13 @@ abstract class ModuleBase
 	 */
 	abstract public function getCommentListLabel();
 	
+	/**
+	 * 
+	 * Treat the fixed deadline topic date 
+	 * 
+	 * @param array $opt delibera options
+	 * @return boolean|string config fixed treated deadline date
+	 */
 	protected function treatFixedDateToEndExtTopic($opt = false)
 	{
 		if(!is_array($opt)) $opt = delibera_get_config();
@@ -301,5 +312,53 @@ abstract class ModuleBase
 		{
 			return false;
 		}
+	}
+	
+	/**
+	 * hook WordPress template_redirect to execute after everything are setup and the query has been done
+	 */
+	public function template_redirect() { /* overload this to do things on WordPress template_redirect */  }
+	
+	/**
+	 * Return the date when situacao is set 
+	 * 
+	 * @param int $post_id
+	 * @param string|\WP_Term $situacao
+	 * @return mixed|boolean|string|array|unknown
+	 */
+	public static function getSituacaoDate($post_id = false, $situacao = false)
+	{
+		if($post_id === false) $post_id = get_the_ID();
+		
+		if($situacao === false)
+		{
+			$situacao = delibera_get_situacao($post_id);
+		}
+		if(is_object($situacao)) $situacao = $situacao->slug;
+		
+		return get_post_meta($post_id, 'delibera-pauta-date-'.$situacao, true);
+	}
+	
+	/**
+	 * Set the date of situacao 
+	 * 
+	 * @param string $post_id
+	 * @param string $value
+	 * @param string|\WP_Term $situacao
+	 * @return number|boolean
+	 */
+	public static function setSituacaoDate($post_id = false, $value = false, $situacao = false)
+	{
+		if($post_id === false) $post_id = get_the_ID(); 
+		
+		if($situacao === false)
+		{
+			$situacao = delibera_get_situacao($post_id);
+		}
+		if(is_object($situacao)) $situacao = $situacao->slug;
+		
+		if($value == false) $value = date('d/m/Y H:i:s');
+		
+		return update_post_meta($post_id, 'delibera-pauta-date-'.$situacao, $value);
 	}
 }

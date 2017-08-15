@@ -25,6 +25,25 @@ function delibera_check_discussion()
 	return true;
 }
 
+function delibera_check_relatoria()
+{
+	var boxes = jQuery('#delibera-flow-column2').find('.dragbox');
+	for (var i = 0; i < boxes.length; i++)
+	{
+	  if(jQuery(boxes[i]).hasClass("emvotacao"))
+	  {
+		  jQuery('.label_show_based_proposals').hide();
+		  return false;
+	  }
+	  if(jQuery(boxes[i]).hasClass("relatoria"))
+	  {
+		  jQuery('.label_show_based_proposals').show();
+		  return true;
+	  }
+	}
+	return true;
+}
+
 jQuery(document).ready(function() {
 	jQuery('.delibera_comment_input_bt_remove').live('click', function() {
 		var sel = confirm('Do you want to delete this vote option?');
@@ -36,6 +55,8 @@ jQuery(document).ready(function() {
 	jQuery('#delibera-flow-column2').on('deliberaUpdateFlow', function(event, data)
 	{
 		delibera_check_discussion();
+		delibera_check_relatoria();
 	});
 	delibera_check_discussion();
+	delibera_check_relatoria();
 });

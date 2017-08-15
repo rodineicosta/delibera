@@ -52,12 +52,14 @@ endif; ?>
 <?php endif; // end have_comments() ?>
 
 <?php
-if (($situacao->slug != "validacao" && $situacao->slug != "emvotacao" && $situacao->slug != "naovalidada") || $delibera_comments_padrao === true) {
-  comment_form();
-  if (function_exists('ecu_upload_form_default')) {
-    ecu_upload_form_default();
-  }
-}
+	if ( ($situacao->slug != "validacao" && $situacao->slug != "emvotacao" && $situacao->slug != "naovalidada") || $delibera_comments_padrao === true)
+	{
+		comment_form();
+		if (function_exists('ecu_upload_form_default'))
+		{
+			ecu_upload_form_default();
+		}
+	}
 ?>
 </div><!-- #comments -->
 <div class="warning message">

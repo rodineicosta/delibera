@@ -27,36 +27,84 @@ Author URI: http://lesterchan.net
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+//PHP 5.3 and later:
+namespace Delibera\Includes\WP_Print;
+
 ### Function: Print Public Variables
-add_filter('query_vars', 'print_variables');
+add_filter('query_vars', '\Delibera\Includes\WP_Print\print_variables');
 function print_variables($public_query_vars) {
 	$public_query_vars[] = 'delibera_print';
 	$public_query_vars[] = 'delibera_printpage';
     $public_query_vars[] = 'number-options';
+    $public_query_vars[] = 'delibera_print_csv';
+    $public_query_vars[] = 'delibera_print_parent';
+    $public_query_vars[] = 'delibera_print_xls';
 	return $public_query_vars;
+}
+
+function removeAddtoanyLinks()
+{
+	remove_filter( 'the_content', 'A2A_SHARE_SAVE_add_to_content', 98 );
+	remove_filter( 'the_excerpt', 'A2A_SHARE_SAVE_add_to_content', 98 );
 }
 
 ### Function: Load WP-Print
 function delibera_print()
 {
-	if(intval(get_query_var('delibera_print')) == 1 || intval(get_query_var('delibera_printpage')) == 1)
+	removeAddtoanyLinks();
+	if(
+		intval(get_query_var('delibera_print')) == 1 ||
+		intval(get_query_var('delibera_printpage')) == 1 ||
+		intval(get_query_var('delibera_print_csv')) > 0 ||
+		intval(get_query_var('delibera_print_xls')) > 0
+	)
 	{
-        global $wp_query;
-        $wp_query->set('posts_per_page', get_query_var('number-options'));
-        query_posts($wp_query->query_vars);
-		include(WP_PLUGIN_DIR.'/delibera/print/print.php');
+		global $wp_query;
+		
+		if(intval(get_query_var('delibera_print_parent')) == 1)
+		{
+			$post = get_post();
+			
+			$current_post_id = get_the_ID();
+			
+			global $parent;
+			$parent = $post->post_parent;
+			if( $parent == 0 )
+			{
+				$parent = $current_post_id;
+			}
+			
+			add_filter( 'posts_where' , '\Delibera\Includes\WP_Print\delibera_print_posts_where' );
+			
+			//$pages = get_pages( array( 'parent' => $parent, 'sort_column' => 'title', 'sort_order' => 'asc', 'number' => '6' ) );
+			$wp_query = new \WP_Query( array(
+				'post_parent' => $parent,
+				'orderby' => 'title',
+				'order' => 'ASC',
+				'post_type' => get_post_type(),
+				'post_status' => 'publish',
+				'include' => $parent,
+				'delibera_print_csv' => get_query_var('delibera_print_csv', false),
+				'delibera_print_xls' => get_query_var('delibera_print_xls', false),
+			));
+		}
+		
+		//TODO FIX posts_per_page
+		/*$args = array_merge( $wp_query->query_vars, array( 'post_type' => 'product' ) );
+		 query_posts( $args );
+		 
+		 $wp_query->set('posts_per_page', get_query_var('number-options'));
+		 query_posts($wp_query->query_vars);*/
+		
+		include(plugin_dir_path(__FILE__) .'/print.php');
 		exit();
 	}
 }
-add_action('template_redirect', 'delibera_print', 5);
+add_action('template_redirect', '\Delibera\Includes\WP_Print\delibera_print', 5);
 
 ### Function: Print Content
 function print_content($display = true) {
 	global $links_text, $link_number, $max_link_number, $matched_links,  $pages, $multipage, $numpages, $post;
-    if (!isset($link_text) && isset($link_url)) {
-        $link_text = $link_url;
-    }
-
 	if (!isset($matched_links)) {
 		$matched_links = array();
 	}
@@ -96,7 +144,12 @@ function print_content($display = true) {
 				} else {
 					$link_url =(strtolower(substr($link_url,0,7)) != 'http://') ?get_option('home') . $link_url : $link_url;
 				}
-				$link_text = $matches[4][$i];+				
+				$link_text = $matches[4][$i];
+				
+				if (!isset($link_text) && isset($link_url)) {
+					$link_text = $link_url;
+				}
+				
 				$new_link = true;
 				$link_url_hash = md5($link_url);
 				if (!isset($matched_links[$link_url_hash])) {
@@ -139,15 +192,11 @@ function print_categories($before = '', $after = '', $parents = '')
 ### Function: Print Comments Content
 function print_comments_content($display = true) {
 	global $links_text, $link_number, $max_link_number, $matched_links;
-    if (!isset($link_text) && isset($link_url)) {
-        $link_text = $link_url;
-    }
-
 	if (!isset($matched_links)) {
 		$matched_links = array();
 	}
 	$content  = get_comment_text();
-	$content = apply_filters('comment_text', $content);
+	$content = apply_filters('comment_text', $content, get_comment());
 	if(!print_can('images')) {
 		$content = remove_image($content);
 	}
@@ -167,6 +216,10 @@ function print_comments_content($display = true) {
 				$link_url = $link_url; 
 			} else {
 				$link_url =(strtolower(substr($link_url,0,7)) != 'http://') ?get_option('home') . $link_url : $link_url;
+			}
+			$link_text = $matches[4][$i];
+			if (!isset($link_text) && isset($link_url)) {
+				$link_text = $link_url;
 			}
 			$new_link = true;
 			$link_url_hash = md5($link_url);
@@ -194,14 +247,28 @@ function print_comments_content($display = true) {
 	}
 }
 
+function delibera_comment_number($postID, $filter)
+{
+	return 0;
+}
 
 ### Function: Print Comments
-function print_comments_number() {
+function print_comments_number($comments = false)
+{
 	global $post;
 	$comment_text = '';
 	$comment_status = $post->comment_status;
-	if($comment_status == 'open') {
-		$num_comments = delibera_comment_number($post->ID, 'todos');
+	if($comment_status == 'open' || (is_array($comments) && count($comments) > 0 ))
+	{
+		$num_comments = 0;
+		if($comments)
+		{
+			$num_comments = count($comments);
+		}
+		else
+		{
+			$num_comments = delibera_comment_number($post->ID, 'todos');
+		}
 		if($num_comments == 0) {
 			$comment_text = __('Sem Interações', 'delibera');
 		} else {
@@ -222,7 +289,7 @@ function print_comments_number() {
 function print_links($text_links = '') {
 	global $links_text;
 	if(empty($text_links)) {
-		$text_links = __('URLs in this post:', 'wp-print');
+		$text_links = __('URLs na pauta:', 'wp-print');
 	}
 	if(!empty($links_text)) { 
 		echo $text_links.$links_text; 
@@ -234,7 +301,7 @@ function print_template_comments($file = '') {
 	if(file_exists(TEMPLATEPATH.'/print-comments.php')) {
 		$file = TEMPLATEPATH.'/print-comments.php';
 	} else {
-		$file = WP_PLUGIN_DIR.'/delibera/print/print-comments.php';
+		$file = plugin_dir_path(__FILE__).'print-comments.php';
 	}
 	return $file;
 }
@@ -299,5 +366,106 @@ function delibera_get_print_link($texto = false, $imagem = false)
 	}
 	return $html;
 }
+
+function delibera_manage_posts_columns($columns)
+{
+	return array_merge( $columns,
+			array( 'delibera_print' => __( 'Print', 'delibera' ) ) );
+}
+add_filter( 'manage_posts_columns' , '\Delibera\Includes\WP_Print\delibera_manage_posts_columns' );
+add_filter( 'manage_pages_columns' , '\Delibera\Includes\WP_Print\delibera_manage_posts_columns' );
+
+function delibera_display_posts_print( $column, $post_id )
+{
+	if ($column == 'delibera_print')
+	{
+		$link = get_the_permalink($post_id);
+		$has_query_vars = strpos($link, '?') === false ? '?' : '&';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_xls=1&delibera_print_parent=1" target="_blank" title="'.__('Exportar XLS com dados da pauta','delibera').'" ><span class="delibera-icon-file-excel" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print=1&delibera_print_parent=1" target="_blank" title="'.__('Imprimir textos com comentários por parágrafo.','delibera').'" ><span class="delibera-icon-print" onclick="" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_csv=1&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por parágrafo','delibera').'" ><span class="delibera-icon-chat-empty" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_csv=2&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por dia','delibera').'" ><span class="delibera-icon-calendar" ></span></a>';
+		echo '<a href="'.get_the_permalink($post_id).$has_query_vars.'delibera_print_csv=3&delibera_print_parent=1" target="_blank" title="'.__('Exportar CSV com número de comentários por usuário','delibera').'" ><span class="delibera-icon-users" ></span></a>';
+	}
+}
+add_action( 'manage_posts_custom_column' , '\Delibera\Includes\WP_Print\delibera_display_posts_print', 10, 2 );
+add_action( 'manage_pages_custom_column' , '\Delibera\Includes\WP_Print\delibera_display_posts_print', 10, 2 );
+
+function delibera_scripts()
+{
+	//wp_enqueue_style( 'delibera-print-fonts', plugin_dir_url(__FILE__).'/fonts/css/delibera-print.css' );
+	wp_enqueue_style( 'delibera-print', plugin_dir_url(__FILE__).'/admin.css' );
+}
+add_action( 'admin_enqueue_scripts', '\Delibera\Includes\WP_Print\delibera_scripts' );
+
+function delibera_print_posts_where( $where )
+{
+	global $parent;
+	
+	$where = " AND ( ID = ".$parent." OR ".substr($where, 4).")";
+	
+	return $where;
+}
+
+/**
+ * Get meta data by meta object type
+ *
+ * @global wpdb $wpdb WordPress database abstraction object.
+ *
+ * @param string $meta_type Type of object metadata is for (e.g., comment, post, term, or user).
+ * @return object|false Meta object or false.
+ */
+function delibera_getMetadataByType( $meta_type = 'post' )
+{
+	global $wpdb;
+	
+	if ( ! $meta_type ) {
+		return false;
+	}
+	
+	$table = _get_meta_table( $meta_type );
+	if ( ! $table ) {
+		return false;
+	}
+	
+	$meta = $wpdb->get_col( " SELECT DISTINCT meta_key FROM $table WHERE meta_key NOT LIKE '\_%' ");
+	
+	if ( empty( $meta ) )
+	{
+		return false;
+	}
+	
+	if($meta_type == 'user')
+	{
+		$meta = array_filter($meta, function($meta)
+		{
+			global $wpdb;
+			$defaults_metas = array(
+				'nickname',
+				'first_name',
+				'last_name',
+				'description',
+				'rich_editing',
+				'comment_shortcuts',
+				'admin_color',
+				'use_ssl',
+				'show_admin_bar_front',
+				$wpdb->prefix.'capabilities',
+				$wpdb->prefix.'user_level',
+				'dismissed_wp_pointers',
+				'show_welcome_panel',
+				'session_tokens',
+				$wpdb->prefix.'dashboard_quick_press_last_post_id',
+				'closedpostboxes_page',
+				'metaboxhidden_page'
+			);
+			return !in_array($meta, $defaults_metas);
+		});
+	}
+	
+	return $meta;
+}
+
+require dirname(__FILE__)."/print-bulk.php";
 
 ?>

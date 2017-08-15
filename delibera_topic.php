@@ -18,10 +18,15 @@ function delibera_pauta_custom_meta()
  *
  * Retorna a situação do post
  * @param int $postID
- * @return mixed term name in taxonomy situacao or false
+ * @return WP_Term|boolean term name in taxonomy situacao or false
  */
-function delibera_get_situacao($postID)
+function delibera_get_situacao($postID = false)
 {
+	if($postID === false)
+	{
+		$postID = get_the_ID();
+		if($postID === false) return false;
+	}
 	$situacao = get_the_terms($postID, 'situacao');
 	$ret = false;
 	if(is_array($situacao) && count($situacao)  > 0)
@@ -42,6 +47,16 @@ function delibera_get_situacao($postID)
 	}
 
 	return $ret;
+}
+
+/**
+ * Return term situacao for given slug
+ * @param string $slug term slug
+ * @return WP_Term|boolean
+ */
+function delibera_get_situacao_by_slug($slug)
+{
+	return get_term_by($slug, 'situacao');
 }
 
 /**
@@ -489,6 +504,7 @@ function deliberaCreateTopic($args = array())
 			$pauta['post_category'] = $args['post_category'];
 		}
 		
+		$_POST['delibera_flow'] = $args['delibera_flow'];
 		// Load defaults modules values at $_POST
 		do_action('delibera_create_pauta_frontend', $opt);
 		
@@ -526,7 +542,7 @@ function deliberaCreateTopic($args = array())
 			{
 				ini_set('display_errors', 1);
 				ini_set('display_startup_errors', 1);
-				error_reporting(E_ALL & ~E_STRICT);
+				error_reporting(E_ALL ^ E_STRICT);
 			}
 			
 			// publica o post
@@ -558,7 +574,7 @@ function deliberaCreateTopic($args = array())
 			return $pauta_id;	
 		}
 	}
-	elseif($opt['criar_pauta_pelo_front_end'] == 'S')
+	elseif(is_user_logged_in() && $opt['criar_pauta_pelo_front_end'] != 'S')
 	{
 		wp_die(__('Criação de pauta fora do painel está desabilitada, favor contactar o administrador e pedir sua ativação.', 'delibera'));
 	}

@@ -32,6 +32,8 @@ class Flow
 		
 		add_action('wp_ajax_delibera_save_flow', array($this, 'saveFlowCallback'));
 		
+		add_action('template_redirect', array($this, 'template_redirect'));
+		
 	}
 	
 	/**
@@ -159,6 +161,22 @@ class Flow
 	}
 	
 	/**
+	 * return the default configured flow
+	 * @param string $options_plugin_delibera
+	 * @return array Default flow
+	 */
+	public static function getDefaultFlow($options_plugin_delibera = false)
+	{
+		if($options_plugin_delibera == false || !is_array($options_plugin_delibera))
+		{
+			$options_plugin_delibera = delibera_get_config();
+		}
+		$default_flow = isset($options_plugin_delibera['delibera_flow']) ? $options_plugin_delibera['delibera_flow'] : array();
+		$default_flow = apply_filters('delibera_flow_list', $default_flow);
+		return $default_flow;
+	}
+	
+	/**
 	 * Get the last deadline before current module
 	 * @param string $situacao
 	 * @param int $post_id
@@ -177,7 +195,22 @@ class Flow
 		{
 			$post_id = get_the_ID();
 		}
-		$flow = $DeliberaFlow->get($post_id);
+		$flow = array();
+		if(get_post_type($post_id) == 'pauta')
+		{
+			$flow = $DeliberaFlow->get($post_id);
+		}
+		else // Creating pauta at front?
+		{
+			if(array_key_exists('delibera_flow', $_POST) && is_array($_POST['delibera_flow']))
+			{
+				$flow = $_POST['delibera_flow'];
+			}
+			else
+			{
+				$flow = self::getDefaultFlow();
+			}
+		}
 		$modules = $DeliberaFlow->getFlowModules();
 		
 		$now = array_search($situacao, $flow);
@@ -318,6 +351,8 @@ class Flow
 	 */
 	public static function next($post_id = false)
 	{
+		$current = self::getCurrentModule($post_id);
+		$current::setSituacaoDate($post_id);
 		$next = self::getNext($post_id);
 		if($next)
 		{
@@ -415,7 +450,7 @@ class Flow
 		{
 			$data = $deadlineDate->format('d/m/Y');
 		}
-		if($diff->d > 0)
+		if($diff->days > 0)
 		{
 			$ret = $diff->format('%r%a');
 			if($ret < -1) // Pauta travada see https://github.com/redelivre/delibera/issues/135
@@ -430,7 +465,7 @@ class Flow
 			}
 			return $ret;
 		}
-		if($diff->d < 1 && ($diff->i || $diff->h || $diff->s)) 
+		if($diff->days < 1 && ($diff->i || $diff->h || $diff->s)) 
 		{
 			return  1;
 		}
@@ -704,6 +739,58 @@ class Flow
 			}
 		}
 		return $dates;
+	}
+	
+	/**
+	 * return list of dates of post stages in format: array of [situacao] => [date]
+	 * @param int $post_id
+	 * @return array
+	 */
+	public static function getFlowDates($post_id)
+	{
+		global $DeliberaFlow;
+		
+		$dates = array();
+		$flow = $DeliberaFlow->get($post_id);
+		$modules = $DeliberaFlow->getFlowModules();
+		foreach ($flow as $situacao)
+		{
+			if(array_key_exists($situacao, $modules))
+			{
+				$dates[$situacao] = $modules[$situacao]::getSituacaoDate($post_id, $situacao);
+				if(empty($dates[$situacao]))
+				{
+					$dates[$situacao] = $modules[$situacao]->getDeadline($post_id);
+				}
+			}
+		}
+		return $dates;
+	}
+
+	/**
+	 * Return module index on flow or false if flow do not have the module/situacao
+	 * @param string $situacao term slug for taxonomy situacao
+	 * @param int $post_id
+	 * @return mixed flow index or false
+	 */
+	public static function hasModule($situacao, $post_id = false)
+	{
+		global $DeliberaFlow;
+		$flow = $DeliberaFlow->get($post_id);
+		return array_search($situacao, $flow);
+	}
+	
+	/**
+	 * hook WordPress template_redirect to execute after everything are setup and the query has been done 
+	 */
+	public function template_redirect()
+	{
+		$post_id = get_the_ID();
+		if(intval($post_id) > 0)
+		{
+			$currentModule = $this->getCurrentModule($post_id);
+			$currentModule->template_redirect();
+		}
 	}
 	
 }

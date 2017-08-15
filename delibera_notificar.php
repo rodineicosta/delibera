@@ -653,12 +653,31 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		{
 			return false;
 		}
+		$lang = get_user_meta(get_current_user_id(), 'user_idioma', true);
+		
+		if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
+		
+		$header = '';
+		$footer = '';
+		if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) != __( 'Cabeçalho' , 'delibera' ) )
+		{
+			$header = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).'<br/>'; //TODO better way to resolv this by forcing a new line (<br/>)
+		}
+		if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]) != __( 'Rodapé' , 'delibera' ) )
+		{
+			$footer = '<br/>'.htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]); //TODO better way to resolv this by forcing a new line (<br/>)
+		}
+		$mensage_default = $header.htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).$footer;
+		
 		$subject_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto"]);
-		$mensage_default = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).htmlspecialchars_decode($options_plugin_delibera[$tipo]).$mensage.'<br/><br/>'.delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);;
-
+		
+		$loop = false; // do a query loop?
+		
+		$users_limit = 500;
 		if(!is_array($users))
 		{
-			$users = $admin ? get_users(array('role' => 'administrator')) : get_users();
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => $users_limit)) : get_users(array('number' => $users_limit));
+			$loop = true;
 		}
 
 		if(!is_array($users))
@@ -672,40 +691,62 @@ function delibera_notificar_representantes($mensage, $tipo, $post = false, $user
 		{
 			$seguiram = delibera_get_quem_seguiu($post->ID, 'ids');
 		}
+		$paged = 1;
 
-		foreach ($users as $user)
+                while(count($users) > 0)
 		{
-			if(user_can($user->ID, 'votar') && isset($user->user_email) && $user->ID != $autor_id)
+			foreach ($users as $user)
 			{
-				$segue = array_search($user->ID, $seguiram);
-
-				$user_notificacoes = get_user_meta($user->ID, 'delibera_notificacoes_email', true);
-
-				if(!$segue && ($user_notificacoes == "N" || get_user_meta($user->ID, "$tipo-enabled", true) == "N"))
+				if(class_exists('Groups_Post_Access') && !Groups_Post_Access::user_can_read_post($post->ID, $user->ID)) // check groups restriction
 				{
 					continue;
 				}
-
-				$mensage_tmp = $mensage_default;
-				$subject_tmp = $subject_default;
-
-				$lang = get_user_meta($user->ID, 'user_idioma', true);
-
-				if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
-
-				if(array_key_exists("$tipo-$lang", $options_plugin_delibera))
+				
+				if(user_can($user->ID, 'votar') && isset($user->user_email) && $user->ID != $autor_id)
 				{
-					$mensage_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin).htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]);
+					$segue = array_search($user->ID, $seguiram);
+	
+					$user_notificacoes = get_user_meta($user->ID, 'delibera_notificacoes_email', true);
+	
+					if(!$segue && ($user_notificacoes == "N" || get_user_meta($user->ID, "$tipo-enabled", true) == "N"))
+					{
+						continue;
+					}
+	
+					$mensage_tmp = $mensage_default; //TODO better name this vars
+					$subject_tmp = $subject_default;
+					
+					$lang = get_user_meta($user->ID, 'user_idioma', true);
+					
+					if(strlen($lang) == 0) $lang = defined('WPLANG') && strlen(WPLANG) > 0 ? WPLANG : get_locale();
+	
+					if(array_key_exists("$tipo-$lang", $options_plugin_delibera)) // Translating to user lang if we have
+					{
+						$header_user = $header; //Using default footer and header and replace if have translation 
+						$footer_user = $footer;
+						if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]) != __( 'Cabeçalho' , 'delibera' ) )
+						{
+							$header_user = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_cabecalho-$lang"]).'<br/>'; //TODO better way to resolv this by forcing a new line (<br/>)
+						}
+						if(!empty(htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"])) && htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]) != __( 'Rodapé' , 'delibera' ) )
+						{
+							$footer_user = '<br/>'.htmlspecialchars_decode($options_plugin_delibera["{$tipo}_rodape-$lang"]); //TODO better way to resolv this by forcing a new line (<br/>)
+						}
+						$mensage_tmp = $header_user . htmlspecialchars_decode($options_plugin_delibera["$tipo-$lang"]) . $mensage .'<br/><br/>'. delibera_notificar_get_mensagem_link($post, $link, $admin) . $footer_user;
+					}
+					if(array_key_exists("{$tipo}_assunto-$lang", $options_plugin_delibera))
+					{
+						$subject_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto-$lang"]);
+					}
+	
+					$subject_tmp = delibera_notificar_replace_vars($subject_tmp, $user, $post, $admin);
+					$mensage_tmp = delibera_notificar_replace_vars($mensage_tmp, $user, $post, $admin);
+					return wp_mail($user->user_email, $subject_tmp, $mensage_tmp);
 				}
-				if(array_key_exists("{$tipo}_assunto-$lang", $options_plugin_delibera))
-				{
-					$subject_tmp = htmlspecialchars_decode($options_plugin_delibera["{$tipo}_assunto-$lang"]);
-				}
-
-				$subject_tmp = delibera_notificar_replace_vars($subject_tmp, $user, $post, $admin);
-				$mensage_tmp = delibera_notificar_replace_vars($mensage_tmp, $user, $post, $admin);
-				return wp_mail($user->user_email, $subject_tmp, $mensage_tmp);
 			}
+			if (!$loop) break;
+			$paged++;
+			$users = $admin ? get_users(array('role' => 'administrator', 'number' => $users_limit, 'paged' => $paged)) : get_users(array('number' => $users_limit, 'paged' => $paged));
 		}
 	}
 	return false;
@@ -773,7 +814,12 @@ function delibera_notificar_replace_vars($subject, $user, $postReport, $admin = 
 
 	if($post)
 	{
-		$author = get_user_by('id', $post->post_author);
+		$author = get_user_by('id', $post->post_author); 
+		if($author === false) //is anonimous post?
+		{
+			$author = new stdClass();
+			$author->user_firstname = 'Anonymous';
+		}
 		$subject = str_ireplace("{post_title}", $post->post_title, $subject);
 		$subject = str_ireplace("{post_url}", delibera_notificar_get_mensagem_link($post), $subject);
 		$subject = str_ireplace("{post_author}", $author->user_firstname, $subject);

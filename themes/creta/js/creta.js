@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
     if (delibera.situation == 'validacao') {
         // controla os botões para aprovar ou rejeitar a entrada de uma pauta para discussao
-        jQuery('#painel_validacao .btn').click(function() {
+        jQuery('.painel_validacao .btn').click(function() {
             if (jQuery(this).hasClass('btn-success')) {
                 jQuery('#delibera_validacao').val('S');
             } else {

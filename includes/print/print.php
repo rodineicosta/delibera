@@ -21,11 +21,11 @@
 $links_text = '';
 
 ### Actions
-add_action('init', 'print_content');
+add_action('init', '\Delibera\Includes\WP_Print\print_content');
 
 ### Filters
-add_filter('wp_title', 'print_pagetitle');
-add_filter('comments_template', 'print_template_comments');
+add_filter('wp_title', '\Delibera\Includes\WP_Print\print_pagetitle');
+add_filter('comments_template', '\Delibera\Includes\WP_Print\print_template_comments');
 //add_filter('comments_array', 'delibera_print_comments');
 remove_filter('comments_array', 'delibera_get_comments_filter');
 
@@ -38,6 +38,6 @@ $withcomments = true;
 if(file_exists(TEMPLATEPATH.'/print-posts.php')) {
 	include(TEMPLATEPATH.'/print-posts.php');
 } else {
-	include(WP_PLUGIN_DIR.'/delibera/print/print-posts.php');
+	include(plugin_dir_path(__FILE__).'/print-posts.php');
 }
 ?>

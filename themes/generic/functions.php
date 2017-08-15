@@ -3,7 +3,7 @@ if(defined(WP_DEBUG) && WP_DEBUG)
 {
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL & ~E_STRICT);
+	error_reporting(E_ALL ^ E_STRICT);
 }
 
 function get_delibera_header() {
@@ -37,7 +37,7 @@ function get_delibera_header() {
 	if ( is_user_logged_in() )
 	{
 		global $current_user;
-		get_currentuserinfo();
+		wp_get_current_user();
 
 		printf(
 		__( 'Você está logado como <a href="%1$s" title="Ver meu perfil" class="profile">%2$s</a>. Caso deseje sair de sua conta, <a href="%3$s" title="Sair">faça o logout</a>.', 'delibera' ),
@@ -126,11 +126,15 @@ function delibera_comment_form($defaults)
 					$defaults['must_log_in'] = sprintf(__('Você precisar <a href="%s">estar logado</a> e ter permissão para votar.','delibera'),wp_login_url( apply_filters( 'the_permalink', get_permalink( $post->ID ))));
 					if (delibera_current_user_can_participate()) {
 						$form = '
-						<div id="painel_validacao" >
-						<input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>
-						<input id="delibera_rejeitar" type="radio" name="delibera_validacao" value="N"	/><label for="delibera_rejeitar" class="delibera_aceitar_radio_label">'.__('Rejeitar','delibera').'</label>
-						<input name="comment" value="A validação de '.$current_user->display_name.' foi registrada no sistema." style="display:none;" />
-						<input name="delibera_comment_tipo" value="validacao" style="display:none;" />
+						<div class="painel_validacao" >
+						<input id="delibera_aceitar" type="radio" name="delibera_validacao" value="S" checked /><label for="delibera_aceitar" class="delibera_aceitar_radio_label">'.__('Aceitar','delibera').'</label>'.
+						(get_post_meta($post->ID, 'delibera_validation_show_abstencao', true) == 'S' ?
+							'<input id="delibera_validation_abstencao" type="radio" name="delibera_validacao" value="A"	/><label for="delibera_validation_abstencao" class="delibera_aceitar_radio_label">'.__('Abstenção','delibera').'</label>' : '' ).
+						(get_post_meta($post->ID, 'delibera_validation_show_rejeitar', true) == 'S' ?
+							'<input id="delibera_rejeitar" type="radio" name="delibera_validacao" value="N"	/><label for="delibera_rejeitar" class="delibera_aceitar_radio_label">'.__('Rejeitar','delibera').'</label>' : '' ).
+						(get_post_meta($post->ID, 'delibera_validation_show_comment', true) == 'S' ?
+							$defaults['comment_field'] : '<input name="comment" value="A validação de '.$current_user->display_name.' foi registrada no sistema." style="display:none;" />' ).
+						'<input name="delibera_comment_tipo" value="validacao" style="display:none;" />
 						</div>
 						';
 						$defaults['comment_field'] = $form;
@@ -194,11 +198,25 @@ function delibera_comment_form($defaults)
 				{
 					$defaults = apply_filters('delibera_discussao_comment_form', $defaults, $situacao->slug);
 				}
+				if(
+						class_exists('\Delibera\Includes\SideComments\CTLT_WP_Side_Comments') && // have side comment module
+						\Delibera\Includes\SideComments\CTLT_WP_Side_Comments::hasSideCommentSection(get_the_ID()) && // have a side comment section
+						! \Delibera\Modules\Discussion::showDefaultCommentForm(get_the_ID()) // AND do not have default comment form enabled
+				)
+				{
+					$defaults['comment_notes_after'] = '
+					<script type="text/javascript">
+					var formdiv = document.getElementById("respond");
+					formdiv.style.display = "none";
+					</script>
+					';
+				}
 			}break;
 			case 'emvotacao':
 			{
 				$user_comments = delibera_get_comments($post->ID, 'voto', array('user_id' => $current_user->ID));
 				$temvoto = false;
+				$tipo_votacao = get_post_meta($post->ID, 'tipo_votacao', true);
 				foreach ($user_comments as $user_comment)
 				{
 					if(get_comment_meta($user_comment->comment_ID, 'delibera_comment_tipo', true) == 'voto')
@@ -207,7 +225,7 @@ function delibera_comment_form($defaults)
 						break;
 					}
 				}
-				if($temvoto)
+				if($temvoto && $tipo_votacao != 'pairwise')
 				{
 					$defaults['comment_notes_after'] = '
 					<script type="text/javascript">
@@ -222,9 +240,9 @@ function delibera_comment_form($defaults)
 					$encaminhamentos = array();
 					if (delibera_current_user_can_participate())
 					{
-						$tipo_votacao = get_post_meta($post->ID, 'tipo_votacao', true);
 						$form = '<div class="delibera_'.$tipo_votacao.'_voto">';
 						$encaminhamentos = delibera_get_comments_encaminhamentos($post->ID);
+						$show_based_proposals = null;
 						
 						$i = 0;
 						$users = array();
@@ -236,15 +254,52 @@ function delibera_comment_form($defaults)
 								foreach ($encaminhamentos as $encaminhamento)
 								{
 									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
-									if(!empty($hasbasedon)) continue; // TODO module and general option to show original proposals
+									$baseouseem = get_comment_meta($encaminhamento->comment_ID, "delibera-baseouseem", true);
+									
+									if(is_null($show_based_proposals))
+									{
+										$show_based_proposals = get_post_meta($encaminhamento->comment_post_ID, 'show_based_proposals', true);
+									}
+									
+									if(!empty($hasbasedon) && !$show_based_proposals) continue;
+									
 									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
 									$users[$encaminhamento->comment_author]++;
 									
-									$form .= '<div id="delibera-voto-modal-'.$i.'" class="delibera-voto-modal"><div class="delibera-voto-modal-window"><div class="delibera-voto-modal-close">×</div>';
+									$form .= '<div id="delibera-voto-modal-'.$i.'" class="delibera-voto-modal"><div class="delibera-voto-modal-window"><div class="delibera-voto-modal-close delibera-icon-cancel"></div>';
 										$form .= '<div id="delibera-voto-modal-content-'.$i.'" class="delibera-voto-modal-content">';
-											$form .= wpautop(apply_filters( 'get_comment_text', $encaminhamento->comment_content, $encaminhamento, array() ));
+											$form .= '<div id="delibera-voto-modal-content-text-'.$i.'" class="delibera-voto-modal-content-text">';
+												$form .= wpautop(apply_filters( 'get_comment_text', $encaminhamento->comment_content, $encaminhamento, array() ));
+											$form .= '</div>';
+											if(!empty($baseouseem))
+											{
+												$form .= '<div id="delibera-voto-modal-content-baseadaem-'.$i.'" class="delibera-voto-modal-content-baseadaem">';
+													$form .= '<div class="delibera-voto-modal-title-baseadaem-list">'.__('Proposta baseada em', 'delibera').':</div>';
+													$based_list = explode(',', $baseouseem);
+													foreach ($based_list as $baseouseem_element)
+													{
+														$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
+														if(!is_array($atts)) continue;
+														$comment_base = get_comment($atts['id']);
+														$form .=
+															'<div class="delibera-based-voto-box">
+																<div class="delibera-voto-content">
+																	<div class="delibera-voto-title">
+																		'.__('Proposta', 'delibera').' de '.get_comment_author($comment_base).'
+																	</div><div class="delibera-icon-plus"></div>
+																	<div class="delibera-voto-icons">
+																	</div>
+																	<div class="delibera-voto-text">
+																		'.$comment_base->comment_content.'
+																	</div>
+																</div>
+															</div>
+														';
+													}
+												$form .= '</div>';
+											}
 										$form .= '</div>';
 									$form .= '</div></div>';
 									$form .= '
@@ -278,14 +333,25 @@ function delibera_comment_form($defaults)
 									';
 								}
 								$form .= '</select></div>';
-								break;
+							break;
+							case 'pairwise':
+								$form = delibera_generateProposalPair($encaminhamentos, $form, $users);
+								//$defaults['id_submit'] = "botao-oculto"; // for click callback on option
+							break;
 							case 'checkbox':
 							default:
 								$form .= '<h3 class="comment-respond">'.__('Escolha os encaminhamentos que deseja aprovar e depois clique em "Votar":','delibera').'</h3>';
 								foreach ($encaminhamentos as $encaminhamento)
 								{
 									$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
-									if(!empty($hasbasedon)) continue; // TODO module and general option to show original proposals
+									
+									if(is_null($show_based_proposals))
+									{
+										$show_based_proposals = get_post_meta($encaminhamento->comment_post_ID, 'show_based_proposals', true);
+									}
+									
+									if(!empty($hasbasedon) && !$show_based_proposals) continue;
+									
 									$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
 									
 									if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
@@ -377,7 +443,7 @@ add_action('wp_enqueue_scripts', function()
 
 		if ($situacao->slug == 'relatoria')
 		{
-			wp_enqueue_script('delibera_relatoria_js', plugin_dir_url(__FILE__) . '/../../../js/delibera_relatoria.js', array('jquery'));
+			wp_enqueue_script('delibera_relatoria_js', WP_PLUGIN_URL.'/delibera/js/delibera_relatoria.js', array('jquery'));
 		}
 	}
 });
@@ -506,6 +572,93 @@ function delibera_gerar_curtir($ID, $type ='pauta')
 	return $html;
 }
 
+function delibera_generateProposalPair($proposals, $form = "", $users = array(), $post_id = false)
+{
+	if($post_id === false) $post_id = get_the_ID();
+	$i = 0;
+	$pair = \Delibera\Modules\Vote::getAPair($post_id);
+	
+	if(!is_array($pair) || count($pair) != 2) return $form;
+	
+	$form .= '<div id="delibera-pairwise-entry"><h3 class="comment-respond">'.__('Escolha a melhor proposta:','delibera').'</h3>';
+	$form .= wp_nonce_field('delibera_vote_callback', '_wpnonce_delibera_vote_callback', true, false);
+	$form .= '<input type="hidden" name="delibera-pair" id="delibera-votes-pair" value="'.implode(',', $pair).'" />';
+	/* @var WP_Comment $encaminhamento */
+	foreach ($proposals as $encaminhamento)
+	{
+		if(!in_array($encaminhamento->comment_ID, $pair)) continue;
+		
+		$hasbasedon = get_comment_meta($encaminhamento->comment_ID, "delibera-hasbasedon", true);
+		$baseouseem = get_comment_meta($encaminhamento->comment_ID, "delibera-baseouseem", true);
+		
+		$show_based_proposals = get_post_meta($encaminhamento->comment_post_ID, 'show_based_proposals', true);
+		
+		if(!empty($hasbasedon) && !$show_based_proposals) continue;
+		
+		$hasbasedon_class = empty($hasbasedon) ? '' : 'delibera-hasbasedon';
+		
+		if(!array_key_exists($encaminhamento->comment_author, $users)) $users[$encaminhamento->comment_author] = 0;
+		$users[$encaminhamento->comment_author]++;
+		
+		$form .= '<div id="delibera-voto-modal-'.$i.'" class="delibera-voto-modal"><div class="delibera-voto-modal-window"><div class="delibera-voto-modal-close delibera-icon-cancel"></div>';
+			$form .= '<div id="delibera-voto-modal-content-'.$i.'" class="delibera-voto-modal-content">';
+			$form .= '<div id="delibera-voto-modal-content-text-'.$i.'" class="delibera-voto-modal-content-text">';
+			$form .= wpautop(apply_filters( 'get_comment_text', $encaminhamento->comment_content, $encaminhamento, array() ));
+		$form .= '</div>';
+		if(!empty($baseouseem))
+		{
+			$form .= '<div id="delibera-voto-modal-content-baseadaem-'.$i.'" class="delibera-voto-modal-content-baseadaem">';
+				$form .= '<div class="delibera-voto-modal-title-baseadaem-list">'.__('Proposta baseada em', 'delibera').':</div>';
+				$based_list = explode(',', $baseouseem);
+				foreach ($based_list as $baseouseem_element)
+				{
+					$atts = shortcode_parse_atts(stripcslashes($baseouseem_element));
+					if(!is_array($atts)) continue;
+					$comment_base = get_comment($atts['id']);
+					$form .= '
+						<div class="delibera-based-voto-box">
+							<div class="delibera-voto-content">
+								<div class="delibera-voto-title">
+									'.__('Proposta', 'delibera').' de '.get_comment_author($comment_base).'
+								</div><div class="delibera-icon-plus"></div>
+								<div class="delibera-voto-icons">
+								</div>
+								<div class="delibera-voto-text">
+									'.$comment_base->comment_content.'
+								</div>
+							</div>
+						</div>
+					';
+				}
+			$form .= '</div>';
+		}
+		$form .= '</div>';
+		$form .= '</div></div>';
+		$form .= '
+			<div id="delibera-voto-option-'.$i.'" class="delibera-voto-option pairwise-voto '.$hasbasedon_class.'">
+				<label id="delibera-label-voto-'.$i.'" for="delibera_voto'.$i.'" class="label-voto">
+					<div class="delibera-voto-content">
+						<div class="delibera-voto-title">
+							'.__('Proposta', 'delibera').' '.$users[$encaminhamento->comment_author].' de @'.get_comment_author($encaminhamento).'
+						</div>
+						<div class="delibera-voto-icons">
+						</div>
+						<div class="delibera-voto-text">
+							'.wp_trim_words( $encaminhamento->comment_content, 55, '...' ).'
+						</div>
+					</div>
+				</label>
+				<div id="delibera-voto-bt-read-'.$i.'" class="delibera-voto-bt-read">'.__('Proposta Completa', 'delibera').'</div>
+				<input type="radio" name="delibera_voto" id="delibera_voto'.$i.'" value="'.$encaminhamento->comment_ID.'" />
+			</div>
+		';
+		$i++;
+	}
+	$form .= '</div>';
+	return $form;
+}
+
+
 /**
 *
 * Gera código html para criação do botão discordar do sistema delibera
@@ -536,11 +689,19 @@ function delibera_gerar_discordar($ID, $type ='pauta')
 			$ID = $ID->comment_ID;
 		}
 	}
+	elseif( !($type == 'post' || $type == 'pauta') )
+	{
+		$comment = get_comment($ID);
+		$postID = $comment->comment_post_ID;
+	}
+	
 	$ndiscordou = intval($type == 'pauta' || $type == 'post' ? get_post_meta($ID, 'delibera_numero_discordar', true) : get_comment_meta($ID, 'delibera_numero_discordar', true));
 	$situacao = delibera_get_situacao($postID);
 
 	global $deliberaThemes;
+	
 	$html = '<div id="thebuttonDiscordo'.$type.$ID.'" class="delibera-unlike" title="Demostre sua discordância com o assunto" >';
+	
 	if ($ndiscordou > 0) {
 		$html .= '<span class="delibera-unlike-count">' . $ndiscordou .'</span>';
 	} else {

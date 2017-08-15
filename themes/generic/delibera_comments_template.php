@@ -82,10 +82,14 @@ class Delibera_Walker_Comment extends Walker_Comment
 
 						$time_diff = time() - $time;
 
-						if ( $time_diff > 0 && $time_diff < 30*24*60*60 )
+						/*if ( $time_diff > 0 && $time_diff < 30*24*60*60 ) //TODO Criar a opção para mostrar a tanto tempo ao invés da data
+						{
 							printf( '&nbsp;' . __( 'há %s', 'delibera' ), human_time_diff( mysql2date( 'U', get_comment_date('Y-m-d H:i:s'), true ), current_time('timestamp') ) );
-						else
-						echo '&nbsp;' .	__( 'em', 'delibera' ) . '&nbsp;' .	get_comment_date();
+						}
+						else*/
+						{
+							echo '&nbsp;' .	__( 'em', 'delibera' ) . '&nbsp;' .	get_comment_date() . '&nbsp;-&nbsp;' . get_comment_time();
+						}
 
 						?>
 					</a>
@@ -125,7 +129,7 @@ class Delibera_Walker_Comment extends Walker_Comment
 			echo '</div>';
 
 
-			delibera_comment_edit_form();
+			if($situacao->slug == 'discussao' || ($situacao->slug == 'relatoria' && current_user_can('relatoria'))) delibera_comment_edit_form();
 			if ($tipo == "encaminhamento" && current_user_can('relatoria') && (/*$situacao->slug == "discussao" || TODO Opção de baseamento na discussão */ $situacao->slug == "relatoria"))
 			{
 				?>

@@ -44,6 +44,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 	public function __construct()
 	{
 		add_action('delibera_pauta_recusada', array('\Delibera\Cron', 'del'));
+		add_filter('delibera_unfilter_duplicate', array($this, 'unfilterDuplicate'));
 		parent::__construct();
 	}
 	
@@ -169,6 +170,12 @@ class Validation extends \Delibera\Modules\ModuleBase
 		
 		$min_validacoes = array_key_exists("min_validacoes", $custom) ?  $custom["min_validacoes"][0] : htmlentities($options_plugin_delibera['minimo_validacao']);
 		
+		$delibera_validation_show_rejeitar = array_key_exists("delibera_validation_show_rejeitar", $custom) ?  $custom["delibera_validation_show_rejeitar"][0] : 'S';
+		
+		$delibera_validation_show_abstencao = array_key_exists("delibera_validation_show_abstencao", $custom) ?  $custom["delibera_validation_show_abstencao"][0] : 'N';
+		
+		$delibera_validation_show_comment = array_key_exists("delibera_validation_show_comment", $custom) ?  $custom["delibera_validation_show_comment"][0] : 'N';
+		
 		$prazo_validacao = $this->generateDeadline($options_plugin_delibera);
 		
 		if(!($post->post_status == 'draft' ||
@@ -186,6 +193,18 @@ class Validation extends \Delibera\Modules\ModuleBase
 			<p>
 				<label class="label_prazo_validacao"><?php _e('Prazo para Validação','delibera') ?>:</label>
 				<input <?php echo $disable_edicao ?> name="prazo_validacao" class="prazo_validacao widefat hasdatepicker" value="<?php echo $prazo_validacao; ?>"/>
+			</p>
+			<p>
+				<label class="label_delibera_validation_show_rejeitar"><?php _e('Mostrar opção para rejeitar Pauta','delibera') ?>:</label>
+				<input <?php echo $disable_edicao ?> name="delibera_validation_show_rejeitar" type="checkbox" value="S" class="delibera_validation_show_rejeitar widefat delibera-admin-checkbox" <?php echo $delibera_validation_show_rejeitar == 'S' ? 'checked="checked"' : ''; ?> />
+			</p>
+			<p>
+				<label class="label_delibera_validation_show_abstencao"><?php _e('Mostrar opção para absteção sobre a Pauta','delibera') ?>:</label>
+				<input <?php echo $disable_edicao ?> name="delibera_validation_show_abstencao" type="checkbox" value="S" class="delibera_validation_show_abstencao widefat delibera-admin-checkbox" <?php echo $delibera_validation_show_abstencao == 'S' ? 'checked="checked"' : ''; ?> />
+			</p>
+			<p>
+				<label class="label_delibera_validation_show_comment"><?php _e('Mostrar campo para comentário durante a validação','delibera') ?>:</label>
+				<input <?php echo $disable_edicao ?> name="delibera_validation_show_comment" type="checkbox" value="S" class="delibera_validation_show_comment widefat delibera-admin-checkbox" <?php echo $delibera_validation_show_comment == 'S' ? 'checked="checked"' : ''; ?> />
 			</p>
 		<?php
 		
@@ -292,6 +311,9 @@ class Validation extends \Delibera\Modules\ModuleBase
 		{
 			$events_meta['prazo_validacao'] = sanitize_text_field($_POST['prazo_validacao']);
 			$events_meta['min_validacoes'] = sanitize_text_field($_POST['min_validacoes']);
+			$events_meta['delibera_validation_show_rejeitar'] = array_key_exists('delibera_validation_show_rejeitar', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_rejeitar']) : 'N';
+			$events_meta['delibera_validation_show_abstencao'] = array_key_exists('delibera_validation_show_abstencao', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_abstencao']) : 'N';
+			$events_meta['delibera_validation_show_comment'] = array_key_exists('delibera_validation_show_comment', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_comment']) : 'N';
 		}
 		
 		return $events_meta;
@@ -350,6 +372,12 @@ class Validation extends \Delibera\Modules\ModuleBase
 	public function getCommentListLabel()
 	{
 		return __('Validação da Pauta', 'delibera');
+	}
+	
+	public function unfilterDuplicate($tipos)
+	{
+		$tipos[] = 'validacao';
+		return $tipos;
 	}
 	
 }

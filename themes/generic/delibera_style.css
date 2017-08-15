@@ -218,7 +218,53 @@ resolucao - 90248f
 }
 
 .lista-de-pautas .navigation {
-	display: none;
+    text-align: center;
+}
+
+.lista-de-pautas .navigation li a,
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a,
+.lista-de-pautas .navigation li.disabled {
+	color: #fff;
+	text-decoration:none;
+}
+
+.lista-de-pautas .navigation li {
+	display: inline;
+}
+
+.lista-de-pautas .navigation li a,
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a,
+.lista-de-pautas .navigation li.disabled,
+.lista-de-pautas .navigation li span {
+	background-color: #ebebeb;
+	border-radius: 2em;
+	cursor: pointer;
+	padding: 0.70em 1em;
+	font-weight: 600;
+	color: #888; 
+}
+
+.lista-de-pautas .navigation li span {
+	cursor: default;
+}
+
+.lista-de-pautas .navigation li a.page-numbers,
+.lista-de-pautas .navigation li span.dots,
+.lista-de-pautas .navigation li.active a.page-numbers {
+	background-color: #6FB7E9;
+	color: #FFF;
+}
+
+.lista-de-pautas .navigation li a:hover,
+.lista-de-pautas .navigation li.active a {
+	background-color: #3C8DC5;
+	color: #fff;
+}
+
+.lista-de-pautas .navigation li span.current {
+	color: #6FB7E9;
 }
 
 /* BANNER CICLO VIDAS */
@@ -420,7 +466,12 @@ display: block;
 }
 
 .single-pauta .entry-date {
-	display: none;
+	/*display: none;*/
+}
+
+.single-pauta .entry-time {
+	display: inline;
+    font-weight: bold;
 }
 
 /* COMMENTS */
@@ -496,7 +547,7 @@ label.delibera_aceitar_radio_label  {
 }
 
 .delibera-comment-discussao {
-		background-color: #cfcfcf;
+	background-color: #cfcfcf;
 }
 
 #delibera-comment-encaminhamento .children .delibera-comment-discussao {
@@ -640,7 +691,13 @@ unlike_color: #ce282a
 	border-radius: 4px;
 }
 
-#painel_validacao p {
+.delibera-comment-body.delibera-comment-emvotacao.delibera-comment-emvotacao-pairwise {
+	min-width: 270px;
+	float: none;
+	margin: 0 auto;
+}
+
+.painel_validacao p {
 	font-weight: 700;
 	margin-bottom: 0px;
 	text-align: center;
@@ -653,6 +710,21 @@ unlike_color: #ce282a
 
 .delibera_lista_validacoes a.comment-reply-link {
 	display: none;
+}
+
+.delibera-comment-validacao-text {
+    float: left;
+    width: 100%;
+    padding: 2px 4px;
+    background-color: #ddd;
+    margin-top: 1em;
+    border-radius: 4px;
+}
+
+.delibera-aceitou-view,
+.delibera-rejeitou-view,
+.delibera-abstencao-view {
+    font-weight: bold;
 }
 
 .delibera-comment-author img {
@@ -1005,13 +1077,15 @@ color: #777;
 }
 
 .delibera-voto-modal-window {
-    background-color: #fff;
-    left: 25%;
+    background-color: #cfcfcf;
+    left: 20%;
     position: absolute;
-    top: 20%;
-    width: 50%;
+    top: 12%;
+    width: 60%;
     padding: 2em 1em;
     text-align: justify;
+    overflow: auto;
+	max-height: 82%;
 }
 
 .delibera-voto-modal-close {
@@ -1046,10 +1120,27 @@ color: #777;
     width: 100%;
 }
 
+#delibera-pairwise-entry .delibera-voto-option {
+	width: 49%;
+	margin-bottom: 50px;
+}
+
+#delibera-pairwise-entry #delibera-voto-option-1 {
+	float: right;
+}
+
 .delibera-voto-option input {
     left: 1em;
     position: absolute;
     top: 45%;
+}
+
+#delibera-pairwise-entry .delibera-voto-option input {
+    display: block;
+    float: left;
+    width: 100%;
+    bottom: -40px;
+    top: unset;
 }
 
 .delibera-voto-content {
@@ -1057,12 +1148,19 @@ color: #777;
     text-align: justify;
 }
 
+#delibera-pairwise-entry .delibera-voto-content {
+    margin-left: 0;
+}
+
 .delibera-voto-title {
     font-size: 1.4em;
     font-weight: bold;
     margin-bottom: 0.5em;
+    width: auto;
+    float: left;
+    cursor: pointer;
 }
-
+	
 .delibera-voto-bt-read {
     background-color: #0b5394;
     border-radius: 10px;
@@ -1073,6 +1171,63 @@ color: #777;
     padding: 0.25em 0.5em;
     text-transform: uppercase;
     cursor: pointer;
+    margin-top: 1em;
+}
+
+.delibera-voto-text {
+	width: 100%;
+	float: left;
+	padding: 0.5em 0.5em 1em 1em;
+	background: rgba(255, 255, 255, 0.2);
+	max-height: 400px;
+	overflow: auto;
+}
+
+.delibera_pairwise_voto label.label-voto, #delibera-pairwise-entry {
+    position: relative;
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+.delibera_pairwise_voto {
+	overflow: hidden;
+}
+
+#botao-oculto {
+	display: none;
+}
+
+.delibera-based-voto-box {
+    width: 100%;
+    float: left;
+    overflow: hidden;
+}
+
+.delibera-voto-modal-content-text {
+    max-height: 460px;
+    display: block;
+    overflow: auto;
+    padding: 0.75em;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.delibera-voto-modal-content-baseadaem {
+	margin-top: 4em;
+}
+
+.delibera-voto-modal-content-baseadaem .delibera-icon-plus:before {
+    background-color: #afafaf;
+	border-radius: 1em;
+	padding: 0.1em;
+}
+
+.comentario_coluna1.delibera-comment-text {
+	font-weight: bolder;
+}
+
+.delibera-result-number {
+    font-weight: bold;
 }
 
 /* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */
