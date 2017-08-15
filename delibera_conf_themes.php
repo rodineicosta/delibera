@@ -96,12 +96,25 @@ class DeliberaThemes
             $themePath = $conf['theme'];
             $themePath = $this->checkPath($themePath);
         }
-
-        if (file_exists($themePath)) {
-            return $themePath;
-        } else {
-            return $this->defaultThemePath;
-        }
+		if(strpos($themePath, 'wp-content/plugins') === false)
+		{
+			$themePath = plugin_dir_path(__FILE__)."/themes/generic";
+		}
+		try
+		{
+			if (file_exists($themePath))
+			{
+				return $themePath;
+			}
+			else
+			{
+				return $this->defaultThemePath;
+			}
+		}
+		catch (Exception $e)
+		{
+			return $this->defaultThemePath;
+		}
     }
 
     /**
