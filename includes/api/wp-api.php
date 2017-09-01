@@ -41,6 +41,22 @@ class WpApi
 				'methods' => 'GET',
 				'callback' => array($this, 'isunliked_comment_api'),
 			) );
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getLikes', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getPautaLikes'),
+			) );
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getUnlikes', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getPautaUnlikes'),
+			) );
+			register_rest_route('wp/v2', '/comments/(?P<id>\d+)/getLikes', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getCommentLikes'),
+			) );
+			register_rest_route('wp/v2', '/comments/(?P<id>\d+)/getUnlikes', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getCommentUnlikes'),
+			) );
 		} );
 		
 		add_action('rest_insert_pauta', array($this, 'apiCreate', 10, 2));
@@ -282,6 +298,41 @@ class WpApi
 		return "ops, need id";
 	}
 	
+	function getPautaLikes($data)
+	{
+		if(is_object($data))
+		{
+			return delibera_numero_curtir($data->get_param('id'), 'pauta');
+		}
+		return "ops, need id";
+	}
+	
+	function getPautaUnlikes($data)
+	{
+		if(is_object($data))
+		{
+			return delibera_numero_discordar($data->get_param('id'), 'pauta');
+		}
+		return "ops, need id";
+	}
+	
+	function getCommentLikes($data)
+	{
+		if(is_object($data))
+		{
+			return delibera_numero_curtir($data->get_param('id'), 'comment');
+		}
+		return "ops, need id";
+	}
+	
+	function getCommentUnlikes($data)
+	{
+		if(is_object($data))
+		{
+			return delibera_numero_discordar($data->get_param('id'), 'comment');
+		}
+		return "ops, need id";
+	}
 }
 
 global $DeliberaApi;
