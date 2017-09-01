@@ -57,6 +57,10 @@ class WpApi
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentUnlikes'),
 			) );
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/situacao', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getPautaSituacao'),
+			) );
 		} );
 		
 		add_action('rest_insert_pauta', array($this, 'apiCreate', 10, 2));
@@ -330,6 +334,20 @@ class WpApi
 		if(is_object($data))
 		{
 			return delibera_numero_discordar($data->get_param('id'), 'comment');
+		}
+		return "ops, need id";
+	}
+	
+	function getPautaSituacao($data)
+	{
+		if(is_object($data))
+		{
+			$situacao = delibera_get_situacao($data->get_param('id'));
+			if( is_object($situacao) )
+			{
+				return $situacao->slug;
+			}
+			return '';
 		}
 		return "ops, need id";
 	}
