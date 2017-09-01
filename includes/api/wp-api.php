@@ -60,7 +60,7 @@ function delibera_api_user_name($object, $field_name, $request)
 }
 
 /**
- * Get the value of the "situação" field
+ * Get the avatar URL
  *
  * @param array $object
  *        	Details of current .
@@ -114,6 +114,7 @@ function delibera_unlike_comment_api($data)
 	return "ops, need id";
 }
 
+
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'wp/v2', '/pautas/(?P<id>\d+)/like', array(
 		'methods' => 'POST',
@@ -131,6 +132,7 @@ add_action( 'rest_api_init', function () {
 		'methods' => 'POST',
 		'callback' => 'delibera_unlike_comment_api',
 	) );
+	
 } );
 
 /**
