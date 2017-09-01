@@ -11,11 +11,11 @@ class WpApi
 		add_action( 'rest_api_init', function () {
 			register_rest_route( 'wp/v2', '/pautas/(?P<id>\d+)/like', array(
 				'methods' => 'POST',
-				'callback' => array($this, 'like_pauta_api'),
+				'callback' => array($this, 'likePauta'),
 			) );
 			register_rest_route( 'wp/v2', '/pautas/(?P<id>\d+)/unlike', array(
 				'methods' => 'POST',
-				'callback' => array($this, 'unlike_pauta_api'),
+				'callback' => array($this, 'unlikePauta'),
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/like', array(
 				'methods' => 'POST',
@@ -27,19 +27,19 @@ class WpApi
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/isLiked', array(
 				'methods' => 'GET',
-				'callback' => array($this, 'isliked_pauta_api'),
+				'callback' => array($this, 'isPautaLiked'),
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/isUnliked', array(
 				'methods' => 'GET',
-				'callback' => array($this, 'isunliked_pauta_api'),
+				'callback' => array($this, 'isPautaUnliked'),
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/isLiked', array(
 				'methods' => 'GET',
-				'callback' => array($this, 'isliked_comment_api'),
+				'callback' => array($this, 'isCommentLiked'),
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/isUnliked', array(
 				'methods' => 'GET',
-				'callback' => array($this, 'isunliked_comment_api'),
+				'callback' => array($this, 'isCommentUnliked'),
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getLikes', array(
 				'methods' => 'GET',
@@ -60,6 +60,10 @@ class WpApi
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/situacao', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getPautaSituacao'),
+			) );
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getVoteOptions', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getVoteOptions'),
 			) );
 		} );
 		
@@ -92,6 +96,43 @@ class WpApi
 					'update_callback' => null,
 					'schema' => null
 				));
+		register_rest_field('pauta', 'likes',
+				array(
+					'get_callback' =>  array($this, 'getPautaLikes'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		register_rest_field('pauta', 'unlikes',
+				array(
+					'get_callback' =>  array($this, 'getPautaUnlikes'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		register_rest_field('pauta', 'liked',
+				array(
+					'get_callback' =>  array($this, 'isPautaLiked'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		register_rest_field('pauta', 'unliked',
+				array(
+					'get_callback' =>  array($this, 'isPautaUnliked'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		register_rest_field('comment', 'liked',
+				array(
+					'get_callback' =>  array($this, 'isCommentLiked'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		register_rest_field('comment', 'unliked',
+				array(
+					'get_callback' =>  array($this, 'isCommentUnliked'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		
 	}
 	
 	/**
@@ -149,7 +190,7 @@ class WpApi
 		return $avatar;
 	}
 	
-	function like_pauta_api($data)
+	function likePauta($data)
 	{
 		if(is_object($data))
 		{
@@ -158,7 +199,7 @@ class WpApi
 		return "ops, need id";
 	}
 	
-	function unlike_pauta_api($data)
+	function unlikePauta($data)
 	{
 		if(is_object($data))
 		{
@@ -258,69 +299,113 @@ class WpApi
 		return $template;
 	}
 	
-	function isliked_pauta_api($data)
+	function isPautaLiked($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
-			$user_id = get_current_user_id();
-			$ip = $_SERVER['REMOTE_ADDR'];
-			return delibera_ja_curtiu($data->get_param('id'), $user_id, $ip, 'pauta');
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		
+		$user_id = get_current_user_id();
+		$ip = $_SERVER['REMOTE_ADDR'];
+		return delibera_ja_curtiu($id, $user_id, $ip, 'pauta');
 	}
 	
-	function isunliked_pauta_api($data)
+	function isPautaUnliked($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
-			$user_id = get_current_user_id();
-			$ip = $_SERVER['REMOTE_ADDR'];
-			return delibera_ja_discordou($data->get_param('id'), $user_id, $ip, 'pauta');
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		
+		$user_id = get_current_user_id();
+		$ip = $_SERVER['REMOTE_ADDR'];
+		
+		return delibera_ja_discordou($id, $user_id, $ip, 'pauta');
 	}
 	
-	function isliked_comment_api($data)
+	function isCommentLiked($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
-			$user_id = get_current_user_id();
-			$ip = $_SERVER['REMOTE_ADDR'];
-			return delibera_ja_curtiu($data->get_param('id'), $user_id, $ip, 'comment');
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		
+		$user_id = get_current_user_id();
+		$ip = $_SERVER['REMOTE_ADDR'];
+		return delibera_ja_curtiu($id, $user_id, $ip, 'comment');
 	}
 	
-	function isunliked_comment_api($data)
+	function isCommentUnliked($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
-			$user_id = get_current_user_id();
-			$ip = $_SERVER['REMOTE_ADDR'];
-			return delibera_ja_discordou($data->get_param('id'), $user_id, $ip, 'comment');
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		$user_id = get_current_user_id();
+		$ip = $_SERVER['REMOTE_ADDR'];
+		return delibera_ja_discordou($id, $user_id, $ip, 'comment');
 	}
 	
-	function getPautaLikes($data)
+	function getPautaLikes($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
 			return delibera_numero_curtir($data->get_param('id'), 'pauta');
 		}
+		if(is_array($data))
+		{
+			return delibera_numero_curtir($data['id'], 'pauta');
+		}
 		return "ops, need id";
 	}
 	
-	function getPautaUnlikes($data)
+	function getPautaUnlikes($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
 			return delibera_numero_discordar($data->get_param('id'), 'pauta');
 		}
+		if(is_array($data))
+		{
+			return delibera_numero_discordar($data['id'], 'pauta');
+		}
 		return "ops, need id";
 	}
 	
-	function getCommentLikes($data)
+	function getCommentLikes($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
@@ -329,7 +414,7 @@ class WpApi
 		return "ops, need id";
 	}
 	
-	function getCommentUnlikes($data)
+	function getCommentUnlikes($data, $field_name = '', $request = null)
 	{
 		if(is_object($data))
 		{
@@ -351,6 +436,9 @@ class WpApi
 		}
 		return "ops, need id";
 	}
+	
+	
+	
 }
 
 global $DeliberaApi;
