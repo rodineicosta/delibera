@@ -124,7 +124,7 @@ function delibera_numero_curtir($ID, $type ='pauta')
 	if($type == 'pauta')
 	{
 		$postID = $ID;
-		$ncurtir = get_post_meta($postID, 'delibera_numero_curtir', true);
+		$ncurtir = intval(get_post_meta($postID, 'delibera_numero_curtir', true));
 		return $ncurtir;
 	}
 	elseif($type == 'comment')

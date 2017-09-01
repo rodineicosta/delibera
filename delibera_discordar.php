@@ -124,7 +124,7 @@ function delibera_numero_discordar($ID, $type ='pauta')
 	if($type == 'pauta')
 	{
 		$postID = $ID;
-		$ndiscordar = get_post_meta($postID, 'delibera_numero_discordar', true);
+		$ndiscordar = intval(get_post_meta($postID, 'delibera_numero_discordar', true));
 		return $ndiscordar;
 	}
 	elseif($type == 'comment')
