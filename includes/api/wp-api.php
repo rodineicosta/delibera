@@ -95,7 +95,7 @@ class WpApi
 	}
 	
 	/**
-	 * Get the value of the "situação" field
+	 * Get the avatar URL
 	 *
 	 * @param array $object
 	 *        	Details of current .
