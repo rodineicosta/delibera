@@ -437,7 +437,25 @@ class WpApi
 		return "ops, need id";
 	}
 	
-	
+	function getVoteOptions($data)
+	{
+		if(is_object($data))
+		{
+			$post_id = $data->get_param('id');
+			$situacao = delibera_get_situacao($post_id);
+			switch ($situacao)
+			{
+				case 'validacao':
+					
+				break;
+				case 'emvotacao':
+					
+				break;
+			}
+			return '';
+		}
+		return "ops, need id";
+	}
 	
 }
 

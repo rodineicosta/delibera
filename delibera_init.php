@@ -78,6 +78,7 @@ function delibera_Add_custom_taxonomy()
 		'label' => __('Temas','delibera'),
 		'labels' => $labels,
 		'public' => true,
+		'show_in_rest' => true,
 		'capabilities' => array(
 			'manage_terms' => 'manage_tema_term',
             'edit_terms' => 'edit_tema_term',
@@ -122,6 +123,7 @@ function delibera_Add_custom_taxonomy()
 		'labels' => $labels,
 		'public' => false,
 		'show_in_nav_menus' => true, // Public
+		'show_in_rest' => false,
 		//'show_ui' => true, // Public
 		'hierarchical' => false//,
 		//'update_count_callback' => '', //Contar objetos associados
