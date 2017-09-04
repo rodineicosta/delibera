@@ -61,10 +61,11 @@ class WpApi
 				'methods' => 'GET',
 				'callback' => array($this, 'getPautaSituacao'),
 			) );
-			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getVoteOptions', array(
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/interactions', array(
 				'methods' => 'GET',
-				'callback' => array($this, 'getVoteOptions'),
+				'callback' => array($this, 'getCommentCount'),
 			) );
+			
 		} );
 		
 		add_action('rest_insert_pauta', array($this, 'apiCreate', 10, 2));
@@ -129,6 +130,12 @@ class WpApi
 		register_rest_field('comment', 'unliked',
 				array(
 					'get_callback' =>  array($this, 'isCommentUnliked'),
+					'update_callback' => null,
+					'schema' => null
+				));
+		register_rest_field('pauta', 'interactions',
+				array(
+					'get_callback' =>  array($this, 'getCommentCount'),
 					'update_callback' => null,
 					'schema' => null
 				));
@@ -301,6 +308,7 @@ class WpApi
 	
 	function isPautaLiked($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
 			$id = $data->get_param('id');
@@ -321,6 +329,7 @@ class WpApi
 	
 	function isPautaUnliked($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
 			$id = $data->get_param('id');
@@ -342,6 +351,7 @@ class WpApi
 	
 	function isCommentLiked($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
 			$id = $data->get_param('id');
@@ -362,6 +372,7 @@ class WpApi
 	
 	function isCommentUnliked($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
 			$id = $data->get_param('id');
@@ -407,20 +418,38 @@ class WpApi
 	
 	function getCommentLikes($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
-			return delibera_numero_curtir($data->get_param('id'), 'comment');
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		return delibera_numero_curtir($id, 'comment');
 	}
 	
 	function getCommentUnlikes($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
-			return delibera_numero_discordar($data->get_param('id'), 'comment');
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		return delibera_numero_discordar($id, 'comment');
 	}
 	
 	function getPautaSituacao($data)
@@ -437,25 +466,26 @@ class WpApi
 		return "ops, need id";
 	}
 	
-	function getVoteOptions($data)
+	function getCommentCount($data, $field_name = '', $request = null)
 	{
+		$id = false;
 		if(is_object($data))
 		{
-			$post_id = $data->get_param('id');
-			$situacao = delibera_get_situacao($post_id);
-			switch ($situacao)
-			{
-				case 'validacao':
-					
-				break;
-				case 'emvotacao':
-					
-				break;
-			}
-			return '';
+			$id = $data->get_param('id');
 		}
-		return "ops, need id";
+		elseif(is_array($data))
+		{
+			$id = $data['id'];
+		}
+		else
+		{
+			return "ops, need id";
+		}
+		
+		return delibera_comment_number_filtro(0, $id);
 	}
+	
+	
 	
 }
 
