@@ -532,7 +532,7 @@ class WpApi
 			
 			$html = ob_get_contents();
 			ob_end_clean();
-			return $html;
+			return array('html' => $html);
 		}
 		return "ops, need id";
 	}
