@@ -525,6 +525,7 @@ class WpApi
 				while ( have_posts() ) {
 					the_post();
 					$comments = get_comments();
+					$comments = delibera_get_comments_filter($comments);
 					delibera_wp_list_comments(array(), $comments);
 				}
 			}
