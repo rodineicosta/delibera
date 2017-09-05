@@ -65,7 +65,14 @@ class WpApi
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentCount'),
 			) );
-			
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getCommentList', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getCommentList'),
+			) );
+			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getCommentListHtml', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getCommentListHtml'),
+			) );
 		} );
 		
 		add_action('rest_insert_pauta', array($this, 'apiCreate', 10, 2));
@@ -485,7 +492,49 @@ class WpApi
 		return delibera_comment_number_filtro(0, $id);
 	}
 	
+	function getCommentList($data)
+	{
+		if(is_object($data))
+		{
+			$post_id = $data->get_param('id');
+			
+			$args = array(
+				'post_id' => $post_id,
+			);
+			$comments = get_comments($args);
+			return delibera_get_comments_filter($comments);
+		}
+		return "ops, need id";
+	}
 	
+	function getCommentListHtml($data)
+	{
+		if(is_object($data))
+		{
+			$post_id = $data->get_param('id');
+			global $wp_query;
+			
+			$args = array(
+				'p'         => $post_id, // ID of a page, post, or custom type
+				'post_type' => 'pauta'
+			);
+			$wp_query = new \WP_Query($args);
+			
+			ob_start();
+			if ( have_posts() ) {
+				while ( have_posts() ) {
+					the_post();
+					$comments = get_comments();
+					delibera_wp_list_comments(array(), $comments);
+				}
+			}
+			
+			$html = ob_get_contents();
+			ob_end_clean();
+			return $html;
+		}
+		return "ops, need id";
+	}
 	
 }
 
