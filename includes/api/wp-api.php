@@ -10,68 +10,164 @@ class WpApi
 		add_action('rest_api_init', array($this, 'register_api_fields'));
 		add_action( 'rest_api_init', function () {
 			register_rest_route( 'wp/v2', '/pautas/(?P<id>\d+)/like', array(
-				'methods' => 'POST',
+				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => array($this, 'likePauta'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route( 'wp/v2', '/pautas/(?P<id>\d+)/unlike', array(
-				'methods' => 'POST',
+				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => array($this, 'unlikePauta'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/like', array(
-				'methods' => 'POST',
+				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => array($this, 'like_comment_api'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/unlike', array(
-				'methods' => 'POST',
+				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => array($this, 'unlike_comment_api'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/isLiked', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'isPautaLiked'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/isUnliked', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'isPautaUnliked'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/isLiked', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'isCommentLiked'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route( 'wp/v2', '/comments/(?P<id>\d+)/isUnliked', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'isCommentUnliked'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getLikes', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getPautaLikes'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getUnlikes', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getPautaUnlikes'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/comments/(?P<id>\d+)/getLikes', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentLikes'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/comments/(?P<id>\d+)/getUnlikes', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentUnlikes'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/situacao', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getPautaSituacao'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/interactions', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentCount'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getCommentList', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentList'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 			register_rest_route('wp/v2', '/pautas/(?P<id>\d+)/getCommentListHtml', array(
 				'methods' => 'GET',
 				'callback' => array($this, 'getCommentListHtml'),
+				
+				'args' => array(
+					'id' => array(
+						'validate_callback' => 'is_numeric'
+					),
+				)
 			) );
 		} );
 		
@@ -156,7 +252,7 @@ class WpApi
 	 *        	Details of current .
 	 * @param string $field_name
 	 *        	Name of field.
-	 * @param WP_REST_Request $request
+	 * @param \WP_REST_Request $request
 	 *        	Current request
 	 *        	
 	 * @return mixed
@@ -173,7 +269,7 @@ class WpApi
 	 *        	Details of current .
 	 * @param string $field_name
 	 *        	Name of field.
-	 * @param WP_REST_Request $request
+	 * @param \WP_REST_Request $request
 	 *        	Current request
 	 *
 	 * @return mixed
@@ -192,7 +288,7 @@ class WpApi
 	 *        	Details of current .
 	 * @param string $field_name
 	 *        	Name of field.
-	 * @param WP_REST_Request $request
+	 * @param \WP_REST_Request $request
 	 *        	Current request
 	 *
 	 * @return mixed
@@ -242,8 +338,8 @@ class WpApi
 	
 	/**
 	 *
-	 * @param WP_Post $post
-	 * @param WP_REST_Request $request
+	 * @param \WP_Post $post
+	 * @param \WP_REST_Request $request
 	 */
 	function apiCreate($post, $request)
 	{
@@ -256,8 +352,8 @@ class WpApi
 	
 	/**
 	 *
-	 * @param WP_Post $prepared_post
-	 * @param WP_REST_Request $request
+	 * @param \WP_Post $prepared_post
+	 * @param \WP_REST_Request $request
 	 */
 	function apiPreInsertPauta($prepared_post, $request)
 	{
