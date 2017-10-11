@@ -169,14 +169,20 @@ class WpApi
 					),
 				)
 			) );
+			register_rest_route('/wp/v2', '/pauta/metas', array(
+				'methods' => 'GET',
+				'callback' => array($this, 'getMetas'),
+			) );
 		} );
 		
-		add_action('rest_insert_pauta', array($this, 'apiCreate', 10, 2));
-		add_filter('rest_pre_insert_pauta', array($this, 'apiPreInsertPauta', 10, 2));
+		add_action('rest_insert_pauta', array($this, 'apiCreate'), 10 , 3);
+		add_filter('rest_pre_insert_pauta', array($this, 'apiPreInsertPauta'), 10, 2);
 		
 		add_action( 'generate_rewrite_rules', array( &$this, 'rewrite_rules' ), 10, 1 );
 		add_filter( 'query_vars', array( &$this, 'rewrite_rules_query_vars' ) );
 		add_filter( 'template_include', array( &$this, 'rewrite_rule_template_include' ) );
+		
+		//add_action('rest_insert_pauta', array($this, 'rest_insert_pauta'));
 		
 	}
 	
@@ -340,13 +346,14 @@ class WpApi
 	 *
 	 * @param \WP_Post $post
 	 * @param \WP_REST_Request $request
+	 * @param bool $creating
 	 */
-	function apiCreate($post, $request)
+	function apiCreate($post, $request, $creating)
 	{
 		$args = $request->get_params();
 		$args['post_id'] = $post->ID;
 		
-		deliberaCreateTopic($args);
+		\deliberaCreateTopic($args);
 		return $post;
 	}
 	
@@ -631,6 +638,11 @@ class WpApi
 			return array('html' => $html);
 		}
 		return "ops, need id";
+	}
+	
+	function getMetas($data = array())
+	{
+		return \delibera_get_metas();
 	}
 	
 }
