@@ -25,7 +25,13 @@ function delibera_get_situacao($postID = false)
 	if($postID === false)
 	{
 		$postID = get_the_ID();
-		if($postID === false) return false;
+		if($postID === false)
+		{
+			$ret = new stdClass();
+			$ret->slug = '';
+			$ret->name = '';
+			return $ret;
+		}
 	}
 	$situacao = get_the_terms($postID, 'situacao');
 	$ret = false;
@@ -34,7 +40,7 @@ function delibera_get_situacao($postID = false)
 		$ret = array_pop($situacao);
 	}
 
-	if(!is_object($ret)) // if term situacao does not exists
+	if(!is_object($ret) || $ret instanceof \WP_Error) // if term situacao does not exists
 	{
 		$ret = new stdClass();
 		$ret->slug = '';
@@ -505,6 +511,14 @@ function deliberaCreateTopic($args = array())
 		}
 		
 		$_POST['delibera_flow'] = $args['delibera_flow'];
+		
+		if(array_key_exists('post_id', $args) && $args['post_id'] > 0)
+		{
+			$pauta_id = $args['post_id'];
+			global $post;
+			$post = get_post($pauta_id);
+			setup_postdata($post);
+		}
 		// Load defaults modules values at $_POST
 		do_action('delibera_create_pauta_frontend', $opt);
 		
@@ -530,6 +544,13 @@ function deliberaCreateTopic($args = array())
 		
 		if(is_int($pauta_id) && $pauta_id > 0)
 		{
+			$status = get_post_status($pauta_id);
+			if($status != 'draft')
+			{
+				$pauta_obj = get_post($pauta_id);
+				$pauta_obj->post_status = 'draft';
+				wp_update_post($pauta_obj);
+			}
 			// isto é necessário por causa do if da função
 			// delibera_publish_pauta()
 			$_POST['publish'] = 'Publicar';
@@ -632,6 +653,22 @@ function deliberaAddTerms($pauta_id, $args, $taxonomy = 'tema', $insert = true )
 		}
 	}
 	return $terms_ids;
+}
+
+function delibera_get_metas()
+{
+	global $DeliberaFlow;
+	if(is_object($DeliberaFlow))
+	{
+		$allmodules = $DeliberaFlow->getFlowModules();
+		$metas = array();
+		foreach ($allmodules as $situacao => $module)
+		{
+			$metas = $module->getMetas($metas);
+		}
+		return apply_filters('delibera-get-metas', $metas);
+	}
+	return array();
 }
 
 ?>
