@@ -30,6 +30,15 @@ class Result extends \Delibera\Modules\ModuleBase
 	protected $shortcodes = array('delibera_lista_de_resolucoes' => 'replaceResolucoes' );
 	
 	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::metas
+	 */
+	protected $metas = array(
+		
+	);
+	
+	/**
 	 * Display priority
 	 * @var int
 	 */

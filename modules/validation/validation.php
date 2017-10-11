@@ -36,6 +36,39 @@ class Validation extends \Delibera\Modules\ModuleBase
 	protected $shortcodes = array('delibera_lista_de_propostas' => 'replacePropostas' );
 	
 	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::metas
+	 */
+	protected $metas = array(
+		'prazo_validacao' => array(
+			'type' => 'date',
+			'example' => '22/01/1982',
+			'desc' => 'Data para o fim da etapa de validação, formato: dd/mm/yyy'
+		),
+		'min_validacoes' => array(
+			'type' => 'int',
+			'example' => '10',
+			'desc' => 'número mínimo de validações para que a proposta se torne uma pauta válida, inteiro > 0'
+		),
+		'delibera_validation_show_rejeitar' => array(
+			'type' => 'S/N',
+			'example' => 'S',
+			'desc' => 'Mostrar botão para rejeitar a proposta'
+		),
+		'delibera_validation_show_abstencao' => array(
+			'type' => 'S/N',
+			'example' => 'S',
+			'desc' => 'Mostrar botão para abstenção'
+		),
+		'delibera_validation_show_comment' => array(
+			'type' => 'S/N',
+			'example' => 'S',
+			'desc' => 'Mostrar o campo para comentário junto com o voto'
+		)
+	);
+	
+	/**
 	 * Display priority
 	 * @var int
 	 */
@@ -127,7 +160,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 	
 	/**
 	 * Label to apply to button
-	 * @param unknown $situation
+	 * @param string $situation
 	 */
 	public function situationButtonText($situation)
 	{
@@ -160,7 +193,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 * @param \WP_Post $post
 	 * @param array $custom post custom fields
 	 * @param array $options_plugin_delibera Delibera options array
-	 * @param WP_Term $situacao
+	 * @param \WP_Term $situacao
 	 * @param bool $disable_edicao
 	 * 
 	 */
@@ -279,7 +312,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 	
 		$param = array(); // TODO Tratar Parametros
 	
-		$html = DeliberaValidation::getPropostas($param);
+		$html = self::getPropostas($param);
 	
 		$wp_posts = $html;
 		global $post;

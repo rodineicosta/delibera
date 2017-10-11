@@ -37,6 +37,29 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	protected $days = array('dias_discussao');
 	
 	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::metas
+	 */
+	protected $metas = array(
+		'prazo_discussao' => array(
+			'type' => 'date',
+			'example' => '22/01/1982',
+			'desc' => 'Data para o fim da etapa de discussão, formato: dd/mm/yyy'
+		),
+		'discussion_type' => array(
+			'type' => 'set',
+			'example' => 'forum',
+			'desc' => 'Tipo da discussão: forum ou side, forum é a discussão normal, side é no formato de side comment, ou comentário por parágrafo'
+		),
+		'delibera_show_default_comment_form' => array(
+			'type' => 'S/N',
+			'example' => 'S',
+			'desc' => 'Mostrar o campo para comentário padrão, no caso de comentário por parágrado, pode não ser necessário exibir o campo para comentários'
+		)
+	);
+	
+	/**
 	 * Display priority
 	 * @var int
 	 */
@@ -80,6 +103,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	public function getMainConfig($opts)
 	{
 		$opts['pauta_suporta_encaminhamento'] = 'S';
+		$opts['discussion_type'] = 'forum';
 		$opts['dias_discussao'] = '5';
 		return $opts;
 	}
@@ -117,7 +141,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	
 	/**
 	 * Label to apply to button
-	 * @param unknown $situation
+	 * @param string $situation
 	 */
 	public function situationButtonText($situation)
 	{
@@ -149,7 +173,7 @@ class Discussion extends \Delibera\Modules\ModuleBase
 	 * @param \WP_Post $post
 	 * @param array $custom post custom fields
 	 * @param array $options_plugin_delibera Delibera options array
-	 * @param WP_Term $situacao
+	 * @param \WP_Term $situacao
 	 * @param bool $disable_edicao
 	 * 
 	 */

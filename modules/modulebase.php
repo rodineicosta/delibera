@@ -37,6 +37,13 @@ abstract class ModuleBase
 	protected $days = array();
 	
 	/**
+	 * Array of module post/pauta meta, include all used meta with type, description and examples, its for a documentation and extend	
+	 * 
+	 * @var array format '[meta_key]' => array( 'type' => [data type], 'example' => [example for value], 'desc' => '[meta description]')  
+	 */
+	protected $metas = array();
+	
+	/**
 	 * Display priority
 	 * @var int
 	 */
@@ -360,5 +367,10 @@ abstract class ModuleBase
 		if($value == false) $value = date('d/m/Y H:i:s');
 		
 		return update_post_meta($post_id, 'delibera-pauta-date-'.$situacao, $value);
+	}
+	
+	public function getMetas($metas = array())
+	{
+		return array_merge($metas, $this->metas);
 	}
 }

@@ -30,6 +30,24 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	protected $days = array('dias_relatoria'/*, 'dias_votacao_relator'*/); // Disable until have vote
 	
 	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::metas
+	 */
+	protected $metas = array(
+		'prazo_relatoria' => array(
+			'type' => 'date',
+			'example' => '22/01/1982',
+			'desc' => 'Data para o fim da etapa de relatoria, formato: dd/mm/yyy'
+		),
+		'prazo_eleicao_relator' => array(
+			'type' => 'date',
+			'example' => '22/01/1982',
+			'desc' => 'Data para o fim da etapa de eleição de relator, formato: dd/mm/yyy'
+		)
+	);
+	
+	/**
 	 * Display priority
 	 * @var int
 	 */

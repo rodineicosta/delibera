@@ -12,6 +12,19 @@ class Flow
 	protected $flow = array();
 	protected $deadlines = array();
 	
+	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::metas
+	 */
+	protected $metas = array(
+		'delibera_flow' => array(
+			'type' => 'array',
+			'example' => 'array("validacao", "discussao","relatoria", "votacao", "resultado")',
+			'desc' => 'Sequência de slugs de situações a qual a pauta podera passar'
+		)
+	);
+	
 	public function __construct()
 	{
 		add_filter('delibera_get_main_config', array($this, 'getMainConfig'));
@@ -33,6 +46,8 @@ class Flow
 		add_action('wp_ajax_delibera_save_flow', array($this, 'saveFlowCallback'));
 		
 		add_action('template_redirect', array($this, 'template_redirect'));
+		
+		add_filter('delibera-get-metas', array($this, 'getMetasFilter'));
 		
 	}
 	
@@ -793,6 +808,15 @@ class Flow
 		}
 	}
 	
+	/**
+	 * add current metas to metas list
+	 * @param array $metas
+	 * @return array
+	 */
+	public function getMetasFilter($metas)
+	{
+		return array_merge($this->metas, $metas);
+	}
 }
 
 global $DeliberaFlow;

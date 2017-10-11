@@ -31,6 +31,39 @@ class Vote extends \Delibera\Modules\ModuleBase
 	protected $days = array('dias_votacao');
 	
 	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Delibera\Modules\ModuleBase::metas
+	 */
+	protected $metas = array(
+		'prazo_votacao' => array(
+			'type' => 'date',
+			'example' => '22/01/1982',
+			'desc' => 'Data para o fim da etapa de votação, formato: dd/mm/yyy'
+		),
+		'tipo_votacao' => array(
+			'type' => 'set',
+			'example' => 'forum',
+			'desc' => 'Tipo da votação: checkbox -> caixa de seleção multipla, dropdown -> caixa de seleção simples usando menu suspenso, radio ->  opção por botões de seleção simples, pairwise -> votação um contra outro'
+		),
+		'show_based_proposals' => array(
+			'type' => 'S/N',
+			'example' => 'S',
+			'desc' => 'Mostrar a(s) proposta(s) base(s) que foram alteradas durante a relatoria como opção na votação'
+		),
+		'delibera_comment_add_list' => array(
+			'type' => 'array',
+			'example' => 'array("Opção 1", "Opção 2", "Opção 3)',
+			'desc' => 'lista de post form em formato padrão do wp-admin para criação direta de opções de votação'
+		),
+		'delibera_comment_add_list_ids' => array(
+			'type' => 'array',
+			'example' => 'array(13, 14, "")',
+			'desc' => 'lista de ids das opções de votação para o caso de edição, campo em branco para novas'
+		)
+	);
+	
+	/**
 	 * Display priority
 	 * @var int
 	 */
