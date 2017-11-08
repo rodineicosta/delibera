@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Delibera
-Plugin URI: http://www.ethymos.com.br
+Plugin URI: http://delibera.redelivre.org.br
 Description: O Plugin Delibera extende as funções padrão do WordPress e cria um ambiente de deliberação.
-Version: 1.0.3
-Author: Ethymos
-Author URI: http://www.ethymos.com.br
+Version: 2.0.0-beta.1
+Author: RedeLivre
+Author URI: http://redelivre.org.br
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
