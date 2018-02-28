@@ -96,7 +96,7 @@ class DeliberaThemes
             $themePath = $conf['theme'];
             $themePath = $this->checkPath($themePath);
         }
-		if(strpos($themePath, 'wp-content/plugins') === false)
+		if(strpos($themePath, 'wp-content/plugins') === false && strpos($themePath, 'wp-content/themes') !== false)
 		{
 			$themePath = plugin_dir_path(__FILE__)."/themes/generic";
 		}
