@@ -66,7 +66,7 @@ function delibera_roles_install($delibera_permissoes)
 				
 			if(!is_object($Role))
 			{
-				throw new Exception(sprintf(__('Permissão original (%s) não localizada','delibera'),$permisao['From']));
+				throw new \Exception(sprintf(__('Permissão original (%s) não localizada','delibera'),$permisao['From']));
 			}
 				
 			$cap = $Role->capabilities;
@@ -76,7 +76,7 @@ function delibera_roles_install($delibera_permissoes)
 		$Role = get_role($nome);
 		if(!is_object($Role))
 		{
-			throw new Exception(sprintf(__('Permissão %s não localizada','delibera'),$nome));
+			throw new \Exception(sprintf(__('Permissão %s não localizada','delibera'),$nome));
 		}
 
 		foreach ($permisao['Caps'] as $cap)

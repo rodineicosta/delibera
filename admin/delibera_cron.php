@@ -50,7 +50,7 @@ class Cron
 							}
 							else
 							{
-								throw new Exception('invalid callback array. dump: '.print_r($value, true));
+								throw new \Exception('invalid callback array. dump: '.print_r($value, true));
 							}
 						}
 						else 
@@ -61,11 +61,11 @@ class Cron
 							}
 							else
 							{
-								throw new Exception('invalid callback function. dump: '.print_r($value, true));
+								throw new \Exception('invalid callback function. dump: '.print_r($value, true));
 							}
 						}
 					}
-					catch (Exception $e)
+					catch (\Exception $e)
 					{
 						$error = __('Erro no cron Delibera: ','delibera').$e->getMessage()."\n".$e->getCode()."\n".$e->getTraceAsString()."\n".$e->getLine()."\n".$e->getFile();
 						wp_mail("jacson@ethymos.com.br", get_bloginfo('name'), $error);
@@ -164,7 +164,7 @@ class Cron
 	/**
 	 * Remove a cron trigger
 	 * @param int $postID
-	 * @param function $callback function name or array($object, 'functio-name')
+	 * @param string $callback function name or array($object, 'functio-name')
 	 */
 	static function del($postID, $callback = false)
 	{

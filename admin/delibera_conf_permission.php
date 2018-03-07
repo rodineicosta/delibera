@@ -272,7 +272,7 @@ class Permission
 		global $wp_roles;
 		
 		if(! isset($wp_roles))
-			$wp_roles = new WP_Roles();
+			$wp_roles = new \WP_Roles();
 		
 		return $wp_roles->get_role($role);
 	}
@@ -283,7 +283,7 @@ class Permission
 		global $wp_roles;
 		
 		if(! isset($wp_roles))
-			$wp_roles = new WP_Roles();
+			$wp_roles = new \WP_Roles();
 		
 		$all_roles = $wp_roles->get_names();
 		$editable_roles = apply_filters('editable_roles', $all_roles);
