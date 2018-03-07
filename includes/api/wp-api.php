@@ -175,8 +175,11 @@ class WpApi
 			) );
 		} );
 		
-		add_action('rest_insert_pauta', array($this, 'apiCreate'), 10 , 3);
+		add_action('rest_insert_pauta', array($this, 'apiCreatePauta'), 10 , 3);
 		add_filter('rest_pre_insert_pauta', array($this, 'apiPreInsertPauta'), 10, 2);
+		
+		add_action('rest_insert_comment', array($this, 'apiCreateComment'), 10 , 3);
+		add_filter('rest_pre_insert_comment', array($this, 'apiPreInsertComment'), 10, 2);
 		
 		add_action( 'generate_rewrite_rules', array( &$this, 'rewrite_rules' ), 10, 1 );
 		add_filter( 'query_vars', array( &$this, 'rewrite_rules_query_vars' ) );
@@ -348,7 +351,7 @@ class WpApi
 	 * @param \WP_REST_Request $request
 	 * @param bool $creating
 	 */
-	function apiCreate($post, $request, $creating)
+	function apiCreatePauta($post, $request, $creating)
 	{
 		$args = $request->get_params();
 		$args['post_id'] = $post->ID;
@@ -369,6 +372,54 @@ class WpApi
 			$prepared_post->post_name = sanitize_title($prepared_post->post_title);
 		}
 		return $prepared_post;
+	}
+	
+	/**
+	 *
+	 * @param \WP_Comment $comment
+	 * @param \WP_REST_Request $request
+	 * @param bool $creating
+	 */
+	function apiCreateComment($comment, $request, $creating)
+	{
+		
+	}
+	
+	/**
+	 * 
+	 * @param \WP_Comment $prepared_comment
+	 * @param \WP_REST_Request $request
+	 * @return \WP_Comment
+	 */
+	function apiPreInsertComment($prepared_comment, $request)
+	{
+		$type = $request->get_param('delibera_comment_tipo');
+		if(!is_null($type))
+		{
+			$_POST['delibera_comment_tipo'] = $type;
+		}
+		$delibera_encaminha = $request->get_param('delibera_encaminha');
+		if(!is_null($delibera_encaminha))
+		{
+			$_POST['delibera_encaminha'] = $delibera_encaminha;
+		}
+		$delibera_validacao = $request->get_param('delibera_validacao');
+		if(!is_null($delibera_validacao))
+		{
+			$_POST['delibera_validacao'] = $delibera_validacao;
+		}
+		$delibera_baseouseem = $request->get_param('delibera_baseouseem');
+		if(!is_null($delibera_baseouseem))
+		{
+			$_POST['delibera-baseouseem'] = $delibera_baseouseem;
+		}
+		$delibera_pair = $request->get_param('delibera_pair');
+		if(!is_null($delibera_pair))
+		{
+			$_POST['delibera-pair'] = $delibera_pair;
+		}
+		
+		return $prepared_comment;
 	}
 	
 	////// Callback de login
