@@ -407,13 +407,10 @@ function delibera_save_comment_metas($comment_id)
 		{
 			$encaminhamento = $_POST['delibera_encaminha'];
 			\Delibera\Modules\Discussion::treatCommentType($comment, $encaminhamento);
-			
 		}break;
 		case 'voto':
 		{
-
 			\Delibera\Modules\Vote::newVote($comment_id);
-
 		} break;
 
 		default:
