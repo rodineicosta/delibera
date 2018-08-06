@@ -1,6 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/redelivre/delibera.png?label=ready&title=Ready)](https://waffle.io/redelivre/delibera)
-
-[![Build Status](http://jenkins.beta.redelivre.org.br:8081/buildStatus/icon?job=Beta%20Delibera)](https://github.com/redelivre/delibera)
 Delibera
 ========
 
@@ -8,12 +5,22 @@ O Delibera é um plugin para WordPress para democracia digital. Ele permite a di
 
 Inspirado em conceitos de redes sociais e outras mídias digitais, tão amplamente apropriadas pela sociedade atual, o Delibera é feito para que pessoas possam interagir, trocar conteúdo e tomar decisões acerca dos assuntos de interesse para diversos tipos de organização ou evento, potencializando o ambiente virtual para a transformação do mundo real.
 
-Ele funciona em quatro momentos:
+![Screenshot](./screenshots/como.png)
 
-* Criação e validação de pautas
-* Discussão das pautas e apresentação das propostas de encaminhamento
-* Sistematização dos encaminhamentos
-* Votação dos encaminhamentos
+[![Stories in Ready](https://badge.waffle.io/redelivre/delibera.png?label=ready&title=Ready)](https://waffle.io/redelivre/delibera)
+[![Build
+Status](http://jenkins.beta.redelivre.org.br:8081/buildStatus/icon?job=Beta%20Delibera)](https://github.com/redelivre/delibera)
+[![Join the chat at https://telegram.me/IdentidadeDigital](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/RedeLivreOrg)
+
+# capturas
+![Screenshot](./screenshots/0.png)
+![Screenshot](./screenshots/1.png)
+
+Ele funciona em quatro momentos:
+ - Criação e validação de pautas
+ -  Discussão das pautas e apresentação das propostas de encaminhamento
+ -  Sistematização dos encaminhamentos
+ -  Votação dos encaminhamentos
 
 O Delibera é ideal para quaisquer grupos de pessoas que precisem tomar decisões coletivas. Conselhos deliberativos, assembleias de condomínio, associações de bairro, movimentos sociais, coletivos, partidos políticos, mandatos, organizações colaborativas e governos.
 
