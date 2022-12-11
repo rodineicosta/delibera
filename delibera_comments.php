@@ -126,7 +126,7 @@ function delibera_get_comment_link($comment_pass = false)
 
 /**
  * where to return after comment post
- * 
+ *
  * @param string $location return to
  * @param WP_Comment $comment
  * @return unknown|mixed
@@ -380,7 +380,7 @@ function delibera_save_comment_metas($comment_id)
 
 	$comment = get_comment($comment_id);
 	$situacao = delibera_get_situacao($comment->comment_post_ID);
-	
+
 	add_comment_meta($comment_id, 'delibera_situacao', $situacao->slug, true); // save situacao when comment has been created for better history
 
 	switch($tipo)
@@ -407,7 +407,7 @@ function delibera_save_comment_metas($comment_id)
 		{
 			$encaminhamento = $_POST['delibera_encaminha'];
 			\Delibera\Modules\Discussion::treatCommentType($comment, $encaminhamento);
-			
+
 		}break;
 		case 'voto':
 		{
@@ -823,9 +823,9 @@ function delibera_valida_validacoes($postID)
 {
 	$validacoes = get_post_meta($postID, 'numero_validacoes', true);
 	$min_validacoes = get_post_meta($postID, 'min_validacoes', true);
-	
+
 	$situacao = delibera_get_situacao($postID);
-	
+
 	if($validacoes >= $min_validacoes && $situacao->slug == 'validacao') // check situacao to avoid same time final validation to avoid topic advancing 2 stages
 	{
 		//wp_set_object_terms($post, 'discussao', 'situacao', false); //Mudar situação para Discussão
@@ -869,7 +869,7 @@ function delibera_duplicate_comment_id($dupe_id, $commentdata )
 {
 	$tipos = array();
 	$tipos = apply_filters('delibera_unfilter_duplicate', $tipos);
-	
+
 	if( array_key_exists('delibera_comment_tipo', $_POST) && in_array($_POST['delibera_comment_tipo'], $tipos) )
 	{
 		return '';
@@ -901,7 +901,7 @@ add_filter( 'comment_flood_filter', 'delibera_comment_flood_filter', 10, 3 );
 
 /**
  * Return pauta situation when comment is created
- * 
+ *
  * @param integer $commentID
  * @return WP_Term|boolean
  */
@@ -917,22 +917,22 @@ function delibera_new_comment($comment_post_ID, $comment, $delibera_comment_tipo
 		$_FILES['attachment'] = array('size' => 0, 'error' => 0);
 	}
 	$user = wp_get_current_user();
-	
+
 	$comment_post_ID = isset($comment_post_ID) ? (int) $comment_post_ID : 0;
 	$comment_content = ( isset($comment) ) ? trim($comment) : null;
-	
+
 	$post = get_post($comment_post_ID);
-	
+
 	if ( empty($post->comment_status) ) {
 		do_action('comment_id_not_found', $comment_post_ID);
 		exit;
 	}
-	
+
 	// get_post_status() will get the parent status for attachments.
 	$status = get_post_status($post);
-	
+
 	$status_obj = get_post_status_object($status);
-	
+
 	if ( !comments_open($comment_post_ID) ) {
 		do_action('comment_closed', $comment_post_ID);
 		$errors[] = __('Sorry, comments are closed for this item.');
@@ -948,34 +948,34 @@ function delibera_new_comment($comment_post_ID, $comment, $delibera_comment_tipo
 	} else {
 		do_action('pre_comment_on_post', $comment_post_ID);
 	}
-	
+
 	// If the user is logged in
 	if ( $user->ID )
 	{
 		if ( empty( $user->display_name ) )
 			$user->display_name=$user->user_login;
-			
+
 			$comment_author       = esc_sql($user->display_name);
 			$comment_author_email = esc_sql($user->user_email);
 			$comment_author_url   = esc_sql($user->user_url);
-			
+
 	}
-	
+
 	$comment_approved = 1;
 	$comment_type = '';
-	
+
 	if ( '' == $comment_content )
 		$errors[] = ( __('<strong>ERROR</strong>: please type a comment.') );
-		
+
 	$comment_parent = isset($comment_parent) ? absint($comment_parent) : 0;
-	
+
 	$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_content', 'comment_type', 'comment_parent', 'user_ID', 'comment_approved');
-	
+
 	$comment_id = wp_new_comment( $commentdata );
-	
+
 	$ret = new stdClass;
 	$ret->comment_id = $comment_id;
 	$ret->errors = $errors;
-	
+
 	return $ret;
 }

@@ -1,18 +1,18 @@
 <?php
 /*
 +----------------------------------------------------------------+
-|																							|
-|	WordPress 2.7 Plugin: WP-Print 2.50										|
-|	Copyright (c) 2008 Lester "GaMerZ" Chan									|
-|																							|
-|	File Written By:																	|
-|	- Lester "GaMerZ" Chan															|
-|	- http://lesterchan.net															|
-|																							|
-|	File Information:																	|
-|	- Printer Friendly Comments Template										|
-|	- wp-content/plugins/wp-print/print-comments.php					|
-|																							|
+|																 |
+|	WordPress 2.7 Plugin: WP-Print 2.50							 |
+|	Copyright (c) 2008 Lester "GaMerZ" Chan						 |
+|																 |
+|	File Written By:											 |
+|	- Lester "GaMerZ" Chan										 |
+|	- http://lesterchan.net										 |
+|																 |
+|	File Information:											 |
+|	- Printer Friendly Comments Template						 |
+|	- wp-content/plugins/wp-print/print-comments.php			 |
+|																 |
 +----------------------------------------------------------------+
 */
 
@@ -24,7 +24,7 @@ if($comments) :
 	if(!isset($post)) $post = get_post();
 	$sidecomments_print_now = false;
 	if(isset($sidecomments_print)) $sidecomments_print_now = $sidecomments_print;
-	
+
 	?>
 	<span style='float:<?php echo ('rtl' == $text_direction) ? 'left' : 'right'; ?>' id='comments_controls'><?php \Delibera\Includes\WP_Print\print_comments_number($comments); ?> (<a  href="#" onclick="javascript:document.getElementById('comments_box').style.display = 'block'; return false;"><?php _e('Mostrar', 'delibera'); ?></a> | <a href="#" onclick="javascript:document.getElementById('comments_box').style.display = 'none'; return false;"><?php _e('Esconder', 'delibera'); ?></a>)</span>
 	<div id="comments_box">
@@ -36,7 +36,7 @@ if($comments) :
 		$voto = delibera_comment_number($post->ID, 'voto');
 		//echo "Votos: $voto<br/>Validações:$validacao<br/>Dis: $discussao<br/>enc: $encaminhamento";
 		//$resolucao = delibera_comment_number($post->ID, 'resolucao'); TODO Número de resoluções, baseado no mínimo de votos, ou marcação especial
-		
+
 		if(!$sidecomments_print_now) // Do not show resume inside side comment area
 		{
 			?>
@@ -92,7 +92,7 @@ if($comments) :
 			$comments_tmp = delibera_comments_filter_portipo($comments, array('encaminhamento', 'resolucao'));
 			include('print_comment_template.php');
 		}
-		
+
 		/*if($resolucao > 0)
 		{
 			?><p id="CommentTitle"><?php echo sprintf(_n('%s Resolução', '%s Resoluções', $resolucao, 'delibera'), number_format_i18n($resolucao)); ?></p><?php

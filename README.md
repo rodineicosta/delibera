@@ -18,9 +18,9 @@ Status](http://jenkins.beta.redelivre.org.br:8081/buildStatus/icon?job=Beta%20De
 
 Ele funciona em quatro momentos:
  - Criação e validação de pautas
- -  Discussão das pautas e apresentação das propostas de encaminhamento
- -  Sistematização dos encaminhamentos
- -  Votação dos encaminhamentos
+ - Discussão das pautas e apresentação das propostas de encaminhamento
+ - Sistematização dos encaminhamentos
+ - Votação dos encaminhamentos
 
 O Delibera é ideal para quaisquer grupos de pessoas que precisem tomar decisões coletivas. Conselhos deliberativos, assembleias de condomínio, associações de bairro, movimentos sociais, coletivos, partidos políticos, mandatos, organizações colaborativas e governos.
 
@@ -42,7 +42,7 @@ http://www.exemplo.com/pauta/
 Como Colaborar?
 ===============
 
-Existem algumas maneiras de colaborar com o desenvolvimento deste plugin. Se você é um usuário, você pode ter encontrado um problema (bug) ou ter tido alguma idéia de uma nova funcionalidade. Em qualquer um dos casos, entre em contato com os desenvolvedores criando uma [issue](https://github.com/redelivre/delibera/issues).
+Existem algumas maneiras de colaborar com o desenvolvimento deste plugin. Se você é um usuário, você pode ter encontrado um problema (bug) ou ter tido alguma ideia de uma nova funcionalidade. Em qualquer um dos casos, entre em contato com os desenvolvedores criando uma [issue](https://github.com/redelivre/delibera/issues).
 
 Se você é um desenvolvedor, sinta-se livre para fazer um fork e contribuir com o desenvolvimento. Se quiser, dê uma olhada se você pode resolver alguma das [issues abertas](https://github.com/redelivre/delibera/issues).
 
@@ -51,13 +51,13 @@ Se você é um desenvolvedor, sinta-se livre para fazer um fork e contribuir com
 
 | Slugs           | Module          | Descrição  |
 | --------------- |:---------------:| -----:|
-| validacao       | Mod. validation | Proposta de pauta, precisa ser validada para ser continuar no fluxo, comentário é apenas se valida |
-| naovalidada     | Mod. validation | Proposta recusada por prazo sem minimo de validação ou forçada pelo admin |
-| discussao       | Mod. Discussion | Pauta em discussão, aceita comentários do tipo padrão ou encaminhamento    |
-| eleicao_relator | Mod. rapporteur | Pauta que precisa de relator, mas antes o relator precisa ser eleito (não implementado)   |
-| relatoria       | Mod. rapporteur | o Relator vai editar os encaminhamentos para criar opções válidas para votação   |
-| emvotacao       | Mod. vote       |  Pauta em votação, aqui o comentário é um voto simples  |
-| comresolucao    | Mod. result     |  Pauta chegou ao fim, apresentar resultado  |
+| validacao       | Mod. validation | Proposta de pauta, precisa ser validada para continuar no fluxo, comentário é possível apenas se valida. |
+| naovalidada     | Mod. validation | Proposta recusada por prazo sem mínimo de validação ou forçada pelo admin. |
+| discussao       | Mod. Discussion | Pauta em discussão, aceita comentários do tipo padrão ou encaminhamento. |
+| eleicao_relator | Mod. rapporteur | Pauta que precisa de relator, mas antes o relator precisa ser eleito (não implementado. |
+| relatoria       | Mod. rapporteur | o Relator vai editar os encaminhamentos para criar opções válidas para votação. |
+| emvotacao       | Mod. vote       |  Pauta em votação, aqui o comentário é um voto simples. |
+| comresolucao    | Mod. result     |  Pauta chegou ao fim, apresentar resultado. |
 
 ## Licença
 

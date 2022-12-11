@@ -20,7 +20,7 @@ function delibera_edit_comment_link( $link = null, $before = '', $after = '' )
 		return;
 
 	if ( null === $link )
-		$link = __('Editar', delibera);
+		$link = __('Editar', 'delibera');
 
 	$html = '<div class="delibera-edit-comment-button"><span class="delibera-edit-comment-button" onclick="';
 	$html .= 'delibera_edit_comment_show(this, \''.$comment->comment_ID.'\');';
@@ -121,7 +121,7 @@ function delibera_delete_comment_link( $link = null, $before = '', $after = '' )
 		return;
 
 	if ( null === $link )
-		$link = __('Deletar', delibera);
+		$link = __('Deletar', 'delibera');
 
 	$html = '<div id="delibera-delete-comment-button-'.$comment->comment_ID.'" class="delibera-delete-comment-button"><span class="delibera-delete-comment-button" >'.$link.'</span></div>';
 	echo $html;
@@ -164,7 +164,7 @@ add_action('wp_ajax_delibera_delete_comment', 'delibera_delete_comment_callback'
 add_action('wp_ajax_nopriv_delibera_delete_comment', 'delibera_delete_comment_callback');
 
 /*
- * Comment Meta Debug 
+ * Comment Meta Debug
  *
 function delibera_comment_add_meta_box()
 {

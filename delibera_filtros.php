@@ -174,14 +174,14 @@ function delibera_filtros_get_filtros($tax, $value = false, $linha = "<br/>")
 	{
 
 		?>
-				<span class="form-filtro-ultimos-chebox-span">
-				<label class="form-filtro-ultimos-chebox-label"><input type="checkbox" name="<?php echo "{$tax}_filtro[]"; ?>" value="<?php echo $term->slug; ?>" class="form-filtro-ultimos-chebox" autocomplete="off" /><?php _e($term->name, 'delibera'); ?></label><?php echo $linha; ?>
-				</span>
-				<?php
-		
+		<span class="form-filtro-ultimos-chebox-span">
+		<label class="form-filtro-ultimos-chebox-label"><input type="checkbox" name="<?php echo "{$tax}_filtro[]"; ?>" value="<?php echo $term->slug; ?>" class="form-filtro-ultimos-chebox" autocomplete="off" /><?php _e($term->name, 'delibera'); ?></label><?php echo $linha; ?>
+		</span>
+		<?php
+
 	}
 	?>
-		
+
 	</div>
 	<?php
 	if($value !== false)
@@ -200,7 +200,7 @@ function delibera_filtros_get_filtros($tax, $value = false, $linha = "<br/>")
 				<?php
 			}
 		}
-		else 
+		else
 		{
 		?>
 			<script type="text/javascript">
@@ -214,8 +214,8 @@ function delibera_filtros_get_filtros($tax, $value = false, $linha = "<br/>")
 }
 
 /**
- * Monta lista de pautas disponíveis em formato arquivo do wp 
- * 
+ * Monta lista de pautas disponíveis em formato arquivo do wp
+ *
  */
 function delibera_filtros_archive_callback()
 {
@@ -225,21 +225,21 @@ function delibera_filtros_archive_callback()
 	$action->canQuery = true;
 
 	$args = delibera_filtros_get_tax_filtro($_POST, array('post_type' => 'pauta', 'post_status' => 'publish'));
-	
+
 	$paged = ( array_key_exists('paged', $_POST) && $_POST['paged'] > 0 ) ? $_POST['paged'] : 1;
 	$args['paged'] = $paged;
 
 	$args = apply_filters('delibera_filtros_archive_callback_filter', $args);
-	
+
 	query_posts($args);
 	?>
 	<div id="lista-de-pautas">
 		<?php $deliberaThemes->archiveLoop(); // Chama o loop do arquivo ?>
-		
+
 		<div id="nav-below" class="navigation">
 			<?php if ( function_exists( 'wp_pagenavi' ) ) wp_pagenavi(); ?>
 		</div><!-- #nav-below -->
-		
+
 	</div>
 	<?php
 	die();

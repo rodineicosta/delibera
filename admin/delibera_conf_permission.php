@@ -6,7 +6,7 @@ namespace Delibera\Conf;
 class Permission
 {
 	protected $roleList = array(
-		
+
 	);
 
 	public function __construct()
@@ -124,18 +124,18 @@ class Permission
 		add_action('init', array($this, 'admin_init'));
 		add_action( 'registered_taxonomy', array($this, 'setTaxonomyCaps'), 10, 3 );
 	}
-	
+
 	public function admin_init()
 	{
 		add_action('delibera_menu_itens', array($this, 'addMenu'));
 		$this->checkDefaultsPerm();
 	}
-	
+
 	public function addMenu($base_page)
 	{
 		add_submenu_page($base_page, __('Delibera Permissões','delibera'),__('Delibera Permissões','delibera'), 'manage_options', 'delibera-perm', array($this, 'confPage'));
 	}
-	
+
 	public function confPage()
 	{
 		if ($_SERVER['REQUEST_METHOD']=='POST')
@@ -149,19 +149,19 @@ class Permission
 		}
 		$this->html();
 	}
-	
+
 	/**
 	 * * Copied from Sendpress **
 	 */
 	function str_lreplace($search, $replace, $subject)
 	{
 		$pos = strrpos($subject, $search);
-		
+
 		if($pos !== false)
 		{
 			$subject = substr_replace($subject, $replace, $pos, strlen($search));
 		}
-		
+
 		return $subject;
 	}
 
@@ -187,7 +187,7 @@ class Permission
 		}
 		update_option('delibera_permission_saved', true);
 	}
-	
+
 	function GenerateCheckbox($id, $role, $echo = false, $label = "", $checked = '')
 	{
 		$listrole = get_role(sanitize_title($role));
@@ -214,7 +214,7 @@ class Permission
 			{
 				if(is_super_admin() || $role != 'administrator')
 				{
-					if(!array_key_exists($cap['label'], $roles)) $roles[$cap['label']] = array(); 
+					if(!array_key_exists($cap['label'], $roles)) $roles[$cap['label']] = array();
 					$roles[$cap['label']][$role] = $cap['id'];
 				}
 			}
@@ -232,7 +232,7 @@ class Permission
 			<table class="table table-bordered table-striped">
 				<?php
 				echo '<tr><th>&nbsp;</th>';
-				
+
 				foreach (array_keys($header) as $head)
 				{
 					echo '<th>'.$head.'</th>';
@@ -263,17 +263,17 @@ class Permission
 			<?php wp_nonce_field( 'delibera-permission-nonce' ); ?>
 			<input type="submit" class="delibera-permission-bt-save" value="<?php _e('Salvar', 'delibera'); ?>" />
 		</form><?php
-		
+
 	}
 
 	function get_role($role)
 	{
 		// $this->security_check();
 		global $wp_roles;
-		
+
 		if(! isset($wp_roles))
-			$wp_roles = new WP_Roles();
-		
+			$wp_roles = new \WP_Roles();
+
 		return $wp_roles->get_role($role);
 	}
 
@@ -281,17 +281,17 @@ class Permission
 	{
 		// $this->security_check();
 		global $wp_roles;
-		
+
 		if(! isset($wp_roles))
-			$wp_roles = new WP_Roles();
-		
+			$wp_roles = new \WP_Roles();
+
 		$all_roles = $wp_roles->get_names();
 		$editable_roles = apply_filters('editable_roles', $all_roles);
-		
+
 		return $all_roles;
 	}
 	/*** End Copied from Sendpress ***/
-	
+
 	public function setTaxonomyCaps( $taxonomy, $object_type, $args )
 	{
 		global $wp_taxonomies;
@@ -311,7 +311,7 @@ class Permission
 			$wp_taxonomies[ 'category' ]->cap->assign_terms = 'manage_categories';*/
 		}
 	}
-	
+
 	/**
 	 * Set defaults permissions when not yet customized, useful for new terms slugs
 	 */
@@ -389,7 +389,7 @@ class Permission
 									$saverole->remove_cap($perm['id']);
 									//echo "$label -> {$perm['id']} -> {$perm['permisson']}:not<br/>";
 								}
-								
+
 							}
 						}
 						else
@@ -411,7 +411,7 @@ class Permission
 			update_option('delibera_permission_fixed2', true);
 		}
 	}
-	
+
 }
 
 $DeliberaConfPermission = new \Delibera\Conf\Permission();

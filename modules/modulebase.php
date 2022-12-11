@@ -7,41 +7,41 @@ abstract class ModuleBase
 {
 
 	/**
-	 * 
+	 *
 	 * @var array List of of topic status
 	 */
 	public $situacao = array();
-	
+
 	/**
 	 *
 	 * @var array list of module flows
 	 */
 	protected $flows = array();
-	
+
 	/**
-	 * 
+	 *
 	 * @var string Name of module deadline metadata
 	 */
 	protected $prazo_meta = 'prazo';
-	
+
 	/**
-	 * 
+	 *
 	 * @var array List of pair shotcode name => method
 	 */
 	protected $shortcodes = array();
-	
+
 	/**
 	 * Config days to make new deadline
 	 * @var array
 	 */
 	protected $days = array();
-	
+
 	/**
 	 * Display priority
 	 * @var int
 	 */
 	public $priority = 0;
-	
+
 	public function __construct()
 	{
 		add_filter('delibera_register_flow_module', array($this, 'registerFlowModule'), $this->priority);
@@ -54,13 +54,13 @@ abstract class ModuleBase
 		//add_filter('delibera_check_post_data', array($this, 'checkPostData'), 10, 3);
 		//add_filter('delibera_save_post_metas', array($this, 'savePostMetas'), 10, 2);
 		add_action('delibera_create_pauta_frontend', array($this, 'createPautaAtFront'));
-		
+
 		foreach ($this->shortcodes as $name => $function)
 		{
 			add_shortcode( $name,  array( $this, $function ));
 		}
 	}
-	
+
 	/**
 	 * Register situacao objects for flow treat
 	 * @param array $modules
@@ -73,36 +73,36 @@ abstract class ModuleBase
 		}
 		return $modules;
 	}
-	
+
 	/**
 	 * Register Tax for the module
 	 */
 	abstract public function registerTax();
-	
+
 	/**
 	 * Initial situation on module begins
 	 * @param int $post_id
 	 */
 	abstract public function initModule($post_id);
-	
+
 	/**
 	 * Append configurations
 	 * @param array $opts
 	 */
 	abstract public function getMainConfig($opts);
-	
+
 	/**
 	 * Array to show on config page
 	 * @param array $rows
 	 */
 	abstract public function configPageRows($rows, $opt);
-	
+
 	/**
 	 * Label to apply to button
 	 * @param unknown $situation
 	 */
 	abstract public function situationButtonText($situation);
-	
+
 	/**
 	 *
 	 * Post Meta Fields display
@@ -115,14 +115,14 @@ abstract class ModuleBase
 	 *
 	 */
 	abstract public function topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao);
-	
+
 	/**
 	 * When the topic is published
 	 * @param int $postID
 	 * @param array $opt delibera configs
 	 */
 	abstract public function publishPauta($postID, $opt);
-	
+
 	/**
 	 * Validate topic required data
 	 * @param array $errors erros report array
@@ -131,7 +131,7 @@ abstract class ModuleBase
 	 * @return array erros report array append if needed
 	 */
 	abstract public function checkPostData($errors, $opt, $autosave);
-	
+
 	/**
 	 * Save topic metadata
 	 * @param array $events_meta
@@ -140,19 +140,19 @@ abstract class ModuleBase
 	 * @return array events_meta to be save on the topic
 	 */
 	abstract public function savePostMetas($events_meta, $opt, $post_id = false);
-	
+
 	/**
 	 * Treat postback of frotend topic
 	 * @param array $opt Delibera configs
 	 */
 	abstract public function createPautaAtFront($opt);
-	
+
 	/**
 	 * Generate deadline date
 	 * @param array $options_plugin_delibera Delibera configs
 	 */
 	abstract public function generateDeadline($options_plugin_delibera);
-	
+
 	/**
 	 * Return this module deadline for the current post
 	 * @param int $post_id
@@ -161,7 +161,7 @@ abstract class ModuleBase
 	public function getDeadline($post_id = false)
 	{
 		if( empty($this->prazo_meta) ) return -1; // Do not have prazo
-		
+
 		if($post_id == false)
 		{
 			$post_id = get_the_ID();
@@ -170,19 +170,19 @@ abstract class ModuleBase
 		{
 			$situacao = delibera_get_situacao($post_id);
 			$situacao = $situacao->slug;
-			
+
 			return !empty($situacao) && array_key_exists($situacao, $this->prazo_meta) ? get_post_meta($post_id, $this->prazo_meta[$situacao], true) : $this->generateDeadline(delibera_get_config());
 		}
 		$deadline = get_post_meta($post_id, $this->prazo_meta, true);
-		
+
 		if(empty($deadline))
 		{
 			return $this->generateDeadline(delibera_get_config());
 		}
-		
+
 		return $deadline;
 	}
-	
+
 	/**
 	 *
 	 * Retorn topic at module situation
@@ -190,15 +190,15 @@ abstract class ModuleBase
 	 */
 	public static function getPautas($filtro = array())
 	{
-		return delibera_get_pautas_em($filtro, $this->situacao);
+		return delibera_get_pautas_em($filtro, array(__CLASS__, 'situacao'));
 	}
-	
+
 	/**
 	 * Trigger module deadline event
 	 * @param array $args in form: array('post_id' => $post_id, 'prazo' => $prazo)
 	 */
 	abstract public static function deadline($args);
-	
+
 	/**
 	 * Create new deadline events calendar
 	 * @param int $post_id
@@ -230,12 +230,12 @@ abstract class ModuleBase
 						$prazo_date = $dateTime->format('d/m/Y');
 						update_post_meta($post_id, $prazo, $prazo_date);
 					}
-					
+
 					\Delibera\Cron::del($post_id, array(get_class($this), 'deadline'));
 					\Delibera\Cron::del($post_id, 'delibera_notificar_fim_prazo');
-					
+
 					$cron = get_option('delibera-cron');
-					
+
 					\Delibera\Cron::add(
 						delibera_tratar_data($prazo_date),
 						array(get_class($this), 'deadline'),
@@ -253,7 +253,7 @@ abstract class ModuleBase
 						)
 					);
 				}
-				else 
+				else
 				{
 					/*$msn = "empty date on $post_id: ".print_r($this, true)."Dates: ".print_r($prazos, true);
 					throw new \Exception($msn);*/
@@ -262,7 +262,7 @@ abstract class ModuleBase
 			}
 		}
 	}
-	
+
 	/**
 	 * Return Deadline days
 	 * @return number
@@ -280,28 +280,28 @@ abstract class ModuleBase
 		}
 		return $days;
 	}
-	
+
 	/**
 	 * Return comment list Title
 	 */
 	abstract public function getCommentListLabel();
-	
+
 	/**
-	 * 
-	 * Treat the fixed deadline topic date 
-	 * 
+	 *
+	 * Treat the fixed deadline topic date
+	 *
 	 * @param array $opt delibera options
 	 * @return boolean|string config fixed treated deadline date
 	 */
 	protected function treatFixedDateToEndExtTopic($opt = false)
 	{
 		if(!is_array($opt)) $opt = delibera_get_config();
-	
+
 		$data_externa = trim($opt['data_fixa_nova_pauta_externa']);
 		if ( !empty($data_externa) && strlen($data_externa) == 10)
 		{
 			$date = \DateTime::createFromFormat('d/m/Y', $data_externa);
-			if( $date->getTimestamp() <= time() ) // fix https://github.com/redelivre/delibera/issues/148 avoid creation of ended topics 
+			if( $date->getTimestamp() <= time() ) // fix https://github.com/redelivre/delibera/issues/148 avoid creation of ended topics
 			{
 				delibera_nofitica_administrators("", 'mensagem_data_externa_vencida');
 				return false;
@@ -313,15 +313,15 @@ abstract class ModuleBase
 			return false;
 		}
 	}
-	
+
 	/**
 	 * hook WordPress template_redirect to execute after everything are setup and the query has been done
 	 */
 	public function template_redirect() { /* overload this to do things on WordPress template_redirect */  }
-	
+
 	/**
-	 * Return the date when situacao is set 
-	 * 
+	 * Return the date when situacao is set
+	 *
 	 * @param int $post_id
 	 * @param string|\WP_Term $situacao
 	 * @return mixed|boolean|string|array|unknown
@@ -329,19 +329,19 @@ abstract class ModuleBase
 	public static function getSituacaoDate($post_id = false, $situacao = false)
 	{
 		if($post_id === false) $post_id = get_the_ID();
-		
+
 		if($situacao === false)
 		{
 			$situacao = delibera_get_situacao($post_id);
 		}
 		if(is_object($situacao)) $situacao = $situacao->slug;
-		
+
 		return get_post_meta($post_id, 'delibera-pauta-date-'.$situacao, true);
 	}
-	
+
 	/**
-	 * Set the date of situacao 
-	 * 
+	 * Set the date of situacao
+	 *
 	 * @param string $post_id
 	 * @param string $value
 	 * @param string|\WP_Term $situacao
@@ -349,16 +349,16 @@ abstract class ModuleBase
 	 */
 	public static function setSituacaoDate($post_id = false, $value = false, $situacao = false)
 	{
-		if($post_id === false) $post_id = get_the_ID(); 
-		
+		if($post_id === false) $post_id = get_the_ID();
+
 		if($situacao === false)
 		{
 			$situacao = delibera_get_situacao($post_id);
 		}
 		if(is_object($situacao)) $situacao = $situacao->slug;
-		
+
 		if($value == false) $value = date('d/m/Y H:i:s');
-		
+
 		return update_post_meta($post_id, 'delibera-pauta-date-'.$situacao, $value);
 	}
 }

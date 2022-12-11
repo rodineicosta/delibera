@@ -1,15 +1,15 @@
-<?php 
+<?php
 
 // PHP 5.3 and later:
 namespace Delibera;
 
 /**
- * Manage cron activities of Delibera 
+ * Manage cron activities of Delibera
  *
  */
 class Cron
 {
-	
+
 	public function __construct()
 	{
 		add_action('admin_action_delibera_cron_action', array($this, 'action'));
@@ -19,7 +19,7 @@ class Cron
 		add_action('wp_trash_post', array($this, 'del') );
 		add_action('before_delete_post', array($this, 'del') );
 	}
-	
+
 	/**
 	 * Wordpress hook when cron is trigged
 	 */
@@ -31,7 +31,7 @@ class Cron
 		$new_crons = array();
 		$dT = new \DateTime();
 		$now = $dT->getTimestamp();
-			
+
 		$exec = 0;
 		foreach ($crons as $key => $values)
 		{
@@ -50,10 +50,10 @@ class Cron
 							}
 							else
 							{
-								throw new Exception('invalid callback array. dump: '.print_r($value, true));
+								throw new \Exception('invalid callback array. dump: '.print_r($value, true));
 							}
 						}
-						else 
+						else
 						{
 							if(function_exists($value['call_back']))
 							{
@@ -61,11 +61,11 @@ class Cron
 							}
 							else
 							{
-								throw new Exception('invalid callback function. dump: '.print_r($value, true));
+								throw new \Exception('invalid callback function. dump: '.print_r($value, true));
 							}
 						}
 					}
-					catch (Exception $e)
+					catch (\Exception $e)
 					{
 						$error = __('Erro no cron Delibera: ','delibera').$e->getMessage()."\n".$e->getCode()."\n".$e->getTraceAsString()."\n".$e->getLine()."\n".$e->getFile();
 						wp_mail("jacson@ethymos.com.br", get_bloginfo('name'), $error);
@@ -79,21 +79,21 @@ class Cron
 			}
 		}
 		update_option('delibera-cron', $new_crons);
-		
+
 		//wp_mail("jacson@ethymos.com.br", get_bloginfo('name'),"Foram executadas $exec tarefa(s)");
 	}
-	
+
 	/**
 	 * Registry a cron event check hourly
 	 */
 	function registry()
 	{
-		if ( !wp_next_scheduled( 'admin_action_delibera_cron_action' ) ) // if already been scheduled, will return a time 
+		if ( !wp_next_scheduled( 'admin_action_delibera_cron_action' ) ) // if already been scheduled, will return a time
 		{
 			wp_schedule_event(time(), 'hourly', 'admin_action_delibera_cron_action');
 		}
 	}
-	
+
 	/**
 	 * Simple text list of cron jobs
 	 */
@@ -133,7 +133,7 @@ class Cron
 			</pre>
 		</div><?php
 	}
-	
+
 	/**
 	 * Add cron trigger
 	 * @param int $data date that will occur
@@ -147,7 +147,7 @@ class Cron
 		{
 			$crons =  get_option('delibera-cron', array());
 			if(!is_array($crons)) $crons = array();
-	
+
 			if(!array_key_exists($data, $crons))
 			{
 				$crons[$data] = array();
@@ -160,7 +160,7 @@ class Cron
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove a cron trigger
 	 * @param int $postID
@@ -170,12 +170,12 @@ class Cron
 	{
 		$crons =  get_option('delibera-cron', array());
 		if(!is_array($crons)) $crons = array();
-	
+
 		if( is_array($callback) )
 		{
 			$callback = $callback[0].'_'.$callback[1];
 		}
-	
+
 		$crons_new = array();
 		foreach($crons as $cron_data => $cron_value)
 		{
@@ -187,9 +187,9 @@ class Cron
 				{
 					$cron_callback = $call['call_back'][0].'_'.$call['call_back'][1];
 				}
-				
+
 				if(array_key_exists('post_id', $call['args'])) $call['args']['post_ID'] = $call['args']['post_id'];
-				
+
 				if($call['args']['post_ID'] != $postID || ($callback !== false && $callback != $cron_callback ))
 				{
 					$new_cron[] = $call;
@@ -200,16 +200,16 @@ class Cron
 				$crons_new[$cron_data] = $new_cron;
 			}
 		}
-	
+
 		ksort($crons_new);
 		update_option('delibera-cron', $crons_new);
 	}
-	
+
 	public function addMenu($base_page)
 	{
 		add_submenu_page($base_page, __('Delibera Cron','delibera'),__('Delibera Cron','delibera'), 'manage_options', 'delibera-cron', array($this, 'confPage'));
 	}
-	
+
 	public function confPage()
 	{
 		$this->cronList();
@@ -222,7 +222,7 @@ class Cron
 			add_action('delibera_menu_itens', array($this, 'addMenu'));
 		}
 	}
-	
+
 }
 
 $DeliberaCron = new \Delibera\Cron();

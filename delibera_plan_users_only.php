@@ -26,13 +26,13 @@ function ruonly_settings_page() {
 <div class="wrap">
 
 
-	<?php 	
+	<?php
 	// get pricing plan level for the current blog
 	$blogid = 	get_current_blog_id();
 	$princing_plan = get_blog_option($blogid,'product_id');
-	
-	//$princing_plan = get_option('pricing_plan');	
-		
+
+	//$princing_plan = get_option('pricing_plan');
+
 	$disabled ='';
 	if($princing_plan == 1 || $princing_plan == 2 || $princing_plan == 3)
 		$disabled="disabled";
@@ -40,8 +40,8 @@ function ruonly_settings_page() {
 	 if($disabled!=''){?>
 		<div id="message" class="error"><?php _e('You pricing plan does not allow to se private forums. Please upgrade your plan to do so.','delibera');?></div>
 	<?php }
-		
-		
+
+
 	?>
 
 <h2><?php _e('Allowing only registeres users.');?></h2>
@@ -52,15 +52,15 @@ function ruonly_settings_page() {
     <table class="form-table">
         <tr valign="top">
         <th scope="row"><?php _e('Only registered users can access website.','delibera');?> </th>
-        
+
         <?php $value = get_option('registered_users_only');?>
-        
+
         <td><input <?php echo $disabled;?> type="checkbox" name="registered_users_only" <?php if(isset($value) & $value=='on') echo "checked";?> /></td>
-     
+
         </tr>
-      
+
     </table>
-    
+
     <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
     </p>
@@ -68,6 +68,3 @@ function ruonly_settings_page() {
 </form>
 </div>
 <?php }
-
-
-?>

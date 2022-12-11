@@ -19,17 +19,19 @@
 //PHP 5.3 and later:
 namespace Delibera\Includes\WP_Print;
 
+use Delibera\Includes\SideComments\CTLT_WP_Side_Comments as CTLT_WP_Side_Comments;
+
 if(intval(get_query_var('delibera_print_csv')) > 0)
 {
 	header('Content-Type: text/csv; charset=utf-8');
 	header('Content-Disposition: attachment; filename='.date('Ymd').'_delibera_report.csv');
-	
+
 	$output = fopen('php://output', 'w');
-	
+
 	if (have_posts())
 	{
 		$allcomments = array();
-			
+
 		switch (intval(get_query_var('delibera_print_csv')))
 		{
 			case 1: //num de comentários por parágrafo
@@ -38,15 +40,15 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 				while (have_posts())
 				{
 					the_post();
-					
-					$paragraphs = \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getPostSectionsList(get_the_ID());
-					
+
+					$paragraphs = CTLT_WP_Side_Comments::getPostSectionsList(get_the_ID());
+
 					global $CTLT_WP_Side_Comments;
 					if(!is_object($CTLT_WP_Side_Comments))
 					{
-						$CTLT_WP_Side_Comments = new \Delibera\Includes\SideComments\CTLT_WP_Side_Comments();
+						$CTLT_WP_Side_Comments = new CTLT_WP_Side_Comments();
 					}
-					
+
 					$sidecomments = $CTLT_WP_Side_Comments->getCommentsPerSection(get_the_ID(), ARRAY_A);
 					if(is_array($sidecomments) && array_key_exists('comments', $sidecomments) && is_array($sidecomments['comments']))
 					{
@@ -70,10 +72,10 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 						{
 							$authors[] = $comment['comment_author'];
 						}
-						
+
 						$authors = array_unique($authors);
 						sort($authors);
-						
+
 						fputcsv($output , array(
 								wp_trim_words(strip_tags($paragraphs[$i]), 5, ' ...'),
 								count($comments),
@@ -87,22 +89,22 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 				while (have_posts())
 				{
 					the_post();
-					
+
 					$getCommentArgs = array(
 						'post_id' => get_the_ID(),
 						'status' => 'approve'
 					);
 					$comments = get_comments( $getCommentArgs );
-					
+
 					$comments = delibera_comments_filter_portipo($comments, array('discussao', 'encaminhamento', 'resolucao'));
-					
+
 					$allcomments = array_merge($allcomments, $comments);
 				}
-				
+
 				$commentsDates = array();
 				foreach ($allcomments as $comment)
 				{
-					
+
 					$date = date('Y/m/d', strtotime($comment->comment_date));
 					if(!array_key_exists($date, $commentsDates)) $commentsDates[$date] = 0;
 					$commentsDates[$date] += 1;
@@ -117,19 +119,19 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 				}
 			break;
 			case 3: //num de comentários por usuário
-				
+
 				while (have_posts())
 				{
 					the_post();
-						
+
 					$getCommentArgs = array(
 							'post_id' => get_the_ID(),
 							'status' => 'approve'
 					);
 					$comments = get_comments( $getCommentArgs );
-					
+
 					$comments = delibera_comments_filter_portipo($comments, array('discussao', 'encaminhamento', 'resolucao'));
-					
+
 					$allcomments = array_merge($allcomments, $comments);
 				}
 				$commentsUsers = array();
@@ -155,7 +157,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 						'metaboxhidden_page' => false,
 						$wpdb->prefix.'accept_the_terms_of_site' => false,
 						'primary_blog' => false
-						
+
 				);
 				foreach ($allcomments as $comment)
 				{
@@ -175,7 +177,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 								{
 									if( substr($key, 0, 1) == '_' ) unset($metas[$key]);
 								}
-							
+
 								$allmetas = array_merge($allmetas, array_keys($metas));
 								$commentsUsers[$user]['metas'] = $metas;
 								continue;
@@ -185,9 +187,9 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 					}
 					$commentsUsers[$user]['count'] += 1;
 				}
-				
+
 				ksort($allmetas, SORT_NATURAL);
-				
+
 				$header = array(__('Usuário', 'delibera'), __('Número de cometários', 'delibera'));
 				$header = array_merge($header, $allmetas);
 				fputcsv($output, $header, ';');
@@ -209,7 +211,7 @@ if(intval(get_query_var('delibera_print_csv')) > 0)
 						{
 							$row[] = $value['metas'][$col][0];
 						}
-						else 
+						else
 						{
 							$row[] = '';
 						}
@@ -230,7 +232,7 @@ if(intval(get_query_var('delibera_print_xls')) > 0)
 		switch (intval(get_query_var('delibera_print_xls')))
 		{
 			case 1:
-				require WP_PLUGIN_DIR.'/delibera/delibera_relatorio_xls.php';	
+				require WP_PLUGIN_DIR.'/delibera/delibera_relatorio_xls.php';
 			break;
 		}
 	}
@@ -270,18 +272,18 @@ global $text_direction; ?>
 						<hr class="Divider" style="text-align: center;" /><?php
 						if(
 							class_exists('\Delibera\Includes\SideComments\CTLT_WP_Side_Comments') &&
-							\Delibera\Includes\SideComments\CTLT_WP_Side_Comments::hasSideCommentSection(get_the_ID()))
+							CTLT_WP_Side_Comments::hasSideCommentSection(get_the_ID()))
 						{
-							$sidecomments_print = true;							
-							$paragraphs = \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getPostSectionsList(get_the_ID());
-							
-							$sidecomments = \Delibera\Includes\SideComments\CTLT_WP_Side_Comments::getCommentsPerSection(get_the_ID());
-							
+							$sidecomments_print = true;
+							$paragraphs = CTLT_WP_Side_Comments::getPostSectionsList(get_the_ID());
+
+							$sidecomments = CTLT_WP_Side_Comments::getCommentsPerSection(get_the_ID());
+
 							if(is_array($sidecomments) && array_key_exists('comments', $sidecomments) && is_array($sidecomments['comments']))
 							{
 								$sidecomments = $sidecomments['comments'];
 							}
-							else 
+							else
 							{
 								$sidecomments = array();
 							}

@@ -10,44 +10,44 @@ class Validation extends \Delibera\Modules\ModuleBase
 	 * @var array List of of topic status
 	 */
 	public $situacao = array('validacao', 'naovalidada');
-	
+
 	/**
 	 *
 	 * @var array list of module flows
 	 */
 	protected $flows = array('validacao');
-	
+
 	/**
 	 *
 	 * @var String Name of module deadline metadata
 	 */
 	protected $prazo_meta = 'prazo_validacao';
-	
+
 	/**
 	 * Config days to make new deadline
 	 * @var array
 	 */
 	protected $days = array('dias_validacao');
-	
+
 	/**
 	 *
 	 * @var array List of pair shotcode name => method
 	 */
 	protected $shortcodes = array('delibera_lista_de_propostas' => 'replacePropostas' );
-	
+
 	/**
 	 * Display priority
 	 * @var int
 	 */
 	public $priority = 1;
-	
+
 	public function __construct()
 	{
 		add_action('delibera_pauta_recusada', array('\Delibera\Cron', 'del'));
 		add_filter('delibera_unfilter_duplicate', array($this, 'unfilterDuplicate'));
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Register Tax for the module
 	 */
@@ -82,9 +82,9 @@ class Validation extends \Delibera\Modules\ModuleBase
 			);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::initModule()
 	 */
@@ -95,7 +95,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 	}
 
 	/**
-	 * Append configurations 
+	 * Append configurations
 	 * @param array $opts
 	 */
 	public function getMainConfig($opts)
@@ -104,7 +104,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 		$opts['dias_validacao'] = '5';
 		return $opts;
 	}
-	
+
 	/**
 	 * Array to show on config page
 	 * @param array $rows
@@ -116,7 +116,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 				"label" => __('Mínimo de validações para uma pauta:', 'delibera'),
 				"content" => '<input type="text" name="minimo_validacao" id="minimo_validacao" value="'.htmlspecialchars_decode($opt['minimo_validacao']).'" autocomplete="off" />'
 		);
-		
+
 		$rows[] = array(
 				"id" => "dias_validacao",
 				"label" => __('Dias para validação da pauta:', 'delibera'),
@@ -124,7 +124,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 		);
 		return $rows;
 	}
-	
+
 	/**
 	 * Label to apply to button
 	 * @param unknown $situation
@@ -135,56 +135,56 @@ class Validation extends \Delibera\Modules\ModuleBase
 		{
 			return __('Votar', 'delibera');
 		}
-		
+
 		return $situation;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::generateDeadline()
 	 */
 	public function generateDeadline($options_plugin_delibera)
 	{
 		$dias_validacao = intval(htmlentities($options_plugin_delibera['dias_validacao']));
-		
+
 		$prazo_validacao_sugerido = strtotime("+$dias_validacao days", delibera_tratar_data(\Delibera\Flow::getLastDeadline('valicacao')));
-		
+
 		return date('d/m/Y', $prazo_validacao_sugerido);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Post Meta Fields display
-	 * 
+	 *
 	 * @param \WP_Post $post
 	 * @param array $custom post custom fields
 	 * @param array $options_plugin_delibera Delibera options array
 	 * @param WP_Term $situacao
 	 * @param bool $disable_edicao
-	 * 
+	 *
 	 */
 	public function topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao)
 	{
 		$validacoes = array_key_exists("numero_validacoes", $custom) ?  $custom["numero_validacoes"][0] : 0;
-		
+
 		$min_validacoes = array_key_exists("min_validacoes", $custom) ?  $custom["min_validacoes"][0] : htmlentities($options_plugin_delibera['minimo_validacao']);
-		
+
 		$delibera_validation_show_rejeitar = array_key_exists("delibera_validation_show_rejeitar", $custom) ?  $custom["delibera_validation_show_rejeitar"][0] : 'S';
-		
+
 		$delibera_validation_show_abstencao = array_key_exists("delibera_validation_show_abstencao", $custom) ?  $custom["delibera_validation_show_abstencao"][0] : 'N';
-		
+
 		$delibera_validation_show_comment = array_key_exists("delibera_validation_show_comment", $custom) ?  $custom["delibera_validation_show_comment"][0] : 'N';
-		
+
 		$prazo_validacao = $this->generateDeadline($options_plugin_delibera);
-		
+
 		if(!($post->post_status == 'draft' ||
 				$post->post_status == 'auto-draft' ||
 				$post->post_status == 'pending'))
 		{
 			$prazo_validacao = array_key_exists("prazo_validacao", $custom) ?  $custom["prazo_validacao"][0] : $prazo_validacao;
 		}
-		
+
 		?>
 			<p>
 				<label  class="label_min_validacoes"><?php _e('Mínimo de Validações','delibera'); ?>:</label>
@@ -207,9 +207,9 @@ class Validation extends \Delibera\Modules\ModuleBase
 				<input <?php echo $disable_edicao ?> name="delibera_validation_show_comment" type="checkbox" value="S" class="delibera_validation_show_comment widefat delibera-admin-checkbox" <?php echo $delibera_validation_show_comment == 'S' ? 'checked="checked"' : ''; ?> />
 			</p>
 		<?php
-		
+
 	}
-	
+
 	/**
 	 * When the topic is published
 	 * @param int $postID
@@ -221,7 +221,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 		$events_meta = array();
 		$events_meta['delibera_numero_comments_validacoes'] = 0;
 		$events_meta['numero_validacoes'] = 0;
-		
+
 		foreach ($events_meta as $key => $value) // Buscar dados
 		{
 			if(get_post_meta($postID, $key, true)) // Se já existe
@@ -233,11 +233,11 @@ class Validation extends \Delibera\Modules\ModuleBase
 				add_post_meta($postID, $key, $value, true); // Senão, cria
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * Validate topic required data 
+	 * Validate topic required data
 	 * @param array $errors erros report array
 	 * @param array $opt Delibera configs
 	 * @param bool $autosave is autosave?
@@ -251,7 +251,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 		{
 			$errors[] = __("É necessário definir corretamente o prazo de validação", "delibera");
 		}
-		
+
 		$value = (int)$_POST['min_validacoes'];
 		$valida = is_int($value) && $value > 0;
 		if(!$autosave && ($valida === false))
@@ -260,7 +260,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 		}
 		return $errors;
 	}
-	
+
 	/**
 	 *
 	 * Retorna pautas em Validação
@@ -270,17 +270,17 @@ class Validation extends \Delibera\Modules\ModuleBase
 	{
 		return self::getPautas($filtro);
 	}
-	
+
 	public function replacePropostas($matches)
 	{
 		global $wp_posts;
 		$temp = explode(',', $matches[1]); // configurações da shorttag
 		$count = count($temp);
-	
+
 		$param = array(); // TODO Tratar Parametros
-	
-		$html = DeliberaValidation::getPropostas($param);
-	
+
+		$html = \Delibera\Modules\Validation::getPropostas($param);
+
 		$wp_posts = $html;
 		global $post;
 		$old = $post;
@@ -292,15 +292,15 @@ class Validation extends \Delibera\Modules\ModuleBase
 		}
 		echo '</div>';
 		$post = $old;
-	
+
 		return ''; // Retornar código da representação
 	}
-	
+
 	/**
 	 * Save topic metadata
 	 * @param array $events_meta
 	 * @param array $opt Delibera configs
-	 * 
+	 *
 	 * @return array events_meta to be save on the topic
 	 */
 	public function savePostMetas($events_meta, $opt, $post_id = false)
@@ -315,10 +315,10 @@ class Validation extends \Delibera\Modules\ModuleBase
 			$events_meta['delibera_validation_show_abstencao'] = array_key_exists('delibera_validation_show_abstencao', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_abstencao']) : 'N';
 			$events_meta['delibera_validation_show_comment'] = array_key_exists('delibera_validation_show_comment', $_POST) ? sanitize_text_field($_POST['delibera_validation_show_comment']) : 'N';
 		}
-		
+
 		return $events_meta;
 	}
-	
+
 	/**
 	 * Treat postback of frotend topic
 	 * @param array $opt Delibera configs
@@ -336,9 +336,9 @@ class Validation extends \Delibera\Modules\ModuleBase
 		}
 		$_POST['min_validacoes'] = $opt['minimo_validacao'];
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 * @see \Delibera\Modules\ModuleBase::deadline()
 	 */
@@ -350,7 +350,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 			self::marcarNaovalidada($args['post_ID']);
 		}
 	}
-	
+
 	/**
 	 * No min validation recived
 	 * @param int $postID
@@ -363,7 +363,7 @@ class Validation extends \Delibera\Modules\ModuleBase
 			do_action('delibera_pauta_recusada', $postID);
 		}
 	}
-	
+
 	/**
 	 *
 	 * {@inheritDoc}
@@ -373,14 +373,12 @@ class Validation extends \Delibera\Modules\ModuleBase
 	{
 		return __('Validação da Pauta', 'delibera');
 	}
-	
+
 	public function unfilterDuplicate($tipos)
 	{
 		$tipos[] = 'validacao';
 		return $tipos;
 	}
-	
+
 }
 $DeliberaValidation = new \Delibera\Modules\Validation();
-
-

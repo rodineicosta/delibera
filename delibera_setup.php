@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Criar a página about
  */
@@ -63,12 +62,12 @@ function delibera_roles_install($delibera_permissoes)
 		if($permisao['Novo'] == true)
 		{
 			$Role = get_role($permisao['From']);
-				
+
 			if(!is_object($Role))
 			{
 				throw new Exception(sprintf(__('Permissão original (%s) não localizada','delibera'),$permisao['From']));
 			}
-				
+
 			$cap = $Role->capabilities;
 			add_role($nome, $permisao["nome"], $cap);
 		}
@@ -81,7 +80,7 @@ function delibera_roles_install($delibera_permissoes)
 
 		foreach ($permisao['Caps'] as $cap)
 		{
-				
+
 			$Role->add_cap($cap);
 		}
 	}
@@ -129,7 +128,6 @@ function delibera_desinstalacao()
 }
 register_deactivation_hook( __FILE__, 'delibera_desinstalacao' );
 
-
 /**
  * 	Para Multisites
  */
@@ -140,7 +138,7 @@ function delibera_wpmu_new_blog($blog_id)
 		$id = get_current_blog_id(); // Qual o blog que chamou essa função
 		if($id != 1)
 		{
-			switch_to_blog(1); // Precisamos pegar o permalink e as linguas no caso do qtranlate ativo do blog raíz 
+			switch_to_blog(1); // Precisamos pegar o permalink e as linguas no caso do qtranlate ativo do blog raíz
 		}
 		/** Antes de mudar **/
 		$permalink_structure = get_option('permalink_structure');
@@ -150,7 +148,7 @@ function delibera_wpmu_new_blog($blog_id)
 			$qtrans['enabled_languages'] = get_option('qtranslate_enabled_languages');
 			$qtrans['default_language'] = get_option('qtranslate_default_language');
 		}
-		
+
 		/** Depois de mudar de blog temos que ir para o novo blog onde o plugin foi ativado **/
 		if($id != 1)
 		{
@@ -160,18 +158,18 @@ function delibera_wpmu_new_blog($blog_id)
 		{
 			switch_to_blog($blog_id); // Ou vai se não estava
 		}
-		
+
 		if(function_exists('qtrans_enableLanguage'))
 		{
 			update_option('qtranslate_enabled_languages', $qtrans['enabled_languages']);
 			update_option('qtranslate_default_language', $qtrans['default_language']);
 		}
 		update_option('permalink_structure', $permalink_structure);
-		
+
 		delibera_init(); // Criando o post type
-		
+
 		flush_rewrite_rules();
-		
+
 		if($id == 1) // se estávamos no blog 1, vamos voltar para ele
 		{
 			restore_current_blog();
@@ -187,6 +185,3 @@ function delibera_wpmu_new_blog_action($blog_id, $user_id = 0, $domain = '', $pa
 	delibera_wpmu_new_blog($blog_id);
 }
 add_action('wpmu_new_blog','delibera_wpmu_new_blog_action',90,6);
-
-
-?>

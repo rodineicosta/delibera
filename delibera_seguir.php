@@ -7,7 +7,7 @@
  * Contabiliza novo seguidor nos metadados da pauta utilizando `update_post_meta`
  *
  * @param $ID
- * @param $type 
+ * @param $type
  *
  * @package Pauta\Seguir
  */
@@ -94,9 +94,8 @@ function delibera_ja_seguiu($postID, $user_id)
 	return false;
 }
 
-
 /**
- * Hook executado quando algum usuário segue uma pauta 
+ * Hook executado quando algum usuário segue uma pauta
  *
  * @package Pauta\Seguir
  */
@@ -118,7 +117,7 @@ add_action('wp_ajax_nopriv_delibera_seguir', 'delibera_seguir_callback');
  *
  * @param $ID - ID da pauta
  * @param $return - tipo do retorno desejado (array ou string)
- * @return Array - retorna IDS que seguem a pauta 
+ * @return Array - retorna IDS que seguem a pauta
  *
  * @package Pauta\Seguir
  */
@@ -162,4 +161,3 @@ function delibera_get_quem_seguiu($ID, $return = 'array')
 	}
 
 }
-?>

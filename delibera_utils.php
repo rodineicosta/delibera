@@ -256,8 +256,8 @@ function deliberaEncryptor($action, $string) {
 
 	$encrypt_method = "AES-256-CBC";
 	//pls set your unique hashing key
-	$secret_key = AUTH_KEY.get_current_blog_id();
-	$secret_iv = SECURE_AUTH_KEY.get_current_blog_id();
+	$secret_key = AUTH_KEY . get_current_blog_id();
+	$secret_iv  = SECURE_AUTH_KEY . get_current_blog_id();
 
 	// hash
 	$key = hash('sha256', $secret_key);

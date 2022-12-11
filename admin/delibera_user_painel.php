@@ -11,7 +11,7 @@ function delibera_get_user_campos_form_registro_template()
 		'Informar' => __('Favor informar', 'delibera'),
 		'funcao_registro' => false, // opcional
 		'tipo_painel' => 'Texto', // Opcional: tipo do painel (Texto, DropDown ou CheckBox)
-		'dados' => false, // Opcional: Função para pegar opções ou Array com dados 
+		'dados' => false, // Opcional: Função para pegar opções ou Array com dados
 		'dados_param' => false, // Opcional: Parametros para a função e dados array("Valor" => "Label", "Valor2" => "Label2")
 		'funcao_painel' => false, // Opcional: Função que gera o html no painel
 		'default' => '' // Valor Padrão da opção
@@ -23,7 +23,7 @@ function delibera_get_user_campos_form_registro()
 	$campos_form_registro = array
 	(
 		/*
-		 * Exemplo: 
+		 * Exemplo:
 		 * array(
 		 * 		'novo' => true, // Se é um campo novo ou já existe no perfil de usuário
 		 * 		'id' => 'user_pais',
@@ -40,12 +40,12 @@ function delibera_get_user_campos_form_registro()
 		 */
 
 	);
-	
+
 	if(has_filter('delibera_user_painel_campos'))
 	{
 		$campos_form_registro = apply_filters('delibera_user_painel_campos', $campos_form_registro);
 	}
-	
+
 	if(function_exists('get_user_campos_form_registro'))
 	{
 		$get_user_campos_form_registro = get_user_campos_form_registro();
@@ -59,7 +59,7 @@ function delibera_get_user_campos_form_registro()
 	{
 		$campos_form_registro[$i] = array_merge($campo_template, $campos_form_registro[$i]);
 	}
-	
+
 	return $campos_form_registro;
 }
 
@@ -73,7 +73,7 @@ function delibera_campos_usuario_registro()
 			{
 				call_user_func($campo['funcao_registro'], $campo);
 			}
-			else 
+			else
 			{
 				?>
 				<p>
@@ -103,22 +103,22 @@ add_action('register_post','delibera_campos_usuario_registro_check',10,3);
 function delibera_register_extra_fields($user_id, $password="", $meta=array())
 {
 	$userdata['ID'] = $user_id;
-	
+
 	foreach (delibera_get_user_campos_form_registro() as $campo)
 	{
 		if(array_key_exists($campo['id'], $_POST))
 		{
-			if($campo[novo] == true)
+			if($campo['novo'] == true)
 			{
-				update_usermeta( $user_id, $campo['id'], $_POST[$campo['id']]);
+				update_user_meta( $user_id, $campo['id'], $_POST[$campo['id']]);
 			}
-			else 
+			else
 			{
 				$userdata[$campo['id']] = $_POST[$campo['id']];
 			}
 		}
 	}
-	
+
 	wp_update_user($userdata);
 	$order = get_user_option("meta-box-order_pauta", $user_id);
 	$order['side'] = 'submitdiv,idiomadiv,tagsdiv-post_tag,temadiv,regiaodiv,pauta_meta';
@@ -126,22 +126,22 @@ function delibera_register_extra_fields($user_id, $password="", $meta=array())
 }
 add_action('user_register', 'delibera_register_extra_fields');
 
-function delibera_extra_profile_fields( $user ) 
+function delibera_extra_profile_fields( $user )
 {
 	$campos = delibera_get_user_campos_form_registro();
 	if($campos > 0)
 	{
 		?>
 		<h3><?php _e('Notificações por e-mail do Delibera', 'delibera'); ?></h3>
-	
+
 		<p><?php _e('Escolha abaixo para quais eventos do sistema do Delibera você deseja receber notificações por e-mail. As opções selecionadas aqui serão aplicadas para todas as pautas. É possível também seguir as pautas individualmente. Para isso clique no botão "Seguir" na página de uma pauta.', 'delibera'); ?></p>
-	
+
 		<table class="Delibera-user-form-table">
 		<?php
 		foreach ($campos as $campo)
 		{
 			if($campo['novo'] == true)
-			{ 
+			{
 				$contactmethods[] = $campo['nome'];
 				?>
 					<tr>
@@ -152,7 +152,7 @@ function delibera_extra_profile_fields( $user )
 							{
 								call_user_func($campo['funcao_painel'], $campo);
 							}
-							else 
+							else
 							{
 								$default = $campo['default'];
 								switch($campo['tipo_painel'])
@@ -212,7 +212,7 @@ function delibera_extra_profile_fields( $user )
 										$salvo = $salvo == '' || empty($salvo) || (is_array($salvo) && count($salvo) == 0) ? strtolower($default) : $salvo;
 										?>
 										<input type="checkbox" name="<?php echo $campo['id'] ?>" id="<?php echo $campo['id'] ?>" value="<?php echo $valor; ?>" <?php echo $salvo === strtolower($valor) ? 'checked="checked"' : '' ; ?> class="regular-checkbox" /><br />
-										
+
 										<?php
 									break;
 									case 'Texto':
@@ -253,7 +253,7 @@ function delibera_profile_update($user_id)
 				{
 					$valor = $_POST[$campo['id']];
 				}
-				else 
+				else
 				{
 					if(is_array($campo['dados']) && count($campo['dados']) == 2)
 					{
@@ -293,7 +293,6 @@ function mc_admin_users_caps( $caps, $cap, $user_id, $args ){
 
 	foreach( $caps as $key => $capability ){
 
-		
 		if( $capability != 'do_not_allow' )
 			continue;
 
@@ -315,7 +314,3 @@ function mc_admin_users_caps( $caps, $cap, $user_id, $args ){
 	return $caps;
 }
 add_filter( 'map_meta_cap', 'mc_admin_users_caps', 10, 4 );
-
-
-
-?>

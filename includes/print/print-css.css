@@ -1,18 +1,18 @@
 /*
-+----------------------------------------------------------------+
-|																							|
-|	WordPress 2.7 Plugin: WP-Print 2.50										|
-|	Copyright (c) 2008 Lester "GaMerZ" Chan									|
-|																							|
-|	File Written By:																	|
-|	- Lester "GaMerZ" Chan															|
-|	- http://lesterchan.net															|
-|																							|
-|	File Information:																	|
-|	- CSS Style For Printer Friendly Page										|
-|	- wp-content/plugins/wp-print/print-css.css								|
-|																							|
-+----------------------------------------------------------------+
++---------------------------------------------------------------+
+|																|
+|	WordPress 2.7 Plugin: WP-Print 2.50							|
+|	Copyright (c) 2008 Lester "GaMerZ" Chan						|
+|																|
+|	File Written By:											|
+|	- Lester "GaMerZ" Chan										|
+|	- http://lesterchan.net										|
+|																|
+|	File Information:											|
+|	- CSS Style For Printer Friendly Page						|
+|	- wp-content/plugins/wp-print/print-css.css					|
+|																|							|
++---------------------------------------------------------------+
 */
 
 
@@ -26,7 +26,7 @@ Body {
 }
 #Outline {
 	width: 90%;
-	margin-left: auto; 
+	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
 	border: 1px solid #000000;
@@ -38,15 +38,15 @@ Body {
 }
 #BlogDate {
 	margin-top: 5px;
-	margin-bottom: 10px;	
+	margin-bottom: 10px;
 }
 #BlogContent {
 	padding: 10px;
 	margin-top: 10px;
 }
 HR.Divider {
-	width: 80%; 
-	height: 1px; 
+	width: 80%;
+	height: 1px;
 	color: #000000;
 }
 #CommentTitle {

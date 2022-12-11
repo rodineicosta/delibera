@@ -2,7 +2,6 @@
 namespace Delibera\Theme;
 
 use WP_User_Query;
-use WP_Query;
 
 class UserDisplay
 {
@@ -41,8 +40,8 @@ class UserDisplay
 
   public static function getUsers($order_by , $search , $per_page , $paged)
   {
-    return new WP_User_Query( 
-      array( 
+    return new WP_User_Query(
+      array(
       'number'         => $per_page ,
       'offset'         => $paged,
       'fields'         => array( 'display_name', 'user_login' , 'ID' ),
@@ -50,24 +49,24 @@ class UserDisplay
       'search_columns' => array( 'ID' , 'user_nicename' , 'user_login' , 'user_email' ),
       'orderby'        => $order_by['orderby'],
       'order'          => $order_by['order'],
-      ) 
+      )
     );
   }
 
    public static function getLastPauta($user)
    {
       $args = array(
-        'author'          =>  $user->ID, 
+        'author'          =>  $user->ID,
         'post_type'       =>  'pauta',
-        'posts_per_page'  =>   1 , 
+        'posts_per_page'  =>   1 ,
         'orderby'         =>  'post_date',
-        'order'           =>  'ASC' 
+        'order'           =>  'ASC'
       );
       $current_user_posts = get_posts( $args );
-     
+
       return $current_user_posts? $current_user_posts[0] : null;
    }
- 
+
   public static function get_comment_meta($id, $control)
   {
     $string = 'delibera_' . $control;
@@ -102,7 +101,7 @@ class UserDisplay
           'post_type' => 'pauta',
           'status' => 'approve',
           'search' =>  $search,
-          'offset' => $paged 
+          'offset' => $paged
           );
 
     return get_comments( $args );
@@ -111,4 +110,3 @@ class UserDisplay
 }
 global $user_display;
 $user_display = new \Delibera\Theme\UserDisplay();
-

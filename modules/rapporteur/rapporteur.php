@@ -10,31 +10,31 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	 * @var array
 	 */
 	public $situacao = array('relatoria', 'eleicao_relator');
-	
+
 	/**
-	 * 
+	 *
 	 * @var array list of module flows
 	 */
 	protected $flows = array('relatoria');
-	
+
 	/**
 	 * Name of module deadline metadata
 	 * @var array situacao a => deadline_a
 	 */
 	protected $prazo_meta = array('relatoria' => 'prazo_relatoria', 'eleicao_relator' => 'prazo_eleicao_relator');
-	
+
 	/**
 	 * Config days to make new deadline
 	 * @var array
 	 */
 	protected $days = array('dias_relatoria'/*, 'dias_votacao_relator'*/); // Disable until have vote
-	
+
 	/**
 	 * Display priority
 	 * @var int
 	 */
 	public $priority = 3;
-	
+
 	/**
 	 * Register Tax for the module
 	 */
@@ -68,7 +68,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 			);
 		}
 	}
-	
+
 	/**
 	 *
 	 * {@inheritDoc}
@@ -87,9 +87,9 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		}
 		$this->newDeadline($post_id);
 	}
-	
+
 	/**
-	 * Append configurations 
+	 * Append configurations
 	 * @param array $opts
 	 */
 	public function getMainConfig($opts)
@@ -99,7 +99,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	    $opts['dias_votacao_relator'] = '2';
 		return $opts;
 	}
-	
+
 	/**
 	 * Array to show on config page
 	 * @param array $rows
@@ -123,7 +123,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		);*/
 		return $rows;
 	}
-	
+
 	/**
 	 * Label to apply to button
 	 * @param unknown $situation
@@ -134,10 +134,10 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		{
 			return __('Relatar', 'delibera');
 		}
-		
+
 		return $situation;
 	}
-	
+
 	/**
 	 *
 	 * {@inheritDoc}
@@ -147,43 +147,43 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	{
 		$dias_relatoria = intval(htmlentities($options_plugin_delibera['dias_relatoria']));
 		$dias_votacao_relator = intval(htmlentities($options_plugin_delibera['dias_votacao_relator']));
-		
+
 		//$dias_relatoria += $dias_discussao; // TODO issue #50
 		if($options_plugin_delibera['eleicao_relator'] == "S") // Adiciona prazo de vatacao relator se for necessário
 		{
 			$dias_relatoria += $dias_votacao_relator;
 		}
-		
+
 		$prazo_eleicao_relator_sugerido = strtotime("+$dias_votacao_relator days", delibera_tratar_data(\Delibera\Flow::getLastDeadline('relatoria')));
 		$prazo_relatoria_sugerido = strtotime("+$dias_relatoria days", delibera_tratar_data(\Delibera\Flow::getLastDeadline('relatoria')));
-		
+
 		$prazo_eleicao_relator = date('d/m/Y', $prazo_eleicao_relator_sugerido);
-		
+
 		return date('d/m/Y', $prazo_relatoria_sugerido);
-		
+
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Post Meta Fields display
-	 * 
+	 *
 	 * @param \WP_Post $post
 	 * @param array $custom post custom fields
 	 * @param array $options_plugin_delibera Delibera options array
 	 * @param WP_Term $situacao
 	 * @param bool $disable_edicao
-	 * 
+	 *
 	 */
 	public function topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao)
 	{
 		$dias_votacao_relator = intval(htmlentities($options_plugin_delibera['dias_votacao_relator']));
-		
+
 		$prazo_eleicao_relator_sugerido = strtotime("+$dias_votacao_relator days", delibera_tratar_data(\Delibera\Flow::getLastDeadline('relatoria', $post->ID)));
-		
+
 		$prazo_eleicao_relator = date('d/m/Y', $prazo_eleicao_relator_sugerido);
-		
+
 		$prazo_relatoria = $this->generateDeadline($options_plugin_delibera);
-		
+
 		if(!($post->post_status == 'draft' ||
 				$post->post_status == 'auto-draft' ||
 				$post->post_status == 'pending'))
@@ -191,7 +191,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 			$prazo_eleicao_relator = array_key_exists("prazo_eleicao_relator", $custom) ?  $custom["prazo_eleicao_relator"][0] : $prazo_eleicao_relator;
 			$prazo_relatoria = array_key_exists("prazo_relatoria", $custom) ?  $custom["prazo_relatoria"][0] : $prazo_relatoria;
 		}
-		
+
 		if($options_plugin_delibera['eleicao_relator'] == "S")
 		{ //TODO remove display none when have election
 		?>
@@ -207,14 +207,14 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 			<input <?php echo $disable_edicao ?> name="prazo_relatoria" class="prazo_relatoria widefat hasdatepicker" value="<?php echo $prazo_relatoria; ?>"/>
 		</p>
 		<?php
-		
+
 	}
-	
+
 	public function publishPauta($postID, $opt)
 	{
-		
+
 	}
-	
+
 	function checkPostData($errors, $opt, $autosave)
 	{
 		$value = $_POST ['prazo_relatoria'];
@@ -223,7 +223,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		{
 			$errors [] = __ ( "É necessário definir corretamente o prazo para relatoria", "Delibera" );
 		}
-		
+
 		if ($opt ['eleicao_relator'] == 'S')
 		{
 			$value = $_POST ['prazo_eleicao_relator'];
@@ -236,7 +236,7 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 
 		return $errors;
 	}
-	
+
 	public function savePostMetas($events_meta, $opt, $post_id = false)
 	{
 		if(
@@ -252,10 +252,10 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 			$events_meta['prazo_relatoria'] = sanitize_text_field($_POST['prazo_relatoria']);
 			$events_meta['prazo_eleicao_relator'] = $opt['eleicao_relator'] == 'S' ? sanitize_text_field($_POST['prazo_eleicao_relator']) : date('d/m/Y');
 		}
-		
+
 		return $events_meta;
 	}
-	
+
 	public function createPautaAtFront($opt)
 	{
 		$data_externa = $this->treatFixedDateToEndExtTopic($opt);
@@ -267,9 +267,9 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		{
 			$_POST['prazo_relatoria'] = $this->generateDeadline($opt);
 		}
-		
+
 	}
-	
+
 	/**
 	 *
 	 * {@inheritDoc}
@@ -285,9 +285,9 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 			{
 				//wp_set_object_terms($post_id, 'emvotacao', 'situacao', false); //Mudar situação para Votação
 				\Delibera\Flow::next($post_id);
-				
+
 				//delibera_notificar_situacao($post_id);
-				
+
 				if(has_action('delibera_relatoria_concluida'))
 				{
 					do_action('delibera_relatoria_concluida', $post_id);
@@ -303,10 +303,10 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 		{
 			//TODO eleicao relator deadline
 			wp_set_object_terms($post_id, 'relatoria', 'situacao', false);
-			$this->newDeadline($post_id);
+			\Delibera\Modules\ModuleBase::newDeadline($post_id);
 		}
 	}
-	
+
 	/**
 	 *
 	 * {@inheritDoc}
@@ -316,8 +316,6 @@ class Rapporteur extends \Delibera\Modules\ModuleBase
 	{
 		return __('Relatoria da Pauta', 'delibera');
 	}
-	
+
 }
 $DeliberaRapporteur = new \Delibera\Modules\Rapporteur();
-
-
