@@ -11,7 +11,7 @@
             "email": "marcoamarelo@gmail.com",
             "role": "Developer"
         },
-	{	
+	{
             "name": "Jacson Passold",
             "email": "jasconp@gmail.com",
             "role": "Developer"
@@ -20,18 +20,20 @@
             "name": "Rodrigo Primo",
             "email": "rodrigosprimo@gmail.com",
             "role": "Developer"
-        }	
+        }
     ],
     "require": {
         "composer/installers": "~1.0"
     },
     "config": {
         "allow-plugins": {
-            "composer/installers": true
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.7",
-        "wp-coding-standards/wpcs": "^2.3"
-    }
+        "squizlabs/php_codesniffer": "3.7.1",
+        "wp-coding-standards/wpcs": "dev-develop"
+    },
+    "minimum-stability": "dev"
 }
