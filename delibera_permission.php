@@ -10,22 +10,23 @@
  * Quando estiver na single da pauta, retorna false sempre que ela
  * estiver com o prazo encerrado.
  *
- * @param string $permissao
- * @return bool
+ * @param   string $permissao
+ * @return  bool
  * @package Pauta
  */
-function delibera_current_user_can_participate($permissao = 'votar') {
-	global $post;
+function delibera_current_user_can_participate($permissao = 'votar')
+{
+    global $post;
 
-	$options = delibera_get_config();
+    $options = delibera_get_config();
 
-	if (is_singular('pauta') && \Delibera\Flow::getDeadlineDays($post->ID) == -1) {
-		return false;
-	} else if (is_multisite() && $options['todos_usuarios_logados_podem_participar'] == 'S') {
-		return is_user_logged_in();
-	} else {
-		return current_user_can($permissao);
-	}
+    if (is_singular('pauta') && \Delibera\Flow::getDeadlineDays($post->ID) == -1) {
+        return false;
+    } else if (is_multisite() && $options['todos_usuarios_logados_podem_participar'] == 'S') {
+        return is_user_logged_in();
+    } else {
+        return current_user_can($permissao);
+    }
 }
 
 /**
@@ -37,23 +38,22 @@ function delibera_current_user_can_participate($permissao = 'votar') {
  */
 function delibera_can_comment($postID = '')
 {
-	if(is_admin()) return true;
+    if (is_admin()) {
+        return true;
+    }
 
-	if(is_null($postID))
-	{
-		$postID = get_the_ID();
-	}
+    if (is_null($postID)) {
+        $postID = get_the_ID();
+    }
 
-	$situacoes_validas = array('validacao' => true, 'discussao' => true, 'emvotacao' => true, 'elegerelator' => true);
-	$situacao = delibera_get_situacao($postID);
+    $situacoes_validas = array('validacao' => true, 'discussao' => true, 'emvotacao' => true, 'elegerelator' => true);
+    $situacao = delibera_get_situacao($postID);
 
-	if(array_key_exists($situacao->slug, $situacoes_validas))
-	{
-		return delibera_current_user_can_participate();
-	}
-	elseif($situacao->slug == 'relatoria')
-	{
-		return current_user_can('relatoria');
-	}
-	return false;
+    if (array_key_exists($situacao->slug, $situacoes_validas)) {
+        return delibera_current_user_can_participate();
+    }
+    elseif ($situacao->slug == 'relatoria') {
+        return current_user_can('relatoria');
+    }
+    return false;
 }

@@ -6,34 +6,33 @@
 /**
  * Inclui no menu lateral do wp admin menu para plugin
  *
- * @package Widget
+ * @package    Widget
  * @subpackage Admin
  */
 function delibera_widgets_add_meta_box()
 {
-    add_meta_box( 'delibera_widgets-meta-box', __('Delibera'), 'delibera_widgets_nav_menu_item_link_meta_box', 'nav-menus', 'side', 'default' );
+    add_meta_box('delibera_widgets-meta-box', __('Delibera'), 'delibera_widgets_nav_menu_item_link_meta_box', 'nav-menus', 'side', 'default');
 }
-add_action( 'admin_init', 'delibera_widgets_add_meta_box' );
+add_action('admin_init', 'delibera_widgets_add_meta_box');
 
 /**
  * Carrega scripts necessários para inclusão de item do menu
  *
- * @package Widget
+ * @package    Widget
  * @subpackage Admin
  */
 function delibera_widgets_admin_script()
 {
-    if(substr($_SERVER['REQUEST_URI'], -(strlen('nav-menus.php'))) == 'nav-menus.php')
-    {
-        wp_enqueue_script('delibera_widgets_admin_script_nav_menus',plugin_dir_url(__FILE__).'/js/delibera_nav_menu.js', array('jquery'));
+    if (substr($_SERVER['REQUEST_URI'], -(strlen('nav-menus.php'))) == 'nav-menus.php') {
+        wp_enqueue_script('delibera_widgets_admin_script_nav_menus', plugin_dir_url(__FILE__).'/js/delibera_nav_menu.js', array('jquery'));
     }
 }
-add_action( 'admin_print_scripts', 'delibera_widgets_admin_script' );
+add_action('admin_print_scripts', 'delibera_widgets_admin_script');
 
 /**
  * Apresenta widget na interface do wordpress
  *
- * @package Widget
+ * @package    Widget
  * @subpackage Admin
  */
 function delibera_widgets_nav_menu_item_link_meta_box()
@@ -69,16 +68,17 @@ function delibera_widgets_nav_menu_item_link_meta_box()
 
 /**
  * Inicializa dinamicamente as widgets disponiveis
- * @package Widget
+ *
+ * @package    Widget
  * @subpackage Admin
  */
-add_action( 'widgets_init', function()
-{
-    $widgets = array('WidgetListaPropostas');
-    foreach ($widgets as $widgetName)
-    {
-        require_once dirname(__FILE__).'/widgets/'.$widgetName.'/'.$widgetName.'.php';
-        register_widget( $widgetName );
+add_action(
+    'widgets_init', function () {
+        $widgets = array('WidgetListaPropostas');
+        foreach ($widgets as $widgetName)
+        {
+            include_once dirname(__FILE__).'/widgets/'.$widgetName.'/'.$widgetName.'.php';
+            register_widget($widgetName);
+        }
     }
-});
-?>
+);

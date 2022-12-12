@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Baseado em no comments-template
  */
@@ -11,20 +10,20 @@
 class Delibera_Walker_Comment extends Walker_Comment
 {
     /**
-     * @see Walker::start_el()
+     * @see   Walker::start_el()
      * @since 2.7.0
      *
-     * @param string $output Passed by reference. Used to append additional content.
+     * @param string $output  Passed by reference. Used to append additional content.
      * @param object $comment Comment data object.
-     * @param int $depth Depth of comment in reference to parents.
-     * @param array $args
+     * @param int    $depth   Depth of comment in reference to parents.
+     * @param array  $args
      */
     function start_el(&$output, $comment, $depth = 0, $args = array(), $current_object_id = 0)
     {
         global $deliberaThemes;
         $depth++;
         $GLOBALS['comment_depth'] = $depth;
-        $args['avatar_size'] = '85';
+        $args['avatar_size']      = '85';
 
         if (!empty($args['callback'])) {
             call_user_func($args['callback'], $comment, $args, $depth);
@@ -33,16 +32,16 @@ class Delibera_Walker_Comment extends Walker_Comment
 
         $GLOBALS['comment'] = $comment;
 
-        $tipo = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
+        $tipo     = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
         $situacao = delibera_get_situacao($comment->comment_post_ID);
 
         extract($args, EXTR_SKIP);
 
         if ('div' == $args['style']) {
-            $tag = 'div';
+            $tag       = 'div';
             $add_below = 'comment';
         } else {
-            $tag = 'li';
+            $tag       = 'li';
             $add_below = 'div-comment';
         }
 
@@ -105,11 +104,11 @@ class Delibera_Walker_Comment extends Walker_Comment
                         <div class="alignright textright">
                             <span class="type"><?php delibera_get_comment_type_label($comment); ?></span>
                             <?php
-                                if ($situacao->slug == 'discussao' || ($situacao->slug == 'relatoria' && current_user_can('relatoria'))) {
-                                    echo "<br/>";
-                                    delibera_edit_comment_link(__('Edit'),'', '');
-                                    delibera_delete_comment_link(__('Deletar'),'', '');
-                                }
+                            if ($situacao->slug == 'discussao' || ($situacao->slug == 'relatoria' && current_user_can('relatoria'))) {
+                                echo "<br/>";
+                                delibera_edit_comment_link(__('Edit'), '', '');
+                                delibera_delete_comment_link(__('Deletar'), '', '');
+                            }
                             ?>
                         </div>
                     </header>
@@ -133,11 +132,11 @@ class Delibera_Walker_Comment extends Walker_Comment
                                         <?php
                                     } else if (is_user_logged_in()) {
                                         ?>
-                                        <a href="<?php delibera_get_comment_link();?>#respond" class="comment-reply-link"><?php _e('De sua opinião', 'delibera'); ?></a>
+                                        <a href="<?php delibera_get_comment_link(); ?>#respond" class="comment-reply-link"><?php _e('De sua opinião', 'delibera'); ?></a>
                                         <?php
                                     } else {
                                         ?>
-                                        <a href="<?php echo wp_login_url(delibera_get_comment_link());?>#respond" class="comment-reply-link"><?php _e('Faça login e de sua opinião', 'delibera'); ?></a>
+                                        <a href="<?php echo wp_login_url(delibera_get_comment_link()); ?>#respond" class="comment-reply-link"><?php _e('Faça login e de sua opinião', 'delibera'); ?></a>
                                         <?php
                                     }
                                     ?>
@@ -145,7 +144,7 @@ class Delibera_Walker_Comment extends Walker_Comment
                             </div>
                         <?php endif; ?>
                         <?php
-                        if ($situacao->slug == 'relatoria' && current_user_can('relatoria'))    {
+                        if ($situacao->slug == 'relatoria' && current_user_can('relatoria')) {
                             $baseouseem = get_comment_meta($comment->comment_ID, 'delibera-baseouseem', true);
                             if (!empty($baseouseem)) {
                                 $elements = explode(',', $baseouseem);
@@ -185,14 +184,14 @@ class Delibera_Walker_Comment extends Walker_Comment
                             <?php
                         }
 
-                        $ncurtiu = get_comment_meta($comment->comment_ID, 'delibera_numero_curtir', true);
+                        $ncurtiu    = get_comment_meta($comment->comment_ID, 'delibera_numero_curtir', true);
                         $ndiscordou = get_comment_meta($comment->comment_ID, 'delibera_numero_discordar', true);
 
                         if (is_user_logged_in() || $ncurtiu || $ndiscordou) : ?>
                             <div class="bottom alignright textright">
                                 <?php
 
-                                $curtir = delibera_gerar_curtir($comment->comment_ID, 'comment');
+                                $curtir    = delibera_gerar_curtir($comment->comment_ID, 'comment');
                                 $discordar = delibera_gerar_discordar($comment->comment_ID, 'comment');
 
                                 if ($curtir) {
@@ -208,7 +207,7 @@ class Delibera_Walker_Comment extends Walker_Comment
                     </section><!-- .reply -->
                 </article>
             </li>
-        <?php
+            <?php
         endif;
 
         $output .= ob_get_clean();

@@ -14,7 +14,7 @@ function delibera_custom_bulk_admin_footer() {
 
     $current_screen = get_current_screen();
 
-    if($current_screen->post_type == 'pauta' && $current_screen->id == "edit-pauta") {
+    if ($current_screen->post_type == 'pauta' && $current_screen->id == "edit-pauta") {
         ?>
         <script type="text/javascript">
             jQuery(document).ready(function() {
@@ -63,7 +63,7 @@ function delibera_custom_bulk_action() {
                 $pautas_afetadas++;
             }
 
-            $sendback = admin_url( "edit.php?post_type=pauta&pautas_afetadas=$pautas_afetadas&novo_prazo=$novo_prazo_discussao");
+            $sendback = admin_url("edit.php?post_type=pauta&pautas_afetadas=$pautas_afetadas&novo_prazo=$novo_prazo_discussao");
 
             wp_redirect($sendback);
 
@@ -83,9 +83,9 @@ function delibera_custom_bulk_admin_notices() {
 
     $current_screen = get_current_screen();
 
-    if($current_screen->post_type == 'pauta' && $current_screen->id == "edit-pauta" &&
+    if ($current_screen->post_type == 'pauta' && $current_screen->id == "edit-pauta" &&
         isset($_REQUEST['pautas_afetadas']) && (int) $_REQUEST['pautas_afetadas']) {
-        $mensagem = sprintf( '%s pautas definidas para o prazo de %s.', number_format_i18n( $_REQUEST['pautas_afetadas']), $_REQUEST['novo_prazo'] );
+        $mensagem = sprintf('%s pautas definidas para o prazo de %s.', number_format_i18n($_REQUEST['pautas_afetadas']), $_REQUEST['novo_prazo']);
         echo "<div class='updated'><p>{$mensagem}</p></div>";
   }
 }
@@ -101,7 +101,7 @@ add_action('admin_notices', 'delibera_custom_bulk_admin_notices');
  */
 function delibera_edit_comment($comment)
 {
-	if(get_post_type($comment->comment_post_ID) == "pauta")
+	if (get_post_type($comment->comment_post_ID) == "pauta")
 	{
 		$tipo = get_comment_meta($comment->comment_ID, "delibera_comment_tipo", true);
 		switch ($tipo)
@@ -167,9 +167,9 @@ add_filter('add_meta_boxes_comment', 'delibera_edit_comment');
  */
  function delibera_edit_columns($columns)
 {
-	$columns[ 'tema' ] = __( 'Tema' );
-	$columns[ 'situacao' ] = __( 'Situação' );
-	$columns[ 'prazo' ] = __( 'Prazo' );
+	$columns[ 'tema' ] = __('Tema');
+	$columns[ 'situacao' ] = __('Situação');
+	$columns[ 'prazo' ] = __('Prazo');
 	return $columns;
 }
 
@@ -185,7 +185,7 @@ function delibera_post_custom_column($column)
 {
 	global $post;
 
-	switch ( $column )
+	switch ($column )
 	{
     case 'tema':
         echo the_terms($post->ID, "tema");
@@ -196,11 +196,11 @@ function delibera_post_custom_column($column)
     case 'prazo':
         $data = "";
         $prazo = \Delibera\Flow::getDeadlineDays($post->ID, $data);
-        if($prazo <= -1)
+        if ($prazo <= -1)
         {
             echo __('Encerrado', 'delibera');
         }
-        elseif($data != "")
+        elseif ($data != "")
         {
             echo $data." (".$prazo.($prazo == 1 ? __(" dia", 'delibera') : __(" dias", 'delibera')).")";
         }
@@ -219,9 +219,9 @@ add_action('manage_posts_custom_column',  'delibera_post_custom_column');
  */
 function delibera_admin_list_options($actions, $post)
 {
-	if(get_post_type($post) == 'pauta' && $post->post_status == 'publish' )
+	if (get_post_type($post) == 'pauta' && $post->post_status == 'publish')
 	{
-		if(current_user_can('forcar_prazo'))
+		if (current_user_can('forcar_prazo'))
 		{
 			$url = 'admin.php?action=delibera_forca_fim_prazo_action&amp;post='.$post->ID;
 			$url = wp_nonce_url($url, 'delibera_forca_fim_prazo_action'.$post->ID);
@@ -232,7 +232,7 @@ function delibera_admin_list_options($actions, $post)
 			$actions['nao_validado'] = '<a href="'.$url.'" title="'.__('Invalidar','delibera').'" >'.__('Invalidar','delibera').'</a>';
 
 		}
-		if(delibera_get_situacao($post->ID)->slug == 'naovalidada' && current_user_can('delibera_reabrir_pauta'))
+		if (delibera_get_situacao($post->ID)->slug == 'naovalidada' && current_user_can('delibera_reabrir_pauta'))
 		{
 			$url = 'admin.php?action=delibera_reabrir_pauta_action&amp;post='.$post->ID;
 			$url = wp_nonce_url($url, 'delibera_reabrir_pauta_action'.$post->ID);

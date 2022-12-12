@@ -1,7 +1,7 @@
-<?php 
-$titulo     = isset($_POST['nova-pauta-titulo'])    ? stripslashes($_POST['nova-pauta-titulo']) : '';
-$conteudo   = isset($_POST['nova-pauta-conteudo'])  ? stripslashes($_POST['nova-pauta-conteudo']) : '';
-$resumo     = isset($_POST['nova-pauta-resumo'])    ? stripslashes($_POST['nova-pauta-resumo']) : '';
+<?php
+$titulo   = isset($_POST['nova-pauta-titulo'])    ? stripslashes($_POST['nova-pauta-titulo']) : '';
+$conteudo = isset($_POST['nova-pauta-conteudo'])  ? stripslashes($_POST['nova-pauta-conteudo']) : '';
+$resumo   = isset($_POST['nova-pauta-resumo'])    ? stripslashes($_POST['nova-pauta-resumo']) : '';
 
 ?>
 <div class="clearfix">
@@ -10,20 +10,20 @@ $resumo     = isset($_POST['nova-pauta-resumo'])    ? stripslashes($_POST['nova-
         <div class="clearfix">
             <div class="alignleft">
                 <div class="row">
-                    <label for="nova-pauta-resumo"><?php _e( 'Título da pauta', 'delibera' ); ?></label><br/>
-                    <input type="text" name="nova-pauta-titulo" id="nova-pauta-titulo" value="<?php echo htmlentities($titulo) ?>" placeholder="<?php _e( 'Digite o título da pauta aqui', 'delibera' ); ?>"/>
+                    <label for="nova-pauta-resumo"><?php _e('Título da pauta', 'delibera'); ?></label><br/>
+                    <input type="text" name="nova-pauta-titulo" id="nova-pauta-titulo" value="<?php echo htmlentities($titulo) ?>" placeholder="<?php _e('Digite o título da pauta aqui', 'delibera'); ?>"/>
                 </div>
-                
+
                 <div class="divider"></div>
-        
+
                 <div class="row">
                     <?php wp_editor($conteudo, 'nova-pauta-conteudo'); ?>
                 </div>
-                
+
                 <div class="divider"></div>
-        
+
                 <div class="row">
-                    <label for="nova-pauta-resumo"><?php _e( 'Resumo da pauta', 'delibera' ); ?></label><br/>
+                    <label for="nova-pauta-resumo"><?php _e('Resumo da pauta', 'delibera'); ?></label><br/>
                     <textarea name="nova-pauta-resumo" id="nova-pauta-resumo"><?php echo htmlentities($resumo) ?></textarea>
                 </div>
             </div>
@@ -40,11 +40,11 @@ $resumo     = isset($_POST['nova-pauta-resumo'])    ? stripslashes($_POST['nova-
                 </div>
             </div>
         </div>
-        
+
         <div class="divider"></div>
-        
+
         <div class="textright">
-            <input type="submit" value="<?php _e( 'Criar pauta', 'delibera' ); ?>" class="btn btn-success"/>
+            <input type="submit" value="<?php _e('Criar pauta', 'delibera'); ?>" class="btn btn-success"/>
         </div>
     </form>
 </div>

@@ -4,7 +4,7 @@ if (have_posts()) :
     while (have_posts()) :
         the_post();
         $temas = wp_get_post_terms($post->ID, 'tema');
-        
+
         $situacao = delibera_get_situacao($post->ID);
         ?>
         <div class="topic clearfix">
@@ -46,6 +46,6 @@ if (have_posts()) :
                 <?php endif; ?>
             </div>
         </div>
-    <?php
+        <?php
     endwhile;
-endif; ?>
+endif;

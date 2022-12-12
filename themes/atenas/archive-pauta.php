@@ -1,49 +1,48 @@
 <?php get_header(); ?>
-		<div id="container">
-			<div id="main-content" role="main">
+        <div id="container">
+            <div id="main-content" role="main">
 
-				<?php
-				// Chama o cabeçalho que apresenta o sistema de discussão
-				get_delibera_header();
+                <?php
+                // Chama o cabeçalho que apresenta o sistema de discussão
+                get_delibera_header();
 
-				delibera_filtros_gerar();
-
-
-
-				//$args = get_tax_filtro($_REQUEST, array('post_type' => 'pauta'));
+                delibera_filtros_gerar();
 
 
-				?>
+
+                //$args = get_tax_filtro($_REQUEST, array('post_type' => 'pauta'));
 
 
-				<div id="lista-de-pautas">
-					<?php
-					// Chama o loop do arquivo
-					//wp_reset_query();
-
-					//echo count(query_posts($args));
-
-					global $deliberaThemes;
-					$deliberaThemes->archiveLoop();
-
-					?>
+                ?>
 
 
-					<div id="nav-below" class="navigation">
-						<?php if ( function_exists( 'wp_pagenavi' ) )
-						{
+                <div id="lista-de-pautas">
+                    <?php
+                    // Chama o loop do arquivo
+                    //wp_reset_query();
 
-							wp_pagenavi(array('query' => $wp_query));
-						}
-						?>
-					</div><!-- #nav-below -->
+                    //echo count(query_posts($args));
 
-				</div>
+                    global $deliberaThemes;
+                    $deliberaThemes->archiveLoop();
+
+                    ?>
 
 
-			</div><!-- #content -->
-		</div><!-- #container -->
+                    <div id="nav-below" class="navigation">
+                        <?php
+                        if (function_exists('wp_pagenavi')) {
+
+                            wp_pagenavi(array('query' => $wp_query));
+                        }
+                        ?>
+                    </div><!-- #nav-below -->
+
+                </div>
+
+
+            </div><!-- #content -->
+        </div><!-- #container -->
 
 <?php
-	get_footer();
-?>
+get_footer();

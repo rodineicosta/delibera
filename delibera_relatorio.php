@@ -1,13 +1,15 @@
 <?php
 /**
  * Adiciona submenu no wp admin para extrair relatórios
- * @package Pauta\Admin
  *
+ * @package Pauta\Admin
  */
 
-add_action('admin_menu', function() {
-    add_submenu_page('delibera-config', __('Relatório', 'delibera'), __('Relatório', 'delibera'), 'manage_options', 'delibera_relatorio', 'delibera_relatorio_page');
-}, 100);
+add_action(
+    'admin_menu', function () {
+        add_submenu_page('delibera-config', __('Relatório', 'delibera'), __('Relatório', 'delibera'), 'manage_options', 'delibera_relatorio', 'delibera_relatorio_page');
+    }, 100
+);
 
 /**
  * Gera a página para o administrador exportar
@@ -16,7 +18,8 @@ add_action('admin_menu', function() {
  *
  * @return null
  */
-function delibera_relatorio_page() {
+function delibera_relatorio_page()
+{
     ?>
     <div class="wrap span-20">
         <h2><?php echo __('Relatorio', 'delibera'); ?></h2>

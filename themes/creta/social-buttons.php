@@ -1,15 +1,8 @@
 <?php
-/**
- *
- *
- */
 
-/**
- *
- *
- */
-function social_buttons($link='', $chamada='' ) {
-echo '
+function social_buttons($link='', $chamada='')
+{
+    echo '
 <ul class="social-buttons cf">
     <li>
         <a href="http://twitter.com/share" class="socialite twitter-share" data-text="'.$chamada.'" data-url="'.$link.'" data-count="horizontal" rel="nofollow" target="_blank"><span class="vhidden">Compartilhe no Twitter</span></a>
@@ -23,5 +16,3 @@ echo '
 </ul>
 ';
 }
-
-?>

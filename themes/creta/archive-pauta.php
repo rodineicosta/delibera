@@ -13,7 +13,6 @@ if (!isset($_GET['tema_filtro'])) {
 get_header();
 
 $options = delibera_get_config();
-
 ?>
 
 <div id="delibera">
@@ -25,7 +24,7 @@ $options = delibera_get_config();
                     <?php if (is_user_logged_in() && isset($options['criar_pauta_pelo_front_end']) && $options['criar_pauta_pelo_front_end'] == 'S') : ?>
                         <p><a href="<?php echo site_url('nova-pauta'); ?>" class="btn btn-info">Criar uma nova pauta</a></p>
                     <?php endif; ?>
-                    
+
                     <h2>Filtrar Pautas</h2>
                     <form>
                         <ul class="status">
@@ -51,22 +50,23 @@ $options = delibera_get_config();
                 <div id="lista-de-pautas" class="site-content alignright">
                     <?php
                     global $deliberaThemes;
-					$deliberaThemes->archiveLoop();
-                    
+                    $deliberaThemes->archiveLoop();
+
                     global $wp_query;
                     $big = 99999999; // need an unlikely integer
-                    
-                    $links = paginate_links(array(
-                        'base' => str_replace($big, '%#%', get_pagenum_link($big)),
-                        'format' => '?paged=%#%',
-                        'total' => $wp_query->max_num_pages,
-                        'current' => max(1, get_query_var('paged')),
-                        'type' => 'array',
-                        'prev_next' => false,
-                    ));
 
+                    $links = paginate_links(
+                        array(
+                            'base'      => str_replace($big, '%#%', get_pagenum_link($big)),
+                            'format'    => '?paged=%#%',
+                            'total'     => $wp_query->max_num_pages,
+                            'current'   => max(1, get_query_var('paged')),
+                            'type'      => 'array',
+                            'prev_next' => false,
+                        )
+                    );
                     ?>
-                    
+
                     <?php if (!empty($links)) : ?>
                         <nav class="navigation">
                             <ol>
@@ -82,4 +82,5 @@ $options = delibera_get_config();
     </div>
 </div>
 
-<?php get_footer(); ?>
+<?php
+get_footer();

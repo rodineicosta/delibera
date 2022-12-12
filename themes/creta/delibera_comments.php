@@ -1,6 +1,6 @@
 <?php
 
-require_once(ABSPATH . 'wp-admin/includes/screen.php');
+require_once ABSPATH . 'wp-admin/includes/screen.php';
 
 global $delibera_comments_padrao;
 
@@ -9,9 +9,9 @@ $situacao = delibera_get_situacao($id);
 if ($situacao->slug == 'comresolucao') {
     $title = __('Encaminhamentos propostos', 'delibera');
 } else if ($situacao->slug == 'validacao') {
-    $title = '';
-    $votes = delibera_get_comments_validacoes($post->ID);
-    $approvals = (int) get_post_meta($post->ID, 'numero_validacoes', true);
+    $title      = '';
+    $votes      = delibera_get_comments_validacoes($post->ID);
+    $approvals  = (int) get_post_meta($post->ID, 'numero_validacoes', true);
     $rejections = (int) get_post_meta($post->ID, 'delibera_numero_comments_validacoes', true) - $approvals;
 } else if ($situacao->slug == 'relatoria') {
     $title = __('Encaminhamentos propostos na discussão', 'delibera');
@@ -22,16 +22,15 @@ if ($situacao->slug == 'comresolucao') {
 }
 
 if (($situacao->slug == "validacao" || $situacao->slug == "emvotacao") && !$delibera_comments_padrao === true) {
-    comment_form(); 
+    comment_form();
 }
-
 ?>
 
 <div class="actions">
     <?php if ($situacao->slug == 'relatoria' && !current_user_can('relatoria')) : ?>
         <h2>Pauta em relatoria</h2>
     <?php endif; ?>
-    
+
     <div id="<?php echo ($situacao->slug == 'comresolucao') ? 'encaminhamentos' : 'comments'; ?>" class="comments-area">
         <?php if (have_comments()) : ?>
             <h2 class="comments-title bottom"><?php echo $title; ?></h2>
@@ -65,15 +64,15 @@ if (($situacao->slug == "validacao" || $situacao->slug == "emvotacao") && !$deli
                     </div>
                 </div>
             <?php elseif ($situacao->slug == 'relatoria') :
-                $args['walker'] = new Delibera_Walker_Comment();
-                
+                $args['walker']  = new Delibera_Walker_Comment();
+
                 $encaminhamentos = delibera_get_comments_all_encaminhamentos($post->ID);
-                $discussoes = delibera_get_comments_discussoes($post->ID);
+                $discussoes      = delibera_get_comments_discussoes($post->ID);
                 ?>
                 <ol class="commentslist">
                     <?php wp_list_comments($args, $encaminhamentos); ?>
                 </ol>
-                
+
                 <h2 class="comments-title bottom"><?php _e('Discussão sobre a pauta', 'delibera'); ?></h2>
                 <ol class="commentslist">
                     <?php wp_list_comments($args, $discussoes); ?>
@@ -84,14 +83,14 @@ if (($situacao->slug == "validacao" || $situacao->slug == "emvotacao") && !$deli
                         <?php delibera_wp_list_comments(); ?>
                     </ul>
                 </div>
-                
+
                 <?php
                 $args['walker'] = new Delibera_Walker_Comment();
-                $comments = delibera_get_comments($post->ID, array('discussao', 'encaminhamento', 'encaminhamento_selecionado'));
+                $comments       = delibera_get_comments($post->ID, array('discussao', 'encaminhamento', 'encaminhamento_selecionado'));
                 ?>
-                
+
                 <h2 class="comments-title bottom"><?php _e('Histórico da pauta', 'delibera'); ?></h2>
-                
+
                 <ol class="commentslist">
                     <?php wp_list_comments($args, $comments); ?>
                 </ol>
@@ -100,12 +99,12 @@ if (($situacao->slug == "validacao" || $situacao->slug == "emvotacao") && !$deli
                     <?php delibera_wp_list_comments(); ?>
                 </ol>
             <?php endif; ?>
-        <?php else : 
+        <?php else :
             if (!comments_open()) : ?>
                 <p class="nocomments">
                     <?php if (!is_user_logged_in()) : ?>
                         <?php printf(
-                            __('Para participar, você precisa <a href="%1$s" title="Faça o login">fazer o login</a> ou <a href="%2$s" title="Registre-se" class="register">registrar-se no site</a>.', 'delibera'), 
+                            __('Para participar, você precisa <a href="%1$s" title="Faça o login">fazer o login</a> ou <a href="%2$s" title="Registre-se" class="register">registrar-se no site</a>.', 'delibera'),
                             wp_login_url(get_permalink()),
                             site_url('wp-login.php?action=register', 'login')."&lang="
                         ); ?>
@@ -113,9 +112,9 @@ if (($situacao->slug == "validacao" || $situacao->slug == "emvotacao") && !$deli
                         <?php _e('Você não tem permissão para participar desta discussão.', 'delibera'); ?>
                     <?php endif; ?>
                 </p>
-            <?php endif; // end ! comments_open() ?>
+            <?php endif; // end !comments_open() ?>
         <?php endif; // end have_comments() ?>
- 
+
         <?php if ($situacao->slug == 'relatoria' && current_user_can('relatoria')) : ?>
             <div class="new-encaminhamento">
                 <div class="box">
@@ -126,9 +125,8 @@ if (($situacao->slug == "validacao" || $situacao->slug == "emvotacao") && !$deli
             comment_form();
             if (function_exists('ecu_upload_form_default')) {
                 ecu_upload_form_default();
-            } 
-        endif; ?>
+            }
+        endif;
+        ?>
     </div>
 </div>
-
-    

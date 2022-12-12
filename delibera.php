@@ -22,9 +22,10 @@
 
 /**
  * Reponsável por importar todos os arquivos utilizados pelo plugin
+ *
  * @package Global
  */
-if(!defined('__DIR__')) {
+if (!defined('__DIR__')) {
     $iPos = strrpos(__FILE__, DIRECTORY_SEPARATOR);
     define("__DIR__", substr(__FILE__, 0, $iPos) . DIRECTORY_SEPARATOR);
 }
@@ -69,9 +70,8 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_topic.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_topic_deadline.php';
 
-if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'delibera_filtros.php'))
-{
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_filtros.php';
+if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'delibera_filtros.php')) {
+    include_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_filtros.php';
 }
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_curtir.php';
@@ -80,10 +80,10 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_discordar.php';
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_seguir.php';
 
-if (file_exists(__DIR__.DIRECTORY_SEPARATOR.'mailer') &&
-    file_exists(__DIR__.DIRECTORY_SEPARATOR.'mailer' . DIRECTORY_SEPARATOR . 'delibera_mailer.php'))
-{
-	//require_once __DIR__.DIRECTORY_SEPARATOR.'mailer'.DIRECTORY_SEPARATOR.'delibera_mailer.php';
+if (file_exists(__DIR__.DIRECTORY_SEPARATOR.'mailer')
+    && file_exists(__DIR__.DIRECTORY_SEPARATOR.'mailer' . DIRECTORY_SEPARATOR . 'delibera_mailer.php')
+) {
+    //require_once __DIR__.DIRECTORY_SEPARATOR.'mailer'.DIRECTORY_SEPARATOR.'delibera_mailer.php';
 }
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'delibera_notificar.php';
@@ -104,8 +104,9 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'de
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'si-captcha.php';
 
-if(file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php'))
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php')) {
+    include_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'wp-side-comments' . DIRECTORY_SEPARATOR . 'wp-side-comments.php';
+}
 
  /**
    * Redir e ciona usuários que não são membros do site
@@ -125,4 +126,5 @@ a d d_filter('login_redirect', function($redirect_to, $request, $user) {
         return $redirect_to;
     }
 }, 10, 3);
-TODO mundo redirecionado para a lista de pauta, talvez uma nova opções */
+TODO mundo redirecionado para a lista de pauta, talvez uma nova opções
+*/

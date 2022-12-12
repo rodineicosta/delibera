@@ -11,6 +11,7 @@
  * de uma sub pasta cujo o nome é o nome do tema. Um tema do Delibera
  * também pode ser salvo dentro de uma pasta chamada delibera dentro
  * do tema atual do Wordpress.
+ *
  * @package Tema
  */
 class DeliberaThemes
@@ -18,6 +19,7 @@ class DeliberaThemes
     /**
      * Diretório onde ficam os temas
      * dentro do plugin
+     *
      * @var string
      */
     public $baseDir;
@@ -25,6 +27,7 @@ class DeliberaThemes
     /**
      * URL do diretório onde ficam
      * os temas dentro do plugin
+     *
      * @var string
      */
     public $baseUrl;
@@ -32,6 +35,7 @@ class DeliberaThemes
     /**
      * Caminho para o diretório
      * do tema padrão
+     *
      * @var string
      */
     public $defaultThemePath;
@@ -39,6 +43,7 @@ class DeliberaThemes
     /**
      * URL para o diretório do
      * tema padrão
+     *
      * @var string
      */
     public $defaultThemeUrl;
@@ -46,6 +51,7 @@ class DeliberaThemes
     /**
      * Caminho para o tema do Delibera
      * dentro do tema atual do WP.
+     *
      * @var string
      */
     public $wpThemePath;
@@ -53,12 +59,14 @@ class DeliberaThemes
     /**
      * Url para o diretório do tema do Delibera
      * dentro do tema atual do WP
+     *
      * @var string
      */
     public $wpThemeUrl;
 
     /**
      * Nome do tema atual do Wordpress
+     *
      * @var string
      */
     public $wpThemeName;
@@ -68,13 +76,13 @@ class DeliberaThemes
      */
     function __construct()
     {
-        $this->baseDir = __DIR__ . '/themes/';
-        $this->baseUrl = plugins_url('/delibera/themes/');
+        $this->baseDir          = __DIR__ . '/themes/';
+        $this->baseUrl          = plugins_url('/delibera/themes/');
         $this->defaultThemePath = $this->baseDir . 'generic/';
-        $this->defaultThemeUrl = $this->baseUrl . 'generic/';
+        $this->defaultThemeUrl  = $this->baseUrl . 'generic/';
 
         $this->wpThemePath = get_stylesheet_directory() . '/delibera';
-        $this->wpThemeUrl = get_stylesheet_directory_uri() . '/delibera';
+        $this->wpThemeUrl  = get_stylesheet_directory_uri() . '/delibera';
         $this->wpThemeName = wp_get_theme()->get_stylesheet();
         add_filter('body_class', array(&$this,'body_class'), 10, 2);
     }
@@ -84,7 +92,7 @@ class DeliberaThemes
      * Se não um nome de tema for passado como
      * parâmetro, retorna o diretório do tema atual.
      *
-     * @param string $themeName
+     * @param  string $themeName
      * @return string
      */
     public function getThemeDir($themeName = '')
@@ -96,25 +104,21 @@ class DeliberaThemes
             $themePath = $conf['theme'];
             $themePath = $this->checkPath($themePath);
         }
-		if(strpos($themePath, 'wp-content/plugins') === false && strpos($themePath, 'wp-content/themes') !== false)
-		{
-			$themePath = plugin_dir_path(__FILE__)."/themes/generic";
-		}
-		try
-		{
-			if (file_exists($themePath))
-			{
-				return $themePath;
-			}
-			else
-			{
-				return $this->defaultThemePath;
-			}
-		}
-		catch (Exception $e)
-		{
-			return $this->defaultThemePath;
-		}
+        if (strpos($themePath, 'wp-content/plugins') === false && strpos($themePath, 'wp-content/themes') !== false) {
+            $themePath = plugin_dir_path(__FILE__)."/themes/generic";
+        }
+        try
+        {
+            if (file_exists($themePath)) {
+                return $themePath;
+            } else {
+                return $this->defaultThemePath;
+            }
+        }
+        catch (Exception $e)
+        {
+            return $this->defaultThemePath;
+        }
     }
 
     /**
@@ -147,7 +151,7 @@ class DeliberaThemes
      * não existir, retorna o caminho para o arquivo
      * no tema padrão.
      *
-     * @param string $file_name
+     * @param  string $file_name
      * @return string
      */
     public function themeFilePath($fileName)
@@ -166,7 +170,7 @@ class DeliberaThemes
      * Se o arquivo não existir, retorna o caminho
      * para o arquivo no tema padrão.
      *
-     * @param string $file_name
+     * @param  string $file_name
      * @return string
      */
     public function themeFileUrl($fileName)
@@ -185,23 +189,19 @@ class DeliberaThemes
      * a listagem de pautas e retorna o template
      * a ser usado.
      *
-     * @param string $archiveTemplate
+     * @param  string $archiveTemplate
      * @return string
      */
     public function archiveTemplate($archiveTemplate)
     {
         global $post;
 
-        if (get_post_type($post) == "pauta" || is_post_type_archive('pauta'))
-        {
-        	if(file_exists(get_stylesheet_directory()."/archive-pauta.php"))
-        	{
-        		$archive_template = get_stylesheet_directory()."/archive-pauta.php";
-        	}
-        	else
-        	{
-        		$archiveTemplate = $this->themeFilePath('archive-pauta.php');
-        	}
+        if (get_post_type($post) == "pauta" || is_post_type_archive('pauta')) {
+            if (file_exists(get_stylesheet_directory()."/archive-pauta.php")) {
+                $archive_template = get_stylesheet_directory()."/archive-pauta.php";
+            } else {
+                $archiveTemplate = $this->themeFilePath('archive-pauta.php');
+            }
         }
 
         return $archiveTemplate;
@@ -212,23 +212,19 @@ class DeliberaThemes
      * a página de uma pauta e retorna o template
      * a ser usado.
      *
-     * @param string $singleTemplate
+     * @param  string $singleTemplate
      * @return string
      */
     public function singleTemplate($singleTemplate)
     {
         global $post;
 
-        if (get_post_type($post) == "pauta" || is_post_type_archive('pauta'))
-        {
-        	if(file_exists(get_stylesheet_directory()."/single-pauta.php"))
-        	{
-        		$singleTemplate = get_stylesheet_directory()."/single-pauta.php";
-        	}
-        	else
-        	{
-        		$singleTemplate = $this->themeFilePath('single-pauta.php');
-        	}
+        if (get_post_type($post) == "pauta" || is_post_type_archive('pauta')) {
+            if (file_exists(get_stylesheet_directory()."/single-pauta.php")) {
+                $singleTemplate = get_stylesheet_directory()."/single-pauta.php";
+            } else {
+                $singleTemplate = $this->themeFilePath('single-pauta.php');
+            }
         }
 
         return $singleTemplate;
@@ -243,16 +239,12 @@ class DeliberaThemes
     {
         global $post, $wp_query;
 
-        if (get_post_type($post) == "pauta" || is_post_type_archive('pauta') || $wp_query->get('tpl') === 'nova-pauta')
-        {
-        	if(file_exists(get_stylesheet_directory()."/delibera_style.css"))
-        	{
-        		wp_enqueue_style('delibera_style', get_stylesheet_directory_uri()."/delibera_style.css");
-        	}
-        	else
-        	{
-        		wp_enqueue_style('delibera_style', $this->themeFileUrl('delibera_style.css'));
-        	}
+        if (get_post_type($post) == "pauta" || is_post_type_archive('pauta') || $wp_query->get('tpl') === 'nova-pauta') {
+            if (file_exists(get_stylesheet_directory()."/delibera_style.css")) {
+                wp_enqueue_style('delibera_style', get_stylesheet_directory_uri()."/delibera_style.css");
+            } else {
+                wp_enqueue_style('delibera_style', $this->themeFileUrl('delibera_style.css'));
+            }
         }
     }
 
@@ -276,14 +268,11 @@ class DeliberaThemes
      */
     public function archiveLoop()
     {
-    	if(file_exists(get_stylesheet_directory()."/loop-pauta.php"))
-    	{
-    		load_template(get_stylesheet_directory()."/loop-pauta.php");
-    	}
-    	else
-    	{
-       		load_template($this->themeFilePath('delibera-loop-archive.php'), true);
-    	}
+        if (file_exists(get_stylesheet_directory()."/loop-pauta.php")) {
+            load_template(get_stylesheet_directory()."/loop-pauta.php");
+        } else {
+            load_template($this->themeFilePath('delibera-loop-archive.php'), true);
+        }
     }
 
     /**
@@ -294,7 +283,7 @@ class DeliberaThemes
     public function getAvailableThemes()
     {
         $themes = array();
-        $dirs = glob($this->baseDir . '*', GLOB_ONLYDIR);
+        $dirs   = glob($this->baseDir . '*', GLOB_ONLYDIR);
 
         foreach ($dirs as $dir) {
             $themes[$dir] = basename($dir);
@@ -312,7 +301,7 @@ class DeliberaThemes
      * Gera o select box com os temas disponíveis
      * para a interface de admin do Delibera.
      *
-     * @param string $currentTheme o tema atual
+     * @param  string $currentTheme o tema atual
      * @return string
      */
     public function getSelectBox($currentTheme)
@@ -329,27 +318,26 @@ class DeliberaThemes
 
         return $html;
     }
-    
+
     public function checkPath($path)
     {
-    	if(strpos($path, 'home/hacklab') !== false) // need to remove old hardcode path from config
-    	{
-    		$theme = basename($path);
-    		$path = $this->baseDir . $theme;
-    	}
-    	return $path;
+        if (strpos($path, 'home/hacklab') !== false) // need to remove old hardcode path from config
+        {
+            $theme = basename($path);
+            $path  = $this->baseDir . $theme;
+        }
+        return $path;
     }
-    
+
     public function body_class($classes, $class)
     {
-    	if(is_pauta())
-    	{
-    		$situacao = delibera_get_situacao(get_the_ID());
-    		$classes[] = $situacao->slug;
-    	}
-    	return $classes;
+        if (is_pauta()) {
+            $situacao  = delibera_get_situacao(get_the_ID());
+            $classes[] = $situacao->slug;
+        }
+        return $classes;
     }
-    
+
 }
 global $deliberaThemes;
 $deliberaThemes = new DeliberaThemes;
@@ -360,15 +348,14 @@ add_action('admin_print_styles', array($deliberaThemes, 'adminPrintStyles'));
 add_action('wp_enqueue_scripts', array($deliberaThemes, 'publicStyles'), 100);
 
 // inclui arquivos específicos do tema
-require_once($deliberaThemes->themeFilePath('functions.php'));
+require_once $deliberaThemes->themeFilePath('functions.php');
 
-if(file_exists(get_stylesheet_directory()."/delibera_comments_template.php"))
-{
-	require_once(get_stylesheet_directory()."/delibera_comments_template.php");
+if (file_exists(get_stylesheet_directory() . "/delibera_comments_template.php")) {
+    include_once get_stylesheet_directory() . "/delibera_comments_template.php";
 }
 else
 {
-	require_once($deliberaThemes->themeFilePath('delibera_comments_template.php'));
+    include_once $deliberaThemes->themeFilePath('delibera_comments_template.php');
 }
 
 
@@ -376,8 +363,8 @@ else
  * Usa o template de comentário do Delibera
  * no lugar do padrão do Wordpress para as pautas
  *
- * @param string $path
- * @return string
+ * @param   string $path
+ * @return  string
  * @package Tema
  */
 function delibera_comments_template($path)

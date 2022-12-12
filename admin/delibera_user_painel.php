@@ -41,15 +41,15 @@ function delibera_get_user_campos_form_registro()
 
 	);
 
-	if(has_filter('delibera_user_painel_campos'))
+	if (has_filter('delibera_user_painel_campos'))
 	{
 		$campos_form_registro = apply_filters('delibera_user_painel_campos', $campos_form_registro);
 	}
 
-	if(function_exists('get_user_campos_form_registro'))
+	if (function_exists('get_user_campos_form_registro'))
 	{
 		$get_user_campos_form_registro = get_user_campos_form_registro();
-		if(is_array($get_user_campos_form_registro))
+		if (is_array($get_user_campos_form_registro))
 		{
 			//$campos_form_registro = array_merge($campos_form_registro, $get_user_campos_form_registro);
 		}
@@ -67,9 +67,9 @@ function delibera_campos_usuario_registro()
 {
 	foreach (delibera_get_user_campos_form_registro() as $campo)
 	{
-		if($campo['registro'] === true)
+		if ($campo['registro'] === true)
 		{
-			if(array_key_exists('funcao_registro', $campo) && function_exists($campo['funcao_registro']))
+			if (array_key_exists('funcao_registro', $campo) && function_exists($campo['funcao_registro']))
 			{
 				call_user_func($campo['funcao_registro'], $campo);
 			}
@@ -91,7 +91,7 @@ function delibera_campos_usuario_registro_check($login, $email, $errors)
 {
 	foreach (delibera_get_user_campos_form_registro() as $campo)
 	{
-		if($campo['registro'] === true && $campo['obrigatorio'] === true && $_POST[$campo['id']] == '')
+		if ($campo['registro'] === true && $campo['obrigatorio'] === true && $_POST[$campo['id']] == '')
 		{
 			$errors->add('empty_'.$campo['id'], $campo['Informar']);
 		}
@@ -106,11 +106,11 @@ function delibera_register_extra_fields($user_id, $password="", $meta=array())
 
 	foreach (delibera_get_user_campos_form_registro() as $campo)
 	{
-		if(array_key_exists($campo['id'], $_POST))
+		if (array_key_exists($campo['id'], $_POST))
 		{
-			if($campo['novo'] == true)
+			if ($campo['novo'] == true)
 			{
-				update_user_meta( $user_id, $campo['id'], $_POST[$campo['id']]);
+				update_user_meta($user_id, $campo['id'], $_POST[$campo['id']]);
 			}
 			else
 			{
@@ -126,10 +126,10 @@ function delibera_register_extra_fields($user_id, $password="", $meta=array())
 }
 add_action('user_register', 'delibera_register_extra_fields');
 
-function delibera_extra_profile_fields( $user )
+function delibera_extra_profile_fields($user )
 {
 	$campos = delibera_get_user_campos_form_registro();
-	if($campos > 0)
+	if ($campos > 0)
 	{
 		?>
 		<h3><?php _e('Notificações por e-mail do Delibera', 'delibera'); ?></h3>
@@ -140,7 +140,7 @@ function delibera_extra_profile_fields( $user )
 		<?php
 		foreach ($campos as $campo)
 		{
-			if($campo['novo'] == true)
+			if ($campo['novo'] == true)
 			{
 				$contactmethods[] = $campo['nome'];
 				?>
@@ -148,7 +148,7 @@ function delibera_extra_profile_fields( $user )
 						<td><label for="<?php echo $campo['id'] ?>"><?php echo $campo['nome'] ?></label></td>
 						<td>
 							<?php
-							if(is_string($campo['funcao_painel']) && function_exists($campo['funcao_painel']) )
+							if (is_string($campo['funcao_painel']) && function_exists($campo['funcao_painel']))
 							{
 								call_user_func($campo['funcao_painel'], $campo);
 							}
@@ -159,15 +159,15 @@ function delibera_extra_profile_fields( $user )
 								{
 									case 'DropDown':
 										$valores = array();
-										if(is_array($campo['dados']) && count($campo['dados']) > 0)
+										if (is_array($campo['dados']) && count($campo['dados']) > 0)
 										{
 											$valores = $campo['dados'];
 										}
-										elseif(is_string($campo['dados']) && function_exists($campo['dados']))
+										elseif (is_string($campo['dados']) && function_exists($campo['dados']))
 										{
 											$param = $campo['dados_param'] ? $campo['dados_param'] : array();
 											$ret = call_user_func($campo['dados'], $param);
-											if(is_array($ret) && count($ret) > 0)
+											if (is_array($ret) && count($ret) > 0)
 											{
 												$valores = $ret;
 											}
@@ -175,12 +175,12 @@ function delibera_extra_profile_fields( $user )
 										?>
 										<select name="<?php echo $campo['id'] ?>" id="<?php echo $campo['id'] ?>" class="regular-dropdown" >
 										<?php
-										$salvo = strtolower(esc_attr( get_user_meta( $user->ID, $campo['id'], true )));
+										$salvo = strtolower(esc_attr(get_user_meta($user->ID, $campo['id'], true )));
 										$salvo = $salvo == '' || empty($salvo) || (is_array($salvo) && count($salvo) == 0) ? strtolower($default) : $salvo;
 										foreach ($valores as $valor => $desc)
 										{
 											?>
-											<option value="<?php echo $valor; ?>" <?php echo $salvo === strtolower($valor) ? 'selected="selected"' : ""; ?> class="regular-checkbox-value" ><?php echo $desc;?></option>
+											<option value="<?php echo $valor; ?>" <?php echo $salvo === strtolower($valor) ? 'selected="selected"' : ""; ?> class="regular-checkbox-value" ><?php echo $desc; ?></option>
 											<?php
 										}
 										?>
@@ -189,16 +189,16 @@ function delibera_extra_profile_fields( $user )
 									break;
 									case 'CheckBox':
 										$valor = true;
-										if(is_array($campo['dados']) && count($campo['dados']) > 0)
+										if (is_array($campo['dados']) && count($campo['dados']) > 0)
 										{
 											$keys = array_keys($campo['dados']);
 											$valor = $keys[0];
 										}
-										elseif(is_string($campo['dados']) && function_exists($campo['dados']))
+										elseif (is_string($campo['dados']) && function_exists($campo['dados']))
 										{
 											$param = $campo['dados_param'] ? $campo['dados_param'] : array();
 											$ret = call_user_func($campo['dados'], $param);
-											if(is_array($ret) && count($ret) > 0)
+											if (is_array($ret) && count($ret) > 0)
 											{
 												$keys = array_keys($ret);
 												$valor = $keys[0] == 0 ? $ret[0] : $keys[0];
@@ -208,7 +208,7 @@ function delibera_extra_profile_fields( $user )
 												$valor = $ret;
 											}
 										}
-										$salvo = strtolower(esc_attr( get_user_meta( $user->ID, $campo['id'], true )));
+										$salvo = strtolower(esc_attr(get_user_meta($user->ID, $campo['id'], true )));
 										$salvo = $salvo == '' || empty($salvo) || (is_array($salvo) && count($salvo) == 0) ? strtolower($default) : $salvo;
 										?>
 										<input type="checkbox" name="<?php echo $campo['id'] ?>" id="<?php echo $campo['id'] ?>" value="<?php echo $valor; ?>" <?php echo $salvo === strtolower($valor) ? 'checked="checked"' : '' ; ?> class="regular-checkbox" /><br />
@@ -217,7 +217,7 @@ function delibera_extra_profile_fields( $user )
 									break;
 									case 'Texto':
 									default:
-										$salvo = esc_attr( get_user_meta( $user->ID, $campo['id'], true ));
+										$salvo = esc_attr(get_user_meta($user->ID, $campo['id'], true ));
 										$salvo = $salvo == '' || empty($salvo) || (is_array($salvo) && count($salvo) == 0) ? $default : $salvo;
 										?>
 										<input type="text" name="<?php echo $campo['id'] ?>" id="<?php echo $campo['id'] ?>" value="<?php echo $salvo; ?>" class="regular-text" /><br />
@@ -237,8 +237,8 @@ function delibera_extra_profile_fields( $user )
 	}
 }
 
-add_action( 'show_user_profile', 'delibera_extra_profile_fields' );
-add_action( 'edit_user_profile', 'delibera_extra_profile_fields' );
+add_action('show_user_profile', 'delibera_extra_profile_fields');
+add_action('edit_user_profile', 'delibera_extra_profile_fields');
 
 function delibera_profile_update($user_id)
 {
@@ -249,22 +249,22 @@ function delibera_profile_update($user_id)
 		{
 			case 'CheckBox':
 				$valor = false;
-				if(array_key_exists($campo['id'], $_POST))
+				if (array_key_exists($campo['id'], $_POST))
 				{
 					$valor = $_POST[$campo['id']];
 				}
 				else
 				{
-					if(is_array($campo['dados']) && count($campo['dados']) == 2)
+					if (is_array($campo['dados']) && count($campo['dados']) == 2)
 					{
 						$keys = array_keys($campo['dados']);
 						$valor = $keys[1];
 					}
-					elseif(is_string($campo['dados']) && function_exists($campo['dados']))
+					elseif (is_string($campo['dados']) && function_exists($campo['dados']))
 					{
 						$param = $campo['dados_param'] ? $campo['dados_param'] : array();
 						$ret = call_user_func($campo['dados'], $param);
-						if(is_array($ret) && count($ret) == 2)
+						if (is_array($ret) && count($ret) == 2)
 						{
 							$keys = array_keys($ret);
 							$valor = $keys[0] == 0 ? $ret[1] : $keys[1];
@@ -274,7 +274,7 @@ function delibera_profile_update($user_id)
 				update_user_meta($user_id, $campo['id'], $valor);
 			break;
 			default:
-				if(array_key_exists($campo['id'], $_POST))
+				if (array_key_exists($campo['id'], $_POST))
 				{
 					update_user_meta($user_id, $campo['id'], $_POST[$campo['id']]);
 				}
@@ -289,14 +289,14 @@ add_action('profile_update', 'delibera_profile_update');
 /*
  * Allowing user Admin on Multisite intalation to edit users on his blog.
  * */
-function mc_admin_users_caps( $caps, $cap, $user_id, $args ){
+function mc_admin_users_caps($caps, $cap, $user_id, $args ){
 
-	foreach( $caps as $key => $capability ){
+	foreach($caps as $key => $capability ){
 
-		if( $capability != 'do_not_allow' )
+		if ($capability != 'do_not_allow')
 			continue;
 
-		switch( $cap ) {
+		switch($cap) {
 			case 'edit_user':
 			case 'edit_users':
 				$caps[$key] = 'edit_users';
@@ -313,4 +313,4 @@ function mc_admin_users_caps( $caps, $cap, $user_id, $args ){
 
 	return $caps;
 }
-add_filter( 'map_meta_cap', 'mc_admin_users_caps', 10, 4 );
+add_filter('map_meta_cap', 'mc_admin_users_caps', 10, 4 );

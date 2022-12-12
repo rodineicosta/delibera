@@ -122,7 +122,7 @@ class Permission
 			),
 		);
 		add_action('init', array($this, 'admin_init'));
-		add_action( 'registered_taxonomy', array($this, 'setTaxonomyCaps'), 10, 3 );
+		add_action('registered_taxonomy', array($this, 'setTaxonomyCaps'), 10, 3 );
 	}
 
 	public function admin_init()
@@ -157,7 +157,7 @@ class Permission
 	{
 		$pos = strrpos($subject, $search);
 
-		if($pos !== false)
+		if ($pos !== false)
 		{
 			$subject = substr_replace($subject, $replace, $pos, strlen($search));
 		}
@@ -169,14 +169,14 @@ class Permission
 	{
 		foreach($this->get_editable_roles() as $role => $role_name)
 		{
-			if(is_super_admin() || $role != 'administrator')
+			if (is_super_admin() || $role != 'administrator')
 			{
 				$saverole = get_role($role);
 				foreach ($this->roleList as $rolearray)
 				{
-					if( isset($_POST[$role . "_{$rolearray['id']}"] ))
+					if (isset($_POST[$role . "_{$rolearray['id']}"]))
 					{
-						$saverole->add_cap( $rolearray['id']);
+						$saverole->add_cap($rolearray['id']);
 					}
 					else
 					{
@@ -191,7 +191,7 @@ class Permission
 	function GenerateCheckbox($id, $role, $echo = false, $label = "", $checked = '')
 	{
 		$listrole = get_role(sanitize_title($role));
-		if($listrole->has_cap($id))
+		if ($listrole->has_cap($id))
 		{
 			$checked = 'checked';
 		}
@@ -201,7 +201,7 @@ class Permission
 				'<span class="delibera-conf-permission-label">'.$label.'</span>'.
 			"</td>"
 		;
-		if($echo) echo $output;
+		if ($echo) echo $output;
 		return $output;
 	}
 
@@ -212,9 +212,9 @@ class Permission
 		{
 			foreach($this->get_editable_roles() as $role => $role_name)
 			{
-				if(is_super_admin() || $role != 'administrator')
+				if (is_super_admin() || $role != 'administrator')
 				{
-					if(!array_key_exists($cap['label'], $roles)) $roles[$cap['label']] = array();
+					if (!array_key_exists($cap['label'], $roles)) $roles[$cap['label']] = array();
 					$roles[$cap['label']][$role] = $cap['id'];
 				}
 			}
@@ -253,14 +253,14 @@ class Permission
 				 * echo "<pre>";
 				 * foreach ($this->get_editable_roles() as $role)
 				 * {
-				 * if($role['name'] != 'Administrator'){
+				 * if ($role['name'] != 'Administrator'){
 				 * print_r($role);
 				 * }
 				 * }
 				 * echo "</pre>";
 				 */
 				?>
-			<?php wp_nonce_field( 'delibera-permission-nonce' ); ?>
+			<?php wp_nonce_field('delibera-permission-nonce'); ?>
 			<input type="submit" class="delibera-permission-bt-save" value="<?php _e('Salvar', 'delibera'); ?>" />
 		</form><?php
 
@@ -271,7 +271,7 @@ class Permission
 		// $this->security_check();
 		global $wp_roles;
 
-		if(! isset($wp_roles))
+		if (!isset($wp_roles))
 			$wp_roles = new \WP_Roles();
 
 		return $wp_roles->get_role($role);
@@ -282,7 +282,7 @@ class Permission
 		// $this->security_check();
 		global $wp_roles;
 
-		if(! isset($wp_roles))
+		if (!isset($wp_roles))
 			$wp_roles = new \WP_Roles();
 
 		$all_roles = $wp_roles->get_names();
@@ -292,17 +292,17 @@ class Permission
 	}
 	/*** End Copied from Sendpress ***/
 
-	public function setTaxonomyCaps( $taxonomy, $object_type, $args )
+	public function setTaxonomyCaps($taxonomy, $object_type, $args )
 	{
 		global $wp_taxonomies;
-		if ( 'tema' == $taxonomy && ( ( is_string($object_type) && 'pauta' == $object_type ) || (is_array($object_type) && in_array('pauta', $object_type) ) ) )
+		if ('tema' == $taxonomy && ((is_string($object_type) && 'pauta' == $object_type ) || (is_array($object_type) && in_array('pauta', $object_type)) ))
 		{
 			$wp_taxonomies[ 'category' ]->cap->manage_terms = 'manage_delibera_cat_term';
 			$wp_taxonomies[ 'category' ]->cap->edit_terms = 'edit_delibera_cat_term';
 			$wp_taxonomies[ 'category' ]->cap->delete_terms = 'delete_delibera_cat_term';
 			$wp_taxonomies[ 'category' ]->cap->assign_terms = 'assign_delibera_cat_term';
 		}
-		elseif( ! ( ( is_string($object_type) && 'pauta' == $object_type ) || (is_array($object_type) && in_array('pauta', $object_type) ) ) )
+		elseif (!((is_string($object_type) && 'pauta' == $object_type ) || (is_array($object_type) && in_array('pauta', $object_type)) ))
 		{
 			//TODO check if was manage_categories
 			/*$wp_taxonomies[ 'category' ]->cap->manage_terms = 'manage_categories';
@@ -318,14 +318,14 @@ class Permission
 	public function checkDefaultsPerm()
 	{
 		$saved = get_option('delibera_permission_saved', false) || get_option('delibera_permission_fixed2', false);
-		if(!$saved)
+		if (!$saved)
 		{
 			$delibera_permissoes = array();
-			if(file_exists(__DIR__.DIRECTORY_SEPARATOR.'../delibera_conf_roles.php'))
+			if (file_exists(__DIR__.DIRECTORY_SEPARATOR.'../delibera_conf_roles.php'))
 			{
 				include __DIR__.DIRECTORY_SEPARATOR.'../delibera_conf_roles.php';
 			}
-			$defaults_perm = array( //TODO add param to main array and loop all permission
+			$defaults_perm = array(//TODO add param to main array and loop all permission
 				array(
 					'id' => 'manage_tema_term',
 					'from' => 'delibera',
@@ -370,18 +370,18 @@ class Permission
 			$roles = $this->get_editable_roles();
 			foreach ($roles as $role => $label)
 			{
-				//if(is_super_admin() || $role != 'administrator')
+				//if (is_super_admin() || $role != 'administrator')
 				{
 					$saverole = get_role($role);
 					foreach ($defaults_perm as $perm)
 					{
-						if($perm['from'] == 'delibera') // check from delibera config not from WordPress
+						if ($perm['from'] == 'delibera') // check from delibera config not from WordPress
 						{
-							if(array_key_exists($role, $delibera_permissoes) )
+							if (array_key_exists($role, $delibera_permissoes))
 							{
-								if( array_search($perm['permisson'], $delibera_permissoes[$role]['Caps']) )
+								if (array_search($perm['permisson'], $delibera_permissoes[$role]['Caps']))
 								{
-									$saverole->add_cap( $perm['id']);
+									$saverole->add_cap($perm['id']);
 									//echo "$label -> {$perm['id']} -> {$perm['permisson']}:have<br/>";
 								}
 								else
@@ -394,9 +394,9 @@ class Permission
 						}
 						else
 						{
-							if( $saverole->has_cap($perm['permisson']) )
+							if ($saverole->has_cap($perm['permisson']))
 							{
-								$saverole->add_cap( $perm['id']);
+								$saverole->add_cap($perm['id']);
 								//echo "$label -> {$perm['id']} -> {$perm['permisson']}:have<br/>";
 							}
 							else

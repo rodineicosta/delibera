@@ -23,12 +23,12 @@ class Flow
 		add_filter('delibera_flow_list', array($this, 'filterFlowList'));
 		add_filter('delibera_check_post_data', array($this, 'checkPostData'), 1000, 3);
 		add_action('delibera_save_post', array($this, 'savePost'), 1000, 3);
-		//if(is_super_admin()) // TODO load after init
+		//if (is_super_admin()) // TODO load after init
 		{
 			add_action('delibera_menu_itens', array($this, 'addMenu'));
 		}
 
-		add_action( 'admin_print_scripts', array($this, 'adminScripts') );
+		add_action('admin_print_scripts', array($this, 'adminScripts'));
 
 		add_action('wp_ajax_delibera_save_flow', array($this, 'saveFlowCallback'));
 
@@ -55,7 +55,7 @@ class Flow
 		$rows[] = array(
 				"id" => "delibera_flow",
 				"label" => __('Fluxo padrão de uma pauta?', 'delibera'),
-				"content" => '<input type="text" name="delibera_flow" id="delibera_flow" value="'.implode(',', array_map("htmlspecialchars", $opt['delibera_flow']) ).'"/>'
+				"content" => '<input type="text" name="delibera_flow" id="delibera_flow" value="'.implode(',', array_map("htmlspecialchars", $opt['delibera_flow'])).'"/>'
 		);
 		return $rows;
 	}
@@ -69,14 +69,14 @@ class Flow
 	{
 		$save_opts = delibera_get_config();
 
-		if(array_key_exists('delibera_flow', $opts) && is_string($opts['delibera_flow']) && strlen($opts['delibera_flow']) > 1)
+		if (array_key_exists('delibera_flow', $opts) && is_string($opts['delibera_flow']) && strlen($opts['delibera_flow']) > 1)
 		{
 			$opts['delibera_flow'] = explode(',', trim($opts['delibera_flow']));
 		}
 
-		if( empty($opts['delibera_flow']) || (is_string($opts['delibera_flow']) && strlen($opts['delibera_flow']) < 2 ) )
+		if (empty($opts['delibera_flow']) || (is_string($opts['delibera_flow']) && strlen($opts['delibera_flow']) < 2 ))
 		{
-			if(empty($save_opts['delibera_flow']))
+			if (empty($save_opts['delibera_flow']))
 			{
 				$opts = $this->getMainConfig($opts);
 			}
@@ -100,7 +100,7 @@ class Flow
 	 */
 	public function topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao)
 	{
-		$flow = implode(',', array_map("htmlspecialchars", $this->get($post->ID)) );
+		$flow = implode(',', array_map("htmlspecialchars", $this->get($post->ID)));
 		/*?>
 			<p>
 				<label for="delibera_flow" class="label_flow"><?php _e('Fluxo da Pauta','delibera'); ?>:</label>
@@ -121,19 +121,19 @@ class Flow
 		$default_flow = isset($options_plugin_delibera['delibera_flow']) ? $options_plugin_delibera['delibera_flow'] : array();
 		$default_flow = apply_filters('delibera_flow_list', $default_flow);
 
-		if($post_id == false)
+		if ($post_id == false)
 		{
 			$post_id = get_the_ID();
-			if($post_id == false)
+			if ($post_id == false)
 			{
 				return $default_flow;
 			}
 		}
 
-		if(array_key_exists($post_id, $this->flow)) return $this->flow[$post_id];
+		if (array_key_exists($post_id, $this->flow)) return $this->flow[$post_id];
 
 		$flow = get_post_meta($post_id, 'delibera_flow', true);
-		if(is_array($flow) && count($flow) > 0)
+		if (is_array($flow) && count($flow) > 0)
 		{
 			$flow = apply_filters('delibera_flow_list', $flow);
 			$this->flow[$post_id] = $flow;
@@ -168,7 +168,7 @@ class Flow
 	 */
 	public static function getDefaultFlow($options_plugin_delibera = false)
 	{
-		if($options_plugin_delibera == false || !is_array($options_plugin_delibera))
+		if ($options_plugin_delibera == false || !is_array($options_plugin_delibera))
 		{
 			$options_plugin_delibera = delibera_get_config();
 		}
@@ -187,23 +187,23 @@ class Flow
 	public static function getLastDeadline($situacao, $post_id = false)
 	{
 		global $DeliberaFlow;
-		if(is_object($situacao))
+		if (is_object($situacao))
 		{
 			$situacao = $situacao->slug;
 		}
 
-		if($post_id == false)
+		if ($post_id == false)
 		{
 			$post_id = get_the_ID();
 		}
 		$flow = array();
-		if(get_post_type($post_id) == 'pauta')
+		if (get_post_type($post_id) == 'pauta')
 		{
 			$flow = $DeliberaFlow->get($post_id);
 		}
 		else // Creating pauta at front?
 		{
-			if(array_key_exists('delibera_flow', $_POST) && is_array($_POST['delibera_flow']))
+			if (array_key_exists('delibera_flow', $_POST) && is_array($_POST['delibera_flow']))
 			{
 				$flow = $_POST['delibera_flow'];
 			}
@@ -215,7 +215,7 @@ class Flow
 		$modules = $DeliberaFlow->getFlowModules();
 
 		$now = array_search($situacao, $flow);
-		if(($now - 1) >= 0 && array_key_exists($now - 1, $flow) && array_key_exists($flow[$now - 1], $modules) && method_exists($modules[$flow[$now - 1]], 'getDeadline'))
+		if (($now - 1) >= 0 && array_key_exists($now - 1, $flow) && array_key_exists($flow[$now - 1], $modules) && method_exists($modules[$flow[$now - 1]], 'getDeadline'))
 		{
 			return $modules[$flow[$now - 1]]->getDeadline();
 		}
@@ -234,11 +234,11 @@ class Flow
 	 */
 	public function savePostMetas($events_meta, $opt, $post_id)
 	{
-		if(array_key_exists('delibera_flow', $_POST) )
+		if (array_key_exists('delibera_flow', $_POST))
 		{
 			$flow = $_POST['delibera_flow'];
 
-			if(is_string($flow))
+			if (is_string($flow))
 			{
 				$flow = explode(',', trim($_POST['delibera_flow']));
 			}
@@ -247,7 +247,7 @@ class Flow
 			$modules = $this->getFlowModules();
 			foreach ($flow as $situacao)
 			{
-				if(array_key_exists($situacao, $modules))
+				if (array_key_exists($situacao, $modules))
 				{
 					$events_meta = $modules[$situacao]->savePostMetas($events_meta, $opt);
 				}
@@ -289,10 +289,10 @@ class Flow
 		/**
 		 * Update flow meta after publish because is before save metas
 		 */
-		if(array_key_exists('delibera_flow', $_POST))
+		if (array_key_exists('delibera_flow', $_POST))
 		{
 			$flow = array();
-			if(is_array($_POST['delibera_flow']))
+			if (is_array($_POST['delibera_flow']))
 			{
 				$flow = array_map("strip_tags", $_POST['delibera_flow']);
 			}
@@ -320,7 +320,7 @@ class Flow
 		$current = array_search($situacao->slug, $flow);
 		$modules = $DeliberaFlow->getFlowModules(); //TODO cache?
 
-		if($current === false)
+		if ($current === false)
 		{
 			$situacoes = array();
 			foreach ($modules as $module)
@@ -336,7 +336,7 @@ class Flow
 			}
 			$current = 0;
 		}
-		if(array_key_exists($current, $flow) && array_key_exists($flow[$current], $modules))
+		if (array_key_exists($current, $flow) && array_key_exists($flow[$current], $modules))
 		{
 			return $modules[$flow[$current]];
 		}
@@ -355,7 +355,7 @@ class Flow
 		$current = self::getCurrentModule($post_id);
 		$current::setSituacaoDate($post_id);
 		$next = self::getNext($post_id);
-		if($next)
+		if ($next)
 		{
 			$next->initModule($post_id);
 		}
@@ -376,7 +376,7 @@ class Flow
 		$current = array_search($situacao->slug, $flow);
 		$modules = $DeliberaFlow->getFlowModules(); //TODO cache?
 
-		if(array_key_exists($current+1, $flow))
+		if (array_key_exists($current+1, $flow))
 		{
 			return $modules[$flow[$current+1]];
 		}
@@ -390,11 +390,11 @@ class Flow
 	 */
 	public static function forcarFimPrazo($post_id)
 	{
-		if(is_object($post_id)) $post_id = $post_id->ID;
+		if (is_object($post_id)) $post_id = $post_id->ID;
 
 		$current = \Delibera\Flow::getCurrentModule($post_id);
 		\Delibera\Cron::del($post_id);
-		call_user_func(array(get_class($current), 'deadline'), array('post_ID' => $post_id, 'prazo' => date('d/m/Y'), 'force' => true) );
+		call_user_func(array(get_class($current), 'deadline'), array('post_ID' => $post_id, 'prazo' => date('d/m/Y'), 'force' => true));
 	}
 
 	/**
@@ -408,7 +408,7 @@ class Flow
 		$flow = $DeliberaFlow->get($postID);
 		$modules = $DeliberaFlow->getFlowModules();
 		$modules[$flow[0]]->initModule($postID);
-		if($new_deadline_days) $modules[$flow[0]]->newDeadline($postID, false);
+		if ($new_deadline_days) $modules[$flow[0]]->newDeadline($postID, false);
 	}
 
 	/**
@@ -418,7 +418,7 @@ class Flow
 	 */
 	public function filterFlowList($flow)
 	{
-		if(is_array($flow))
+		if (is_array($flow))
 		{
 			$modules = $this->getFlowModules();
 			$flow = array_values(array_intersect($flow, array_keys($modules)));
@@ -441,24 +441,24 @@ class Flow
 
 		$deadline = $module->getDeadline($post_id);
 
-		if($deadline <= -1) return -1;
+		if ($deadline <= -1) return -1;
 
 		$dateTimeNow = new \DateTime();
 		$deadlineDate = \DateTime::createFromFormat('d/m/Y H:i:s', $deadline." 23:59:59");
 
 		$diff = $dateTimeNow->diff($deadlineDate);
-		if(!is_null($data))
+		if (!is_null($data))
 		{
 			$data = $deadlineDate->format('d/m/Y');
 		}
-		if($diff->days > 0)
+		if ($diff->days > 0)
 		{
 			$ret = $diff->format('%r%a');
-			if($ret < -1) // Pauta travada see https://github.com/redelivre/delibera/issues/135
+			if ($ret < -1) // Pauta travada see https://github.com/redelivre/delibera/issues/135
 			{
 				//let's check why
 				$next = self::getNext($post_id);
-				if($next) // Ops have more in flow
+				if ($next) // Ops have more in flow
 				{
 					$next->initModule($post_id);
 				}
@@ -466,7 +466,7 @@ class Flow
 			}
 			return $ret;
 		}
-		if($diff->days < 1 && ($diff->i || $diff->h || $diff->s))
+		if ($diff->days < 1 && ($diff->i || $diff->h || $diff->s))
 		{
 			return  1;
 		}
@@ -494,7 +494,7 @@ class Flow
 		$situacao = "";
 		$disable_edicao = false;
 
-		if(is_null($post))
+		if (is_null($post))
 		{
 			$post = new \WP_Post(new \stdClass());
 		}
@@ -506,7 +506,7 @@ class Flow
 
 		$modules = $this->getFlowModules();
 
-		if( $flow != false && is_array($flow) )
+		if ($flow != false && is_array($flow))
 		{
 			$allmodules = $modules;
 			$modules = array();
@@ -527,7 +527,7 @@ class Flow
 				</h2>
 				<div class="dragbox-content" style="<?php echo ($is_post_meta && $flow === false) ? "display: none;" : ''; ?>" >
 					<?php
-					if($is_post_meta)
+					if ($is_post_meta)
 					{
 						$module->topicMeta($post, $custom, $options_plugin_delibera, $situacao, $disable_edicao);
 					}
@@ -536,13 +536,13 @@ class Flow
 						$rows = array();
 						$rows = $module->configPageRows($rows, $options_plugin_delibera);
 						$table = delibera_form_table($rows);
-						if(has_filter('delibera_config_form'))
+						if (has_filter('delibera_config_form'))
 						{
 							$table = apply_filters('delibera_config_form', $table, $opt);
 						}
 						echo $table;
 					}
-					if(!$is_post_meta) // Use post save
+					if (!$is_post_meta) // Use post save
 					{?>
 						<input type="button" class="dragbox-bt-save" value="<?php _e('Save', 'delibera'); ?>" />
 					<?php
@@ -564,7 +564,7 @@ class Flow
 		$flow = $this->get();
 		?>
 		<div class="delibera-flow-panel <?php echo is_null($post) ? 'delibera-flow-panel-config' : 'delibera-flow-panel-post' ?>"><?php
-			wp_nonce_field( 'delibera-flow-nonce', '_delibera-flow-nonce' );
+			wp_nonce_field('delibera-flow-nonce', '_delibera-flow-nonce');
 			?>
 			<input type="hidden" id="delibera-flow-postid" name="delibera-flow-postid" value="<?php the_ID(); ?>" />
 			<input type="hidden" id="delibera_flow" name="delibera_flow" value="<?php echo implode(',', $flow); ?>" />
@@ -587,10 +587,10 @@ class Flow
 	{
 		$screen = get_current_screen();
 		$screenid = $screen->id;
-		if(strpos($screenid, 'page_delibera') !== false || $screenid == 'pauta' )
+		if (strpos($screenid, 'page_delibera') !== false || $screenid == 'pauta')
 		{
 			$post_id = get_the_ID();
-			wp_enqueue_script('delibera-admin-flow', plugin_dir_url(__FILE__).'/js/flow.js', array( 'jquery-ui-core', 'jquery-ui-sortable'));
+			wp_enqueue_script('delibera-admin-flow', plugin_dir_url(__FILE__).'/js/flow.js', array('jquery-ui-core', 'jquery-ui-sortable'));
 			$data = array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'post_id' => $post_id
@@ -598,7 +598,7 @@ class Flow
 
 			wp_localize_script('delibera-admin-flow', 'delibera_admin_flow', $data);
 			wp_enqueue_script('jquery-ui-datepicker-ptbr', DELIBERA_DIR_URL.'/js/jquery.ui.datepicker-pt-BR.js', array('jquery-ui-datepicker'));
-			wp_enqueue_script('delibera-admin', plugin_dir_url(__FILE__).'/js/admin_scripts.js', array( 'jquery-ui-datepicker-ptbr'));
+			wp_enqueue_script('delibera-admin', plugin_dir_url(__FILE__).'/js/admin_scripts.js', array('jquery-ui-datepicker-ptbr'));
 
 			wp_enqueue_style('delibera-admin-flow',plugin_dir_url(__FILE__).'/css/flow.css');
 		}
@@ -613,15 +613,15 @@ class Flow
 	 */
 	public function checkPostData($errors, $opt, $autosave)
 	{
-		if(array_key_exists('delibera_flow', $_POST) )
+		if (array_key_exists('delibera_flow', $_POST))
 		{
 			$flow = $_POST['delibera_flow'];
-			if(is_string($flow))
+			if (is_string($flow))
 			{
 				$flow = explode(',', strip_tags($_POST['delibera_flow']));
 			}
 			$valida = is_array($flow) ? count($flow) : false;
-			if(!$autosave && ($valida === false || $valida < 1))
+			if (!$autosave && ($valida === false || $valida < 1))
 			{
 				$errors[] = __("É necessário definir corretamente o fluxo da pauta", "delibera");
 			}
@@ -630,7 +630,7 @@ class Flow
 				$modules = $this->getFlowModules();
 				foreach ($flow as $situacao)
 				{
-					if(array_key_exists($situacao, $modules))
+					if (array_key_exists($situacao, $modules))
 					{
 						$errors = $modules[$situacao]->checkPostData($errors, $opt, false);
 					}
@@ -651,17 +651,17 @@ class Flow
 		$opt = delibera_get_config();
 		$all_errors = array();
 
-		if($post_id > 0)
+		if ($post_id > 0)
 		{
 			$modules = $this->getFlowModules();
 			$events_meta = array();
 			foreach ($flow as $situacao)
 			{
 				$errors = array();
-				if(array_key_exists($situacao, $modules))
+				if (array_key_exists($situacao, $modules))
 				{
 					$errors = $modules[$situacao]->checkPostData($errors, $opt, false);
-					if(count($errors) == 0)
+					if (count($errors) == 0)
 					{
 						$events_meta = $modules[$situacao]->savePostMetas($events_meta, $opt);
 					}
@@ -671,12 +671,12 @@ class Flow
 					}
 				}
 			}
-			if(count($all_errors) > 0)
+			if (count($all_errors) > 0)
 			{
-				if ( defined( 'DOING_AJAX' ) ) {
+				if (defined('DOING_AJAX')) {
 					die(json_encode($all_errors));//TODO error notice and parser
 				}
-				wp_die( implode('<br/>', $errors) );
+				wp_die(implode('<br/>', $errors));
 
 			}
 			foreach ($events_meta as $key => $value) // Buscar dados
@@ -707,12 +707,12 @@ class Flow
 				}
 			}
 			$opt['delibera_flow'] = $flow;
-			if(! update_option('delibera-config', $opt) && $oldFlow != implode(',', $flow) )
+			if (!update_option('delibera-config', $opt) && $oldFlow != implode(',', $flow))
 			{
 				$all_errors = array(__('can not update modules configs', 'delibera'));
 			}
 
-			if(count($all_errors) > 0)
+			if (count($all_errors) > 0)
 			{
 				die(json_encode($all_errors));//TODO error notice and parser
 			}
@@ -734,7 +734,7 @@ class Flow
 		$modules = $DeliberaFlow->getFlowModules();
 		foreach ($flow as $situacao)
 		{
-			if(array_key_exists($situacao, $modules))
+			if (array_key_exists($situacao, $modules))
 			{
 				$dates[$situacao] = $modules[$situacao]->getDeadline($post_id);
 			}
@@ -756,10 +756,10 @@ class Flow
 		$modules = $DeliberaFlow->getFlowModules();
 		foreach ($flow as $situacao)
 		{
-			if(array_key_exists($situacao, $modules))
+			if (array_key_exists($situacao, $modules))
 			{
 				$dates[$situacao] = $modules[$situacao]::getSituacaoDate($post_id, $situacao);
-				if(empty($dates[$situacao]))
+				if (empty($dates[$situacao]))
 				{
 					$dates[$situacao] = $modules[$situacao]->getDeadline($post_id);
 				}
@@ -787,7 +787,7 @@ class Flow
 	public function template_redirect()
 	{
 		$post_id = get_the_ID();
-		if(intval($post_id) > 0)
+		if (intval($post_id) > 0)
 		{
 			$currentModule = $this->getCurrentModule($post_id);
 			$currentModule->template_redirect();
